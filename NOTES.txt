@@ -1,0 +1,4 @@
+1. Must be Java 8 compatible at runtime.
+2. Must work with OpenAPI 2 & 3.
+3. Must work with local files and URLs.
+4. Must work with YAML and JSON

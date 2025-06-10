@@ -9,7 +9,8 @@
     <root level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </root>
-    <logger name="com.radiantlogic" level="DEBUG">
+    <logger name="com.radiantlogic" level="DEBUG" additivity
+            ="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 </configuration>

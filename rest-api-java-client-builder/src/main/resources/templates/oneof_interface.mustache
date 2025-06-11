@@ -4,5 +4,11 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     public {{propertyType}} {{propertyGetter}}();
     {{/discriminator}}
 
-    default void foo() {}
+    default String toUrlQueryString() {
+        return "";
+    }
+
+    default String toUrlQueryString(String prefix) {
+        return "";
+    }
 }

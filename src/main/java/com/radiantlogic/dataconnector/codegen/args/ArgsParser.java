@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -55,6 +56,10 @@ public class ArgsParser {
     try {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine commandLine = parser.parse(options, args);
+      if (commandLine.hasOption(HELP_OPTION.getArgName())) {
+        final HelpFormatter helpFormatter = new HelpFormatter();
+        helpFormatter.printHelp("rest-api-java-client-builder", options);
+      }
     } catch (final ParseException ex) {
       throw new IllegalStateException(
           "Failed to parse command line arguments, cannot proceed.", ex);

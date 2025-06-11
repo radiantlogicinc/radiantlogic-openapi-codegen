@@ -1,7 +1,9 @@
 package com.radiantlogic.dataconnector.codegen.openapi;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.NonNull;
@@ -17,17 +19,18 @@ public class OpenapiPathValidator {
     log.info("Parsing and validating OpenAPI path: {}", openapiPath);
     try {
       final URI uri = new URI(openapiPath);
+      final URL url = uri.toURL();
       if (openapiPath.startsWith("file:")) {
         ensureFileUriExists(uri);
       }
-      return uri.toString();
-    } catch (final URISyntaxException | IllegalArgumentException ex) {
+      return url.toString();
+    } catch (final URISyntaxException | MalformedURLException | IllegalArgumentException ex) {
       log.debug("Failed to parse OpenAPI path as URI. Trying as file path.");
       try {
         final URI fileUri = new URI("file://%s".formatted(openapiPath));
         ensureFileUriExists(fileUri);
-        return fileUri.toString();
-      } catch (final URISyntaxException | IllegalArgumentException ex2) {
+        return fileUri.toURL().toString();
+      } catch (final URISyntaxException | MalformedURLException | IllegalArgumentException ex2) {
         ex.addSuppressed(ex2);
       }
 

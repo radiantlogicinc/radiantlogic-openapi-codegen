@@ -1,5 +1,7 @@
 package com.radiantlogic.dataconnector.codegen.properties;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +15,8 @@ import org.w3c.dom.Element;
 public class PropsReaderTest {
   private static String artifactId;
   private static String version;
+
+  private final PropsReader propsReader = new PropsReader();
 
   @BeforeAll
   @SneakyThrows
@@ -32,7 +36,10 @@ public class PropsReaderTest {
   }
 
   @Test
+  @SneakyThrows
   void itReadsPropsSetByMavenPlugin() {
-    throw new RuntimeException();
+    final Props props = propsReader.readProps();
+    final Props expectedProps = new Props(artifactId, version);
+    assertThat(props).isEqualTo(expectedProps);
   }
 }

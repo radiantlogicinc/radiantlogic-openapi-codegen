@@ -25,7 +25,6 @@ public class ArgsParser {
           .argName("OpenAPI Path")
           .longOpt("path")
           .desc("The path to the OpenAPI specification. Either a file path or URL.")
-          .type(String.class)
           .hasArg()
           .valueSeparator('=')
           .build();
@@ -35,7 +34,6 @@ public class ArgsParser {
           .longOpt("groupId")
           .desc(
               "The groupId to use for the generated artifact. If not provided, a default groupId will be set")
-          .required(false)
           .hasArg()
           .valueSeparator('=')
           .build();
@@ -45,17 +43,14 @@ public class ArgsParser {
           .longOpt("validate")
           .desc(
               "Whether or not to run validation on the OpenAPI specification before generating code. Strongly recommended. Defaults to true.")
-          .type(Boolean.class)
           .hasArg()
           .valueSeparator('=')
-          .required(false)
           .build();
   private static final Option HELP_OPTION =
       Option.builder("h")
           .argName("Help")
           .longOpt("help")
           .desc("Print the help information for this CLI")
-          .required(false)
           .build();
   private static final Options OPTIONS = new Options();
 
@@ -85,7 +80,8 @@ public class ArgsParser {
       }
 
       final boolean doValidate =
-          commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE);
+          Boolean.parseBoolean(
+              commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE.toString()));
       final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt(), "");
       if (StringUtils.isBlank(openapiPath)) {
         throw new IllegalArgumentException(

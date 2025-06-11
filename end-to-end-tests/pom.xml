@@ -14,6 +14,7 @@
         <revision>1.0.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.30</lombok.version>
+        <pmd.version>7.12.0</pmd.version>
     </properties>
 
     <modules>

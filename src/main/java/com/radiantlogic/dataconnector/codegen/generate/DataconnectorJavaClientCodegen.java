@@ -3,9 +3,12 @@ package com.radiantlogic.dataconnector.codegen.generate;
 import com.radiantlogic.dataconnector.codegen.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import lombok.NonNull;
+import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
@@ -18,7 +21,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    // TODO clear this directory
+    if (Files.exists(outputDir)) {
+      try {
+        FileUtils.deleteDirectory(outputDir.toFile());
+      } catch (IOException ex) {
+        throw new RuntimeException(
+            "Unable to delete existing output directory: %s".formatted(outputDir), ex);
+      }
+    }
     setOutputDir(outputDir.toString());
     setGroupId("com.radiantlogic.customer.dataconnector"); // TODO rename this
     setArtifactId(title);

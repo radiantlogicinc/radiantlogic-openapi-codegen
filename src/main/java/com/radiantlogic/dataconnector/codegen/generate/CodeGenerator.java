@@ -1,10 +1,13 @@
 package com.radiantlogic.dataconnector.codegen.generate;
 
+import com.radiantlogic.dataconnector.codegen.args.Args;
 import io.swagger.v3.parser.core.models.ParseOptions;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CodeGenerator {
+  @NonNull private final Args args;
 
   public void generate() {
     final ParseOptions parseOptions = new ParseOptions();

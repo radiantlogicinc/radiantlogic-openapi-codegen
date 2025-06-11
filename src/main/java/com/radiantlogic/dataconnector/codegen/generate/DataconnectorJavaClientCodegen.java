@@ -1,5 +1,6 @@
 package com.radiantlogic.dataconnector.codegen.generate;
 
+import com.radiantlogic.dataconnector.codegen.args.Args;
 import com.radiantlogic.dataconnector.codegen.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -12,12 +13,12 @@ import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
-  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI) {
+  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
-    init();
+    init(args);
   }
 
-  private void init() {
+  private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
@@ -30,7 +31,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       }
     }
     setOutputDir(outputDir.toString());
-    setGroupId("com.radiantlogic.customer.dataconnector"); // TODO rename this
+    setGroupId(args.groupId());
     setArtifactId(title);
     setArtifactVersion(version);
   }

@@ -17,6 +17,8 @@ import org.apache.commons.cli.ParseException;
 @Slf4j
 @RequiredArgsConstructor
 public class ArgsParser {
+  private static final String DEFAULT_GROUP_ID = "com.radiantlogic.custom.dataconnector";
+
   private static final Option PATH_OPTION =
       Option.builder()
           .argName("p")
@@ -80,13 +82,14 @@ public class ArgsParser {
       if (commandLine.hasOption(HELP_OPTION.getArgName())) {
         final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
-        return new Args(ProgramArgStatus.EXIT, "", false);
+        return new Args(ProgramArgStatus.EXIT, "", "", false);
       }
 
       final boolean doValidate =
           commandLine.getParsedOptionValue(VALIDATE_OPTION.getArgName(), Boolean.TRUE);
       final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getArgName());
-      final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getArgName());
+      final String groupId =
+          commandLine.getOptionValue(GROUP_ID_OPTION.getArgName(), DEFAULT_GROUP_ID);
       return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId, doValidate);
     } catch (final ParseException ex) {
       throw new IllegalStateException(

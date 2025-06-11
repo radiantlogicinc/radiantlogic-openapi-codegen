@@ -20,18 +20,18 @@ public class ArgsParser {
   private static final String DEFAULT_GROUP_ID = "com.radiantlogic.custom.dataconnector";
 
   private static final Option PATH_OPTION =
-      Option.builder()
-          .argName("p")
+      Option.builder("p")
+          .argName("OpenAPI Path")
           .longOpt("path")
           .desc("The path to the OpenAPI specification. Either a file path or URL.")
           .type(String.class)
           .hasArg()
           .valueSeparator('=')
-          .required()
+          //          .required()
           .build();
   private static final Option GROUP_ID_OPTION =
-      Option.builder()
-          .argName("g")
+      Option.builder("g")
+          .argName("Group ID")
           .longOpt("groupId")
           .desc(
               "The groupId to use for the generated artifact. If not provided, a default groupId will be set")
@@ -40,8 +40,8 @@ public class ArgsParser {
           .valueSeparator('=')
           .build();
   private static final Option VALIDATE_OPTION =
-      Option.builder()
-          .argName("v")
+      Option.builder("v")
+          .argName("Validate")
           .longOpt("validate")
           .desc(
               "Whether or not to run validation on the OpenAPI specification before generating code. Strongly recommended. Defaults to true.")
@@ -51,8 +51,8 @@ public class ArgsParser {
           .required(false)
           .build();
   private static final Option HELP_OPTION =
-      Option.builder()
-          .argName("h")
+      Option.builder("h")
+          .argName("Help")
           .longOpt("help")
           .desc("Print the help information for this CLI")
           .required(false)
@@ -78,17 +78,16 @@ public class ArgsParser {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine commandLine = parser.parse(options, args);
 
-      if (commandLine.hasOption(HELP_OPTION.getArgName())) {
+      if (commandLine.hasOption(HELP_OPTION.getOpt())) {
         final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
         return new Args(ProgramArgStatus.EXIT, "", "", false);
       }
 
       final boolean doValidate =
-          commandLine.getParsedOptionValue(VALIDATE_OPTION.getArgName(), Boolean.TRUE);
-      final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getArgName());
-      final String groupId =
-          commandLine.getOptionValue(GROUP_ID_OPTION.getArgName(), DEFAULT_GROUP_ID);
+          commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE);
+      final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt());
+      final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getOpt(), DEFAULT_GROUP_ID);
       return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId, doValidate);
     } catch (final ParseException ex) {
       throw new IllegalStateException(

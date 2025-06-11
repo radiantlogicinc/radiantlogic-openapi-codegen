@@ -84,6 +84,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>false</skip>
                             <executable>java</executable>
                             <arguments>
                                 <argument>-cp</argument>

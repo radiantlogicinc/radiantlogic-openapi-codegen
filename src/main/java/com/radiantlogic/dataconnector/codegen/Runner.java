@@ -33,6 +33,13 @@ public class Runner {
     }
   }
 
+  /**
+   * Handling args in development mode slightly differently than production allows for this program
+   * to work more gracefully with the exec-maven-plugin from the CLI.
+   *
+   * <p>The expectation is that, if the first arg is 'dev', then the section arg will be a
+   * space-separated list of all other arguments, which is what the program actually expects.
+   */
   private static String[] handleDevArgs(@NonNull final String[] args) {
     if (args.length == 2 && args[0].equals("dev")) {
       log.debug("Dev args detected, applying special handling");

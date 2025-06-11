@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.codegen.args;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.dataconnector.codegen.properties.Props;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,9 @@ public class ArgsParserTest {
 
   @Test
   void itParsesNoArgs() {
-    throw new RuntimeException();
+    assertThatThrownBy(() -> argsParser.parse(new String[] {}))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Missing required arguments. Please run with -h for more information.");
   }
 
   @Test

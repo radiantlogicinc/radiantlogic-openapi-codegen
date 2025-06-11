@@ -2,6 +2,7 @@ package com.radiantlogic.dataconnector.codegen.args;
 
 import com.radiantlogic.dataconnector.codegen.properties.Props;
 import java.util.Arrays;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
@@ -55,7 +56,7 @@ public class ArgsParser {
           .required(false)
           .build();
 
-  private final Props props;
+  @NonNull private final Props props;
 
   public Args parse(final String[] args) {
     if (args.length <= 1) {
@@ -77,7 +78,7 @@ public class ArgsParser {
 
       if (commandLine.hasOption(HELP_OPTION.getArgName())) {
         final HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp("rest-api-java-client-builder", options);
+        helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
         return new Args(ProgramArgStatus.EXIT, "", false);
       }
 

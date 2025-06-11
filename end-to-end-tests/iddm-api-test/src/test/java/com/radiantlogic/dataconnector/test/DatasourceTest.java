@@ -20,6 +20,7 @@ public class DatasourceTest {
 
     final ApiClient apiClient = new ApiClient();
     apiClient.setBasePath(testProps.getProperty("basePath"));
+    apiClient.setLenientOnJson(true);
 
     final AuthTokenApiApi authTokenApiApi = new AuthTokenApiApi(apiClient);
     final String username = testProps.getProperty("username");
@@ -29,7 +30,7 @@ public class DatasourceTest {
             .encodeToString(
                 String.format("%s:%s", username, password).getBytes(StandardCharsets.UTF_8));
 
-    final String token = authTokenApiApi.postLogin(auth).getToken();
+    final String token = authTokenApiApi.postLogin(String.format("Basic %s", auth)).getToken();
     apiClient.setBearerToken(token);
   }
 }

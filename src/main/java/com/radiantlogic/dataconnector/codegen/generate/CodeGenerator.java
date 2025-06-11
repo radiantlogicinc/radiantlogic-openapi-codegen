@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 
+/** The class that handles the actual code generation. */
 @Slf4j
 @RequiredArgsConstructor
 public class CodeGenerator {
@@ -24,7 +25,8 @@ public class CodeGenerator {
 
     final OpenAPI openAPI =
         new OpenAPIParser().readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
-    final DataconnectorJavaClientCodegen codegen = new DataconnectorJavaClientCodegen(openAPI);
+    final DataconnectorJavaClientCodegen codegen =
+        new DataconnectorJavaClientCodegen(openAPI, args);
     new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
   }
 }

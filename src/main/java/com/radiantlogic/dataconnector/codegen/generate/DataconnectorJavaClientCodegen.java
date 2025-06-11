@@ -12,6 +12,10 @@ import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 
+/**
+ * A customized version of the default JavaClientCodegen designed to produce the exact artifact
+ * style we want.
+ */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);

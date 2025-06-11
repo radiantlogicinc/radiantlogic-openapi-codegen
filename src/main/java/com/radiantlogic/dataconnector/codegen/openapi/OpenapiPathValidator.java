@@ -34,7 +34,7 @@ public class OpenapiPathValidator {
         ex.addSuppressed(ex2);
       }
 
-      throw createInvalidPathException(ex);
+      throw createInvalidPathException(ex, openapiPath);
     }
   }
 
@@ -44,7 +44,9 @@ public class OpenapiPathValidator {
     }
   }
 
-  private IllegalArgumentException createInvalidPathException(final Throwable cause) {
-    return new IllegalArgumentException("Invalid OpenAPI path. Must be valid URL or file.", cause);
+  private IllegalArgumentException createInvalidPathException(
+      final Throwable cause, final String path) {
+    return new IllegalArgumentException(
+        "Invalid OpenAPI path. Must be valid URL or file. Path: %s".formatted(path), cause);
   }
 }

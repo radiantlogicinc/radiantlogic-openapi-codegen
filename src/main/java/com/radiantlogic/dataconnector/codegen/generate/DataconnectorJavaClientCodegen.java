@@ -41,6 +41,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setModelPackage("%s.model".formatted(args.groupId()));
     setArtifactId(title);
     setArtifactVersion(version);
+
+    // TODO need to fix the scm output
+    // TODO need to fix the license output
+    // TODO need to fix the dev output
+    // TODO need to not be fat jar
+    // TODO needs to be unsigned
   }
 
   // TODO need tests

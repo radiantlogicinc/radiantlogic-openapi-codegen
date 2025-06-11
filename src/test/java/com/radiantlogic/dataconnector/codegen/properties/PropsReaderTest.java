@@ -23,9 +23,8 @@ public class PropsReaderTest {
       doc = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(stream);
     }
     final Element root = doc.getDocumentElement();
-    final Element project = getSingleElement(root, "project");
-    artifactId = getSingleElement(project, "artifactId").getTextContent();
-    version = getSingleElement(project, "version").getTextContent();
+    artifactId = getSingleElement(root, "artifactId").getTextContent();
+    version = getSingleElement(root, "version").getTextContent();
   }
 
   private static Element getSingleElement(final Element base, final String tagName) {

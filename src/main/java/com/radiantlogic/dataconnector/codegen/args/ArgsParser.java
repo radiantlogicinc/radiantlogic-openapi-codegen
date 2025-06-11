@@ -55,14 +55,13 @@ public class ArgsParser {
           .argName("h")
           .longOpt("help")
           .desc("Print the help information for this CLI")
-          .type(Boolean.class)
           .required(false)
           .build();
 
   @NonNull private final Props props;
 
   public Args parse(final String[] args) {
-    if (args.length <= 1) {
+    if (args.length < 1) {
       throw new IllegalArgumentException(
           "Missing required arguments. Please run with -h for more information.");
     }

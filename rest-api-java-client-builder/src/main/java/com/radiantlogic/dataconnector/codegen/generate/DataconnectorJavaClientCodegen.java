@@ -42,6 +42,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setInvokerPackage("%s.invoker".formatted(args.groupId()));
     setArtifactId(title);
     setArtifactVersion(version);
+    setDisallowAdditionalPropertiesIfNotPresent(false);
 
     // TODO need to fix the scm output
     // TODO need to fix the license output

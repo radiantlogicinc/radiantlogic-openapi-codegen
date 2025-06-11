@@ -1,5 +1,7 @@
 package com.radiantlogic.dataconnector.codegen.args;
 
+import java.util.Arrays;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -7,6 +9,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+@Slf4j
 public class ArgsParser {
   private static final Option PATH_OPTION =
       Option.builder()
@@ -41,6 +44,8 @@ public class ArgsParser {
       throw new IllegalArgumentException(
           "Missing required arguments. Please run with -h for more information.");
     }
+
+    log.debug("Parsing cli arguments {}", Arrays.toString(args));
 
     final Options options = new Options();
     options.addOption(PATH_OPTION);

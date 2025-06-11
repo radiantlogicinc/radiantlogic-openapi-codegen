@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.codegen;
 import com.radiantlogic.dataconnector.codegen.args.Args;
 import com.radiantlogic.dataconnector.codegen.args.ArgsParser;
 import com.radiantlogic.dataconnector.codegen.args.ProgramArgStatus;
+import com.radiantlogic.dataconnector.codegen.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.codegen.properties.Props;
 import com.radiantlogic.dataconnector.codegen.properties.PropsReader;
 import lombok.NonNull;
@@ -42,6 +43,10 @@ public class Runner {
         System.exit(0);
         return;
       }
+
+      final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
+      final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
+      final Args validatedParedArgs = parsedArgs.withOpenapiPath(parsedPath);
       // TODO run program
     } catch (final Exception ex) {
       log.error("Application has failed to execute", ex);

@@ -1,7 +1,11 @@
 package com.radiantlogic.dataconnector.codegen.args;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class ArgsParser {
   private static final Option PATH_OPTION =
@@ -42,5 +46,13 @@ public class ArgsParser {
     options.addOption(PATH_OPTION);
     options.addOption(VALIDATE_OPTION);
     options.addOption(HELP_OPTION);
+
+    try {
+      final CommandLineParser parser = new DefaultParser();
+      final CommandLine commandLine = parser.parse(options, args);
+    } catch (final ParseException ex) {
+      throw new IllegalStateException(
+          "Failed to parse command line arguments, cannot proceed.", ex);
+    }
   }
 }

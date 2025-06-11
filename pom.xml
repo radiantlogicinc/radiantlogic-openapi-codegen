@@ -128,8 +128,8 @@
                                 <argument>-cp</argument>
                                 <classpath />
                                 <argument>com.radiantlogic.dataconnector.codegen.Runner</argument>
-                                <argument>generate</argument>
-                                <argument>${openapiPath}</argument>
+                                <argument>dev</argument>
+                                <argument>${programArgs}</argument>
                             </arguments>
                         </configuration>
                     </execution>

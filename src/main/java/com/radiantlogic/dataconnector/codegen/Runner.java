@@ -20,7 +20,7 @@ public class Runner {
       final Props props = propsReader.readProps();
 
       log.info("Starting {}", props.artifactId());
-      final ArgsParser argsParser = new ArgsParser();
+      final ArgsParser argsParser = new ArgsParser(props);
       final Args parsedArgs = argsParser.parse(args);
       if (parsedArgs.status() == ProgramArgStatus.EXIT) {
         System.exit(0);

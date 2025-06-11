@@ -1,6 +1,8 @@
 package com.radiantlogic.dataconnector.codegen.args;
 
+import com.radiantlogic.dataconnector.codegen.properties.Props;
 import java.util.Arrays;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,6 +13,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ArgsParser {
   private static final Option PATH_OPTION =
       Option.builder()
@@ -51,6 +54,8 @@ public class ArgsParser {
           .type(Boolean.class)
           .required(false)
           .build();
+
+  private final Props props;
 
   public Args parse(final String[] args) {
     if (args.length <= 1) {

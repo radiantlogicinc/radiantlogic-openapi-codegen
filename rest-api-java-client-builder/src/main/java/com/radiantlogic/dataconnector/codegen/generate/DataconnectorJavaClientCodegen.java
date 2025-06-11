@@ -87,18 +87,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               model.discriminator.setMappedModels(mappedModels);
             });
 
-    //    for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
-    //      CodegenModel model = ModelUtils.getModelByName(entry.getKey(), objs);
-    //      if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-    //        for (CodegenDiscriminator.MappedModel mappedModel :
-    // model.discriminator.getMappedModels()) {
-    //          CodegenModel mappedCodegenModel =
-    //              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-    //          mappedCodegenModel.setParent(model.classname);
-    //        }
-    //      }
-    //    }
-
     return super.postProcessAllModels(objs);
   }
 

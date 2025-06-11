@@ -22,6 +22,16 @@ public class ArgsParser {
           .valueSeparator('=')
           .required()
           .build();
+  private static final Option GROUP_ID_OPTION =
+      Option.builder()
+          .argName("g")
+          .longOpt("groupId")
+          .desc(
+              "The groupId to use for the generated artifact. If not provided, a default groupId will be set")
+          .required(false)
+          .hasArg()
+          .valueSeparator('=')
+          .build();
   private static final Option VALIDATE_OPTION =
       Option.builder()
           .argName("v")
@@ -54,6 +64,7 @@ public class ArgsParser {
     options.addOption(PATH_OPTION);
     options.addOption(VALIDATE_OPTION);
     options.addOption(HELP_OPTION);
+    options.addOption(GROUP_ID_OPTION);
 
     try {
       final CommandLineParser parser = new DefaultParser();

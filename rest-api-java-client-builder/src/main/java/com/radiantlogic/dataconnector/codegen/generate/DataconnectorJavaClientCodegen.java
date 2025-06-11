@@ -50,8 +50,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setDisallowAdditionalPropertiesIfNotPresent(false);
     setLibrary("apache-httpclient");
     setUseBeanValidation(true);
-    setUseOneOfInterfaces(true);
-    additionalProperties.put("useOneOfInterfaces", true);
+    setUseOneOfInterfaces(false); // TODO delete this
+    additionalProperties.put("useOneOfInterfaces", false); // TODO delete this
     setUseOneOfDiscriminatorLookup(true);
     setTemplateDir("templates");
 

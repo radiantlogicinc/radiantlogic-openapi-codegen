@@ -37,7 +37,7 @@ public class Runner {
       final PropsReader propsReader = new PropsReader();
       final Props props = propsReader.readProps();
 
-      log.info("Starting {}", props.artifactId());
+      log.info("Starting code generation");
       final ArgsParser argsParser = new ArgsParser(props);
       final Args parsedArgs = argsParser.parse(args);
       if (parsedArgs.status() == ProgramArgStatus.EXIT) {

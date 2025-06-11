@@ -5,6 +5,7 @@ import com.radiantlogic.dataconnector.codegen.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -90,7 +91,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return super.postProcessAllModels(objs);
   }
 
-  private boolean isExplicitMapping(@NonNull final CodegenDiscriminator.MappedModel mappedModel) {}
+  private boolean isExplicitMapping(@NonNull final CodegenDiscriminator.MappedModel mappedModel) {
+    try {
+      final Field field =
+          CodegenDiscriminator.MappedModel.class.getDeclaredField("explicitMapping");
+      field.setAccessible(true);
+      return (boolean) field.get(mappedModel);
+    } catch (final ReflectiveOperationException ex) {
+      throw new RuntimeException("Failed to check for an explicit discriminator mapping", ex);
+    }
+  }
 
   // TODO need tests
   private String getOpenapiTitle() {

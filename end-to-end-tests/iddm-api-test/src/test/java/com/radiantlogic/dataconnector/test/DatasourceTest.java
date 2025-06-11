@@ -1,7 +1,11 @@
 package com.radiantlogic.dataconnector.test;
 
 import com.radiantlogic.custom.dataconnector.api.AuthTokenApiApi;
+import com.radiantlogic.custom.dataconnector.api.DataSourcesApi;
 import com.radiantlogic.custom.dataconnector.invoker.ApiClient;
+import com.radiantlogic.custom.dataconnector.model.GetDataSources200ResponseResultInner;
+import com.radiantlogic.custom.dataconnector.model.GetDataSources200ResponseResultInnerOneOf;
+import com.radiantlogic.custom.dataconnector.model.LdapDataSource;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -32,5 +36,13 @@ public class DatasourceTest {
 
     final String token = authTokenApiApi.postLogin(String.format("Basic %s", auth)).getToken();
     apiClient.setBearerToken(token);
+
+    final DataSourcesApi dataSourcesApi = new DataSourcesApi(apiClient);
+    LdapDataSource dataSource = new LdapDataSource();
+    final GetDataSources200ResponseResultInner request = new GetDataSources200ResponseResultInner();
+    final GetDataSources200ResponseResultInnerOneOf innerRequest =
+        new GetDataSources200ResponseResultInnerOneOf();
+    request.setActualInstance(innerRequest);
+    dataSourcesApi.createDataSource(request);
   }
 }

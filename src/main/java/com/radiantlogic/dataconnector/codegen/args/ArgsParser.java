@@ -13,6 +13,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/** Parse the arguments supplied to this program using the commons-cli library. */
 @Slf4j
 @RequiredArgsConstructor
 public class ArgsParser {
@@ -85,7 +86,8 @@ public class ArgsParser {
       final boolean doValidate =
           commandLine.getParsedOptionValue(VALIDATE_OPTION.getArgName(), Boolean.TRUE);
       final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getArgName());
-      return new Args(ProgramArgStatus.PROCEED, openapiPath, doValidate);
+      final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getArgName());
+      return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId, doValidate);
     } catch (final ParseException ex) {
       throw new IllegalStateException(
           "Failed to parse command line arguments, cannot proceed.", ex);

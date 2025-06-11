@@ -5,11 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.radiantlogic.dataconnector</groupId>
-    <artifactId>rest-api-java-client-builder</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>dataconnector-client-parent</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
 
     <properties>
-        <java.version>24</java.version>
+        <revision>1.0.0-SNAPSHOT</revision>
         <lombok.version>1.18.38</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <pmd.version>7.12.0</pmd.version>

@@ -30,10 +30,6 @@ public class Runner {
    */
   public static void main(final String[] args) {
     try {
-      if (args.length == 0) {
-        throw new IllegalArgumentException("Cannot execute with specifying the command");
-      }
-
       final PropsReader propsReader = new PropsReader();
       final Props props = propsReader.readProps();
 

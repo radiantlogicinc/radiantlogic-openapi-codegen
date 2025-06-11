@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
-import org.openapitools.codegen.CodegenDiscriminator;
-import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.utils.ModelUtils;
@@ -65,16 +63,28 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   // TODO cleanup or delete
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
-    for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
-      CodegenModel model = ModelUtils.getModelByName(entry.getKey(), objs);
-      if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-        for (CodegenDiscriminator.MappedModel mappedModel : model.discriminator.getMappedModels()) {
-          CodegenModel mappedCodegenModel =
-              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-          mappedCodegenModel.setParent(model.classname);
-        }
-      }
-    }
+    objs.entrySet().stream()
+        .map(entry -> ModelUtils.getModelByName(entry.getKey(), objs))
+        .filter(
+            model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
+        .forEach(
+            model -> {
+              model.discriminator.getMappedModels().stream()
+                  .map(mappedModel -> ModelUtils.getModelByName(mappedModel.getModelName(), objs))
+                  .forEach(mappedModel -> mappedModel.setParent(model.classname));
+            });
+
+    //    for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
+    //      CodegenModel model = ModelUtils.getModelByName(entry.getKey(), objs);
+    //      if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
+    //        for (CodegenDiscriminator.MappedModel mappedModel :
+    // model.discriminator.getMappedModels()) {
+    //          CodegenModel mappedCodegenModel =
+    //              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+    //          mappedCodegenModel.setParent(model.classname);
+    //        }
+    //      }
+    //    }
 
     return super.postProcessAllModels(objs);
   }

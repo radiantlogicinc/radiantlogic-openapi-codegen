@@ -86,7 +86,7 @@ public class ArgsParser {
 
       final boolean doValidate =
           commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE);
-      final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt());
+      final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt(), "");
       if (StringUtils.isBlank(openapiPath)) {
         throw new IllegalArgumentException(
             "Missing required OpenAPI path argument. Please use the -h option to see usage instructions.");

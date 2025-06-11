@@ -26,4 +26,14 @@ public class ArgsParserTest {
   void itParsesWithAllArgsProvided() {
     throw new RuntimeException();
   }
+
+  @Test
+  void itParsesNoArgs() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itParsesWithMissingOpenapiPathArg() {
+    throw new RuntimeException();
+  }
 }

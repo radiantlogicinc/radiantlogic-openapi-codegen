@@ -27,7 +27,7 @@ public class ArgsParser {
           .type(String.class)
           .hasArg()
           .valueSeparator('=')
-          //          .required()
+          .required()
           .build();
   private static final Option GROUP_ID_OPTION =
       Option.builder("g")

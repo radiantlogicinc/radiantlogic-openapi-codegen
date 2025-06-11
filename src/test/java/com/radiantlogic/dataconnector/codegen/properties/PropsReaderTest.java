@@ -35,6 +35,15 @@ public class PropsReaderTest {
     return (Element) base.getElementsByTagName(tagName).item(0);
   }
 
+  /**
+   * If run via IntelliJ, this will not work unless you do the following:
+   *
+   * <p>1. Open the run configuration for the test. 2. Select Modify Options -> Before Launch Task
+   * 3. Add a new task, "Add Maven Goal" 4. The "command line options" should be
+   * "generate-resources"
+   *
+   * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
+   */
   @Test
   @SneakyThrows
   void itReadsPropsSetByMavenPlugin() {

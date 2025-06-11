@@ -29,6 +29,8 @@ public class ArgsParser {
           .desc(
               "Whether or not to run validation on the OpenAPI specification before generating code. Strongly recommended. Defaults to true.")
           .type(Boolean.class)
+          .hasArg()
+          .valueSeparator('=')
           .required(false)
           .build();
   private static final Option HELP_OPTION =
@@ -56,10 +58,17 @@ public class ArgsParser {
     try {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine commandLine = parser.parse(options, args);
+
       if (commandLine.hasOption(HELP_OPTION.getArgName())) {
         final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("rest-api-java-client-builder", options);
+        return new Args(ProgramArgStatus.EXIT, "", false);
       }
+
+      final boolean doValidate =
+          commandLine.getParsedOptionValue(VALIDATE_OPTION.getArgName(), Boolean.TRUE);
+      final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getArgName());
+      return new Args(ProgramArgStatus.PROCEED, openapiPath, doValidate);
     } catch (final ParseException ex) {
       throw new IllegalStateException(
           "Failed to parse command line arguments, cannot proceed.", ex);

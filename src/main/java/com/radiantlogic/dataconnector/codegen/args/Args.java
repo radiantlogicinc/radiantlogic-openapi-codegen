@@ -1,3 +1,6 @@
 package com.radiantlogic.dataconnector.codegen.args;
 
-public record Args(String openapiPath, boolean doValidate) {}
+import lombok.NonNull;
+
+public record Args(
+    @NonNull ProgramArgStatus status, @NonNull String openapiPath, boolean doValidate) {}

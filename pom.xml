@@ -9,6 +9,11 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>./rest-api-java-client-builder</module>
+        <module>./end-to-end-tests</module>
+    </modules>
+
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
         <lombok.version>1.18.38</lombok.version>

@@ -57,6 +57,14 @@ public class ArgsParser {
           .desc("Print the help information for this CLI")
           .required(false)
           .build();
+  private static final Options OPTIONS = new Options();
+
+  static {
+    OPTIONS.addOption(PATH_OPTION);
+    OPTIONS.addOption(VALIDATE_OPTION);
+    OPTIONS.addOption(HELP_OPTION);
+    OPTIONS.addOption(GROUP_ID_OPTION);
+  }
 
   @NonNull private final Props props;
 
@@ -68,20 +76,12 @@ public class ArgsParser {
 
     log.debug("Parsing cli arguments {}", Arrays.toString(args));
 
-    final Options options = new Options();
-    options.addOption(PATH_OPTION);
-    options.addOption(VALIDATE_OPTION);
-    options.addOption(HELP_OPTION);
-    options.addOption(GROUP_ID_OPTION);
-
     try {
       final CommandLineParser parser = new DefaultParser();
-      final CommandLine commandLine = parser.parse(options, args);
+      final CommandLine commandLine = parser.parse(OPTIONS, args);
 
       if (commandLine.hasOption(HELP_OPTION.getOpt())) {
-        final HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
-        return new Args(ProgramArgStatus.EXIT, "", "", false);
+        return handleHelp();
       }
 
       final boolean doValidate =
@@ -93,5 +93,11 @@ public class ArgsParser {
       throw new IllegalStateException(
           "Failed to parse command line arguments, cannot proceed.", ex);
     }
+  }
+
+  private Args handleHelp() {
+    final HelpFormatter helpFormatter = new HelpFormatter();
+    helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
+    return new Args(ProgramArgStatus.EXIT, "", "", false);
   }
 }

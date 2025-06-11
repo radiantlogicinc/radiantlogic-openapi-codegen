@@ -50,6 +50,11 @@ public class ArgsParserTest {
 
   @Test
   void itParsesWithMissingOpenapiPathArg() {
-    throw new RuntimeException();
+    final String groupId = "org.something";
+    final String[] args = {"-g=%s".formatted(groupId)};
+    assertThatThrownBy(() -> argsParser.parse(args))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            "Missing required OpenAPI path argument. Please use the -h option to see usage instructions.");
   }
 }

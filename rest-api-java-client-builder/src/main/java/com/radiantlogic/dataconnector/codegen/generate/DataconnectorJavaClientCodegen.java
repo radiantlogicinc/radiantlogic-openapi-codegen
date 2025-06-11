@@ -68,12 +68,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
       CodegenModel model = ModelUtils.getModelByName(entry.getKey(), objs);
       if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-        System.out.println(model.name);
         for (CodegenDiscriminator.MappedModel mappedModel : model.discriminator.getMappedModels()) {
           CodegenModel mappedCodegenModel =
               ModelUtils.getModelByName(mappedModel.getModelName(), objs);
           mappedCodegenModel.setParent(model.classname);
-          System.out.println("  " + mappedCodegenModel.name + " " + mappedCodegenModel.parent);
         }
       }
     }

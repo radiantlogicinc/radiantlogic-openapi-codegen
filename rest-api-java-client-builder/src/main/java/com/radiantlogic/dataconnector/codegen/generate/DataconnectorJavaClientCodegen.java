@@ -9,8 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
+import org.openapitools.codegen.CodegenDiscriminator;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.utils.ModelUtils;
@@ -69,9 +73,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
         .forEach(
             model -> {
-              model.discriminator.getMappedModels().stream()
-                  .map(mappedModel -> ModelUtils.getModelByName(mappedModel.getModelName(), objs))
-                  .forEach(mappedModel -> mappedModel.setParent(model.classname));
+              final Set<CodegenDiscriminator.MappedModel> mappedModels =
+                  model.discriminator.getMappedModels().stream()
+                      .filter(this::isExplicitMapping)
+                      .map(
+                          mappedModel -> {
+                            final CodegenModel codegenMappedModel =
+                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                            codegenMappedModel.setParent(model.classname);
+                            return mappedModel;
+                          })
+                      .collect(Collectors.toSet());
+              model.discriminator.setMappedModels(mappedModels);
             });
 
     //    for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
@@ -88,6 +101,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     return super.postProcessAllModels(objs);
   }
+
+  private boolean isExplicitMapping(@NonNull final CodegenDiscriminator.MappedModel mappedModel) {}
 
   // TODO need tests
   private String getOpenapiTitle() {

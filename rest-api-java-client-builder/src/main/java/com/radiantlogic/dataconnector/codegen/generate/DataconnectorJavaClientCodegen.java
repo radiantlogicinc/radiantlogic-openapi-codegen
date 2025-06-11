@@ -44,6 +44,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setArtifactVersion(version);
     setDisallowAdditionalPropertiesIfNotPresent(false);
     setLibrary("apache-httpclient");
+    setUseOneOfInterfaces(true);
 
     // TODO need to fix the scm output
     // TODO need to fix the license output

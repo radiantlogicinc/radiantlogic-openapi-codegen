@@ -4,7 +4,6 @@ import com.radiantlogic.custom.dataconnector.api.AuthTokenApiApi;
 import com.radiantlogic.custom.dataconnector.api.DataSourcesApi;
 import com.radiantlogic.custom.dataconnector.invoker.ApiClient;
 import com.radiantlogic.custom.dataconnector.model.GetDataSources200ResponseResultInner;
-import com.radiantlogic.custom.dataconnector.model.GetDataSources200ResponseResultInnerOneOf;
 import com.radiantlogic.custom.dataconnector.model.LdapDataSource;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +23,6 @@ public class DatasourceTest {
 
     final ApiClient apiClient = new ApiClient();
     apiClient.setBasePath(testProps.getProperty("basePath"));
-    apiClient.setLenientOnJson(true);
 
     final AuthTokenApiApi authTokenApiApi = new AuthTokenApiApi(apiClient);
     final String username = testProps.getProperty("username");
@@ -40,9 +38,6 @@ public class DatasourceTest {
     final DataSourcesApi dataSourcesApi = new DataSourcesApi(apiClient);
     LdapDataSource dataSource = new LdapDataSource();
     final GetDataSources200ResponseResultInner request = new GetDataSources200ResponseResultInner();
-    final GetDataSources200ResponseResultInnerOneOf innerRequest =
-        new GetDataSources200ResponseResultInnerOneOf();
-    request.setActualInstance(innerRequest);
     dataSourcesApi.createDataSource(request);
   }
 }

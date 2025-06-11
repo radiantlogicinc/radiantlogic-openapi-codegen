@@ -69,7 +69,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
     objs.keySet().stream()
-        .map(entry -> ModelUtils.getModelByName(entry.getKey(), objs))
+        .map(key -> ModelUtils.getModelByName(key, objs))
         .filter(
             model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
         .forEach(

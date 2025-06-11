@@ -9,10 +9,24 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>./rest-api-java-client-builder</module>
-        <module>./end-to-end-tests</module>
-    </modules>
+    <profiles>
+        <profile>
+            <id>source-only</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>./rest-api-java-client-builder</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>source-and-tests</id>
+            <modules>
+                <module>./rest-api-java-client-builder</module>
+                <module>./end-to-end-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>

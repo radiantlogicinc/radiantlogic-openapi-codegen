@@ -20,7 +20,7 @@
             </modules>
         </profile>
         <profile>
-            <id>source-and-tests</id>
+            <id>all</id>
             <modules>
                 <module>./rest-api-java-client-builder</module>
                 <module>./end-to-end-tests</module>

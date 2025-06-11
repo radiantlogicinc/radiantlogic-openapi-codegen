@@ -7,7 +7,7 @@ run() {
 
   IFS=$'\n'
   pre_format_files=($(git diff --name-only --staged))
-  mvn -P source-and-tests spotless:apply
+  mvn -P all spotless:apply
 
   for pre_file in "${pre_format_files[@]}"; do
     if [ -f "$pre_file" ]; then

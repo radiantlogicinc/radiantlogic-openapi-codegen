@@ -14,9 +14,13 @@ public class CodeGenerator {
   @NonNull private final ParsedConfig config;
 
   public void generate() {
+    final ParseOptions parseOptions = new ParseOptions();
+    parseOptions.setResolve(true);
+    parseOptions.setResolveFully(true);
+
     final OpenAPI openAPI =
         new OpenAPIParser()
-            .readLocation(config.openapiPath(), List.of(), new ParseOptions())
+            .readLocation(config.openapiPath(), List.of(), parseOptions)
             .getOpenAPI();
     final DataconnectorJavaClientCodegen codegen = new DataconnectorJavaClientCodegen(openAPI);
     new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();

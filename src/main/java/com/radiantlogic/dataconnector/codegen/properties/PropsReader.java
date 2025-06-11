@@ -10,7 +10,8 @@ public class PropsReader {
         getClass().getClassLoader().getResourceAsStream("project.properties")) {
       final Properties props = new Properties();
       props.load(stream);
-      return new Props(props.getProperty("artifactId"), props.getProperty("version"));
+      return new Props(
+          props.getProperty("project.artifactId"), props.getProperty("project.version"));
     }
   }
 }

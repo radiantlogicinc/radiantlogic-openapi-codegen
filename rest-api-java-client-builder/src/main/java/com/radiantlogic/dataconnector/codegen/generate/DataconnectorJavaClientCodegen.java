@@ -62,6 +62,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     // TODO needs to be unsigned
   }
 
+  // TODO cleanup or delete
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
     for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
@@ -71,7 +72,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         for (CodegenDiscriminator.MappedModel mappedModel : model.discriminator.getMappedModels()) {
           CodegenModel mappedCodegenModel =
               ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-          System.out.println("  " + mappedModel.getModelName());
+          mappedCodegenModel.setParent(model.name);
+          System.out.println("  " + mappedCodegenModel.name);
         }
       }
     }

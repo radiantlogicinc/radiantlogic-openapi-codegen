@@ -43,8 +43,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setArtifactId(title);
     setArtifactVersion(version);
 
-    additionalProperties.put("ignoreUnknownProperties", true);
-
     // TODO need to fix the scm output
     // TODO need to fix the license output
     // TODO need to fix the dev output

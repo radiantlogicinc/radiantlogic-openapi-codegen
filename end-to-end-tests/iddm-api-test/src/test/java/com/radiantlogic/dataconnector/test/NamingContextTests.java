@@ -2,9 +2,9 @@ package com.radiantlogic.dataconnector.test;
 
 import org.junit.jupiter.api.Test;
 
-public class DatasourceTest {
+public class NamingContextTests {
     @Test
-    void itCanCreateAndReadDatasource() {
+    void itCanCreateHdapContext() {
         throw new RuntimeException();
     }
 }

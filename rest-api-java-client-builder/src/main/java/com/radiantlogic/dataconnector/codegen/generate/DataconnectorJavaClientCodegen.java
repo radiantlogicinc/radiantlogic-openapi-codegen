@@ -7,10 +7,15 @@ import io.swagger.v3.oas.models.info.Info;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
+import org.openapitools.codegen.CodegenDiscriminator;
+import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelsMap;
+import org.openapitools.codegen.utils.ModelUtils;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
@@ -47,12 +52,30 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setUseBeanValidation(true);
     setUseOneOfInterfaces(true);
     additionalProperties.put("useOneOfInterfaces", true);
+    setUseOneOfDiscriminatorLookup(true);
 
     // TODO need to fix the scm output
     // TODO need to fix the license output
     // TODO need to fix the dev output
     // TODO need to not be fat jar
     // TODO needs to be unsigned
+  }
+
+  @Override
+  public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
+    for (Map.Entry<String, ModelsMap> entry : objs.entrySet()) {
+      CodegenModel model = ModelUtils.getModelByName(entry.getKey(), objs);
+      if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
+        System.out.println(model.name);
+        for (CodegenDiscriminator.MappedModel mappedModel : model.discriminator.getMappedModels()) {
+          CodegenModel mappedCodegenModel =
+              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+          System.out.println("  " + mappedModel.getModelName());
+        }
+      }
+    }
+
+    return super.postProcessAllModels(objs);
   }
 
   // TODO need tests

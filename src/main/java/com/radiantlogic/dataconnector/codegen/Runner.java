@@ -10,6 +10,22 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Runner {
+
+  /**
+   * If run via IntelliJ, this will not work unless you do the following:
+   *
+   * <p>1. Open the run configuration.
+   *
+   * <p>2. Select Modify Options -> Before Launch Task
+   *
+   * <p>3. Add a new task, "Add Maven Goal"
+   *
+   * <p>4. The "command line options" should be "generate-resources"
+   *
+   * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
+   * This program generates a properties file at compile time with the maven-resources-plugin, which
+   * is necessary.
+   */
   public static void main(final String[] args) {
     try {
       if (args.length == 0) {

@@ -33,5 +33,11 @@ public class Runner {
     }
   }
 
-  private static String[] handleDevArgs(@NonNull final String[] args) {}
+  private static String[] handleDevArgs(@NonNull final String[] args) {
+    if (args.length == 2 && args[0].equals("dev")) {
+      log.debug("Dev args detected, applying special handling");
+      return args[1].split(" ");
+    }
+    return args;
+  }
 }

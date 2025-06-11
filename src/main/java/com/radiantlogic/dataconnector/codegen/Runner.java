@@ -24,6 +24,7 @@ public class Runner {
       final Args parsedArgs = argsParser.parse(args);
       if (parsedArgs.status() == ProgramArgStatus.EXIT) {
         System.exit(0);
+        return;
       }
       // TODO run program
     } catch (final Exception ex) {

@@ -36,7 +36,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setArtifactVersion(version);
   }
 
-  // TODO need tests for these utilities
+  // TODO need tests
   private String getOpenapiTitle() {
     return Optional.ofNullable(openAPI.getInfo())
         .map(Info::getTitle)
@@ -44,6 +44,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .orElse("unknown-api");
   }
 
+  // TODO need tests
   private String getOpenapiVersion() {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }

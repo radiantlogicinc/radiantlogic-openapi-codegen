@@ -53,6 +53,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setUseOneOfInterfaces(true);
     additionalProperties.put("useOneOfInterfaces", true);
     setUseOneOfDiscriminatorLookup(true);
+    setTemplateDir("templates");
 
     // TODO need to fix the scm output
     // TODO need to fix the license output

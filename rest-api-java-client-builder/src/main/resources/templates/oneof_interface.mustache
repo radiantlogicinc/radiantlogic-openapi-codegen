@@ -3,4 +3,6 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{#discriminator}}
     public {{propertyType}} {{propertyGetter}}();
     {{/discriminator}}
+
+    default void foo() {}
 }

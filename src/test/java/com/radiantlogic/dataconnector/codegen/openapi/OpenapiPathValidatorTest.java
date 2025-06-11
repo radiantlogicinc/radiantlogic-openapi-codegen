@@ -28,10 +28,13 @@ public class OpenapiPathValidatorTest {
   }
 
   @Test
+  @SneakyThrows
   void itAcceptsUrlFileOpenapiPath() {
-    final String file = "file:///tmp/openapi.json";
+    final Path tempFile = tempDir.resolve("openapi.json");
+    Files.createFile(tempFile);
+    final String file = "file://%s".formatted(tempFile.toString());
     final String parsedFile = openapiPathValidator.parseAndValidate(file);
-    final String expectedParsedFile = "file:/tmp/openapi.json";
+    final String expectedParsedFile = "file:%s".formatted(tempFile.toString());
     assertThat(parsedFile).isEqualTo(expectedParsedFile);
   }
 

@@ -38,6 +38,7 @@ public class CodeGenerator {
     new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
   }
 
+  /** Perform any necessary pre-processing to resolve potential codegen issues. */
   private void preProcessOpenAPI(@NonNull final OpenAPI openAPI) {
     log.debug("Pre-processing OpenAPI");
     Optional.ofNullable(openAPI.getComponents())

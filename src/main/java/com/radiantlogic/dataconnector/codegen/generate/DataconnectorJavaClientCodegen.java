@@ -19,7 +19,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
     setOutputDir(outputDir.toString());
-    setGroupId("com.radiantlogic.customer.dataconnector");
+    setGroupId("com.radiantlogic.customer.dataconnector"); // TODO rename this
     setArtifactId(title);
     setArtifactVersion(version);
   }

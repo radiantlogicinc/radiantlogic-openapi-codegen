@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class OpenapiPathValidator {
+  // TODO add relative path support
   public String parseAndValidate(@NonNull final String openapiPath) {
     log.info("Parsing and validating OpenAPI path: {}", openapiPath);
     try {

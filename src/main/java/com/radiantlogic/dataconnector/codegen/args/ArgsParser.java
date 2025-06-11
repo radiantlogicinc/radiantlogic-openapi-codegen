@@ -12,6 +12,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 
 /** Parse the arguments supplied to this program using the commons-cli library. */
 @Slf4j
@@ -27,7 +28,6 @@ public class ArgsParser {
           .type(String.class)
           .hasArg()
           .valueSeparator('=')
-          .required()
           .build();
   private static final Option GROUP_ID_OPTION =
       Option.builder("g")
@@ -87,6 +87,11 @@ public class ArgsParser {
       final boolean doValidate =
           commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE);
       final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt());
+      if (StringUtils.isBlank(openapiPath)) {
+        throw new IllegalArgumentException(
+            "Missing required OpenAPI path argument. Please use the -h option to see usage instructions.");
+      }
+
       final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getOpt(), DEFAULT_GROUP_ID);
       return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId, doValidate);
     } catch (final ParseException ex) {
@@ -97,7 +102,7 @@ public class ArgsParser {
 
   private Args handleHelp() {
     final HelpFormatter helpFormatter = new HelpFormatter();
-    helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), options);
+    helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), OPTIONS);
     return new Args(ProgramArgStatus.EXIT, "", "", false);
   }
 }

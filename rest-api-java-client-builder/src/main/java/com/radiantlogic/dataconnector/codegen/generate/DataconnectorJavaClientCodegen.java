@@ -63,7 +63,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   // TODO cleanup or delete
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
-    objs.entrySet().stream()
+    objs.keySet().stream()
         .map(entry -> ModelUtils.getModelByName(entry.getKey(), objs))
         .filter(
             model -> model.discriminator != null && model.discriminator.getMappedModels() != null)

@@ -42,6 +42,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setInvokerPackage("%s.invoker".formatted(args.groupId()));
     setArtifactId(title);
     setArtifactVersion(version);
+    setDisallowAdditionalPropertiesIfNotPresent(false);
+    setUseOneOfInterfaces(true);
+    additionalProperties.put("useOneOfInterfaces", true);
+    setUseOneOfDiscriminatorLookup(true);
+    setLegacyDiscriminatorBehavior(false);
 
     setTemplateDir("templates");
     setLibrary("resttemplate");

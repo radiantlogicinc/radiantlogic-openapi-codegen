@@ -44,13 +44,16 @@ public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
     setUseOneOfInterfaces(true); // TODO delete this
     additionalProperties.put("useOneOfInterfaces", true); // TODO delete this
     setUseOneOfDiscriminatorLookup(true);
-    setTemplateDir("templates");
     setLegacyDiscriminatorBehavior(false);
     setUseEnumCaseInsensitive(false);
     setUseJakartaEe(false);
     //    additionalProperties.put("swagger2AnnotationLibrary", true);
 
-    setLibrary("google-api-client");
+    //    setTemplateDir("templates");
+    //    setLibrary("google-api-client");
+
+    setTemplateDir("resttemplate-templates");
+    setLibrary("resttemplate");
   }
 
   // TODO need tests

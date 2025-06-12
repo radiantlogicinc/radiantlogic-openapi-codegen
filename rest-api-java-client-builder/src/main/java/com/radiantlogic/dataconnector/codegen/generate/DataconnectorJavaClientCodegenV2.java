@@ -40,13 +40,14 @@ public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
     setArtifactId(title);
     setArtifactVersion(version);
     setDisallowAdditionalPropertiesIfNotPresent(false);
-    setUseBeanValidation(true);
+    setUseBeanValidation(false);
     setUseOneOfInterfaces(true); // TODO delete this
     additionalProperties.put("useOneOfInterfaces", true); // TODO delete this
     setUseOneOfDiscriminatorLookup(true);
     setTemplateDir("templates");
     setLegacyDiscriminatorBehavior(false);
     setUseEnumCaseInsensitive(false);
+    setUseJakartaEe(false);
 
     setLibrary("google-api-client");
   }

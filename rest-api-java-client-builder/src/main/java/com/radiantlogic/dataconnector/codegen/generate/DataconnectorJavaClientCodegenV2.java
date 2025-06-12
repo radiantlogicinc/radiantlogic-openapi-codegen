@@ -48,7 +48,7 @@ public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
     setLegacyDiscriminatorBehavior(false);
     setUseEnumCaseInsensitive(false);
     setUseJakartaEe(false);
-    additionalProperties.put("swagger2AnnotationLibrary", true);
+    //    additionalProperties.put("swagger2AnnotationLibrary", true);
 
     setLibrary("google-api-client");
   }

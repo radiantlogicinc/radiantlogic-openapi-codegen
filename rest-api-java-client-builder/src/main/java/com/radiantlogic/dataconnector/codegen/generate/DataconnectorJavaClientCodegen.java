@@ -57,7 +57,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private String getOpenapiTitle() {
     return Optional.ofNullable(openAPI.getInfo())
         .map(Info::getTitle)
-        .map(title -> title.replaceAll("\\s+", "-"))
+        .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
         .orElse("unknown-api");
   }
 

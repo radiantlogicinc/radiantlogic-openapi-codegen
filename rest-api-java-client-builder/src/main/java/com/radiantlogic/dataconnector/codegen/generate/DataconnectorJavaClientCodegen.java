@@ -141,7 +141,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               final Schema schema = openAPI.getComponents().getSchemas().get(model.schemaName);
               final List<CodegenProperty> actualVars =
                   model.getVars().stream()
-                      .filter(prop -> schema.getProperties().containsKey(prop.baseName))
+                      .filter(
+                          prop ->
+                              schema.getProperties() != null
+                                  && schema.getProperties().containsKey(prop.baseName))
                       .toList();
               model.setVars(actualVars);
             });

@@ -2,3 +2,13 @@
 2. Must work with OpenAPI 2 & 3.
 3. Must work with local files and URLs.
 4. Must work with YAML and JSON
+
+
+
+
+
+https://github.com/okta/okta-management-openapi-spec/blob/master/dist/current/idp-minimal.yaml
+https://github.com/okta/okta-management-openapi-spec/blob/master/dist/current/management-minimal.yaml
+https://github.com/okta/okta-management-openapi-spec/blob/master/dist/current/oauth-minimal.yaml
+
+main -> feature/end-to-end-test -> feature/e2e-test

@@ -39,6 +39,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     // TODO need to validate groupId
     setApiPackage("%s.api".formatted(args.groupId()));
     setModelPackage("%s.model".formatted(args.groupId()));
+    setInvokerPackage("%s.invoker".formatted(args.groupId()));
     setArtifactId(title);
     setArtifactVersion(version);
 

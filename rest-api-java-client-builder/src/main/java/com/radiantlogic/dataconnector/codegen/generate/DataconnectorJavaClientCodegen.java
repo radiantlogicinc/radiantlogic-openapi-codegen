@@ -46,7 +46,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setUseOneOfInterfaces(true);
     additionalProperties.put("useOneOfInterfaces", true);
     setUseOneOfDiscriminatorLookup(true);
-    setLegacyDiscriminatorBehavior(false);
+    setLegacyDiscriminatorBehavior(true);
+    setUseEnumCaseInsensitive(false);
 
     setTemplateDir("templates");
     setLibrary("resttemplate");

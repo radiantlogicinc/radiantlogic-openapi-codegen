@@ -4,7 +4,7 @@ set -euo pipefail
 
 mvn clean compile \
   exec:exec@generate \
-  -DprogramArgs="-p=$(pwd)/idp-minimal.yaml"
+  -DprogramArgs="-p=$(pwd)/end-to-end-tests/okta-api-test/idp-minimal.yaml"
 #  -DprogramArgs="-p=$(pwd)/end-to-end-tests/iddm-api-test/radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml"
 
 (

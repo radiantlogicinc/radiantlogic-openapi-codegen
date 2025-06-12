@@ -55,8 +55,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   @Override
+  public boolean getUseInlineModelResolver() {
+    return false;
+  }
+
+  @Override
   public ModelsMap postProcessModelsEnum(ModelsMap objs) {
-    objs.getModels().forEach(model -> System.out.println(model.getModel().classname));
+    objs.getModels()
+        .forEach(
+            model -> {
+              System.out.println(model.getModel().classname);
+            });
     return super.postProcessModelsEnum(objs);
   }
 

@@ -11,6 +11,7 @@ import java.util.Optional;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelsMap;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
@@ -51,6 +52,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     setTemplateDir("templates");
     setLibrary("resttemplate");
+  }
+
+  @Override
+  public ModelsMap postProcessModelsEnum(ModelsMap objs) {
+    objs.getModels().forEach(model -> System.out.println(model.getModel().classname));
+    return super.postProcessModelsEnum(objs);
   }
 
   // TODO need tests

@@ -22,5 +22,6 @@
 
     <modules>
         <module>iddm-api-test</module>
+        <module>okta-api-test</module>
     </modules>
 </project>

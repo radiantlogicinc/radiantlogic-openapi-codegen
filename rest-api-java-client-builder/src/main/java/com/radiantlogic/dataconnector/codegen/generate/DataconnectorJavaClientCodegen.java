@@ -126,14 +126,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               final Set<CodegenDiscriminator.MappedModel> mappedModels =
                   model.discriminator.getMappedModels().stream()
                       .filter(this::isExplicitMapping)
-                      .map(
-                          mappedModel -> {
-                            final CodegenModel codegenMappedModel =
-                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                            codegenMappedModel.setParent(model.getClassname());
-                            reconcileInlineEnums(codegenMappedModel, model);
-                            return mappedModel;
-                          })
+                      //                      .map(
+                      //                          mappedModel -> {
+                      //                            final CodegenModel codegenMappedModel =
+                      //
+                      // ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                      //
+                      // codegenMappedModel.setParent(model.getClassname());
+                      //                            reconcileInlineEnums(codegenMappedModel, model);
+                      //                            return mappedModel;
+                      //                          })
                       .collect(Collectors.toSet());
 
               model.getDiscriminator().setMappedModels(mappedModels);

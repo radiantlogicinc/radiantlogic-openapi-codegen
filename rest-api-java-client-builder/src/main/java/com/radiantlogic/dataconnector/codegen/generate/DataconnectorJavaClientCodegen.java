@@ -56,11 +56,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setDisallowAdditionalPropertiesIfNotPresent(false);
     setLibrary("apache-httpclient");
     setUseBeanValidation(true);
-    setUseOneOfInterfaces(false); // TODO delete this
-    additionalProperties.put("useOneOfInterfaces", false); // TODO delete this
+    setUseOneOfInterfaces(true); // TODO delete this
+    additionalProperties.put("useOneOfInterfaces", true); // TODO delete this
     setUseOneOfDiscriminatorLookup(true);
     setTemplateDir("templates");
     setLegacyDiscriminatorBehavior(false);
+    setUseEnumCaseInsensitive(false);
 
     // TODO need to fix the scm output
     // TODO need to fix the license output
@@ -126,16 +127,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               final Set<CodegenDiscriminator.MappedModel> mappedModels =
                   model.discriminator.getMappedModels().stream()
                       .filter(this::isExplicitMapping)
-                      //                      .map(
-                      //                          mappedModel -> {
-                      //                            final CodegenModel codegenMappedModel =
-                      //
-                      // ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                      //
-                      // codegenMappedModel.setParent(model.getClassname());
-                      //                            reconcileInlineEnums(codegenMappedModel, model);
-                      //                            return mappedModel;
-                      //                          })
+                      .map(
+                          mappedModel -> {
+                            final CodegenModel codegenMappedModel =
+                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+
+                            //
+                            // codegenMappedModel.setParent(model.getClassname());
+                            reconcileInlineEnums(codegenMappedModel, model);
+                            return mappedModel;
+                          })
                       .collect(Collectors.toSet());
 
               model.getDiscriminator().setMappedModels(mappedModels);

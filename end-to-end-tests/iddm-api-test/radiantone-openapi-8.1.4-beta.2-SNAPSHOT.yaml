@@ -48,6 +48,8 @@ tags:
     description: JDBC Drivers
   - name: Login Page Information API
     description: API to get information to display on the login page.
+  - name: Private File management for data catalog.
+    description: Private File management for data catalog.
   - name: Saas Configuration
     description: This API gets RadiantOne saas info
   - name: Schema Diff Manager
@@ -2758,6 +2760,67 @@ paths:
             - SCOPE_DATA_CATALOG_TEMPLATE_MANAGEMENT_EDIT
       tags:
         - Data Source Type Metadata
+  /data-catalog-service/private_files/{name}/upload/{meta}/{property}:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceName"
+      - $ref: "#/components/parameters/MetaName"
+      - $ref: "#/components/parameters/PropertyName"
+    post:
+      description: Allows for upload of private file used by data catalog meta driven
+        plugins.
+      summary: Upload file.
+      operationId: private-files_upload
+      security:
+        - bearer_auth:
+            - SCOPE_DATA_CATALOG_DATA_SOURCE_VIEW
+            - SCOPE_DATA_CATALOG_DATA_SOURCE_EDIT
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PrivateBinaryFile"
+      responses:
+        "200":
+          description: File operation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileOperationResult"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+      tags:
+        - Private File management for data catalog.
+  /data-catalog-service/private_files/{name}/delete/{filename}:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceName"
+      - $ref: "#/components/parameters/PrivateFileName"
+    delete:
+      description: Allows for deletion of a private file.
+      summary: Delete a file.
+      operationId: private-files_delete
+      security:
+        - bearer_auth:
+            - SCOPE_DATA_CATALOG_DATA_SOURCE_EDIT
+      responses:
+        "200":
+          description: File operation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileOperationResult"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+      tags:
+        - Private File management for data catalog.
   /directory-browser-service/directory_browser:
     get:
       summary: Get Root DSE
@@ -7967,7 +8030,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AttributesResponseBody"
+                $ref: "#/components/schemas/AbstractAttributesResponse"
       security:
         - bearer_auth:
             - SCOPE_DIRECTORY_NAMESPACE_DIRECTORY_SCHEMA_VIEW
@@ -13415,6 +13478,31 @@ components:
         type: string
         maxLength: 500
         pattern: .*
+    MetaName:
+      name: meta
+      in: path
+      required: true
+      schema:
+        type: string
+        example: kafka
+        maxLength: 1000
+    PropertyName:
+      name: property
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ssl_truststore_file
+        maxLength: 1000
+    PrivateFileName:
+      name: filename
+      in: path
+      required: true
+      schema:
+        type: string
+        example: file.txt
+        maxLength: 1000
+        pattern: ^.*\.[^\\]+$
     fileName:
       name: fileName
       in: path
@@ -15881,11 +15969,64 @@ components:
             - PASSWORD
             - BOOLEAN
             - NUMBER
+            - FILE
             - LIST
           nullable: false
         isRequired:
           type: boolean
           example: false
+          nullable: true
+          default: false
+        accept:
+          type: object
+          nullable: true
+          description: Provide a pattern for file uploads. This allows restrictions on
+            specific types of file uploads.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              pattern: ^\.[a-zA-Z0-9]+$
+          example:
+            application/java-archive:
+              - .jar
+              - .war
+              - .ear
+            application/pdf:
+              - .pdf
+            image/jpeg:
+              - .jpg
+              - .jpeg
+            image/png:
+              - .png
+            application/json:
+              - .json
+            text/plain:
+              - .txt
+            application/x-java-keystore:
+              - .jks
+              - .keystore
+            application/octet-stream:
+              - .bin
+              - .exe
+              - .dll
+            application/zip:
+              - .zip
+              - .rar
+            text/csv:
+              - .csv
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              - .xlsx
+        hiddenBy:
+          type: string
+          nullable: true
+          example: fieldName
+        hidden:
+          type: boolean
+          nullable: true
+          default: false
+        readOnly:
+          type: boolean
           nullable: true
           default: false
         regex:
@@ -16047,6 +16188,38 @@ components:
           uniqueItems: true
       required:
         - templates
+    FileOperationCode:
+      type: string
+      description: Operational code for the file operation.
+      nullable: false
+      default: NO_OP
+      enum:
+        - SUCCESS
+        - UPLOAD_ERROR
+        - DELETE_ERROR
+        - INTERNAL_ERROR
+        - NO_OP
+    PrivateBinaryFile:
+      type: object
+      description: File we are uploading into the private files directory.
+      properties:
+        file:
+          type: string
+          format: binary
+    FileOperationResult:
+      description: Represents a file upload response.
+      type: object
+      properties:
+        path:
+          type: string
+          description: The path of the file operation.
+          nullable: false
+          default: ""
+        message:
+          type: string
+          nullable: true
+        opcode:
+          $ref: "#/components/schemas/FileOperationCode"
     Attributes:
       type: array
       items:
@@ -18876,8 +19049,11 @@ components:
       required:
         - name
         - requiredForObjectClasses
-    AttributesResponseBody:
+    AbstractAttributesResponse:
       type: object
+      properties:
+        meta:
+          type: boolean
       oneOf:
         - $ref: "#/components/schemas/ListAttributes"
         - $ref: "#/components/schemas/ListStringAttributes"
@@ -18886,11 +19062,6 @@ components:
         mapping:
           "true": "#/components/schemas/ListAttributes"
           "false": "#/components/schemas/ListStringAttributes"
-    AbstractAttributesResponse:
-      type: object
-      properties:
-        meta:
-          type: boolean
     ListAttributes:
       allOf:
         - $ref: "#/components/schemas/AbstractAttributesResponse"

@@ -11,14 +11,14 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>iddm-api-spec</artifactId>
+    <artifactId>okta-api-tests</artifactId>
     <version>${revision}</version>
 
     <dependencies>
         <dependency>
             <groupId>com.radiantlogic.custom.dataconnector</groupId>
-            <artifactId>RadiantOne-V8-API</artifactId>
-            <version>8.1.4-beta.2-SNAPSHOT</version>
+            <artifactId>MyAccount-Management</artifactId>
+            <version>2025.01.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

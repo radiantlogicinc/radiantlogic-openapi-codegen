@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>iddm-api-spec</artifactId>
+    <artifactId>iddm-api-tests</artifactId>
     <version>${revision}</version>
 
     <dependencies>

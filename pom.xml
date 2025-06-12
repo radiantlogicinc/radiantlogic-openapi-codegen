@@ -11,6 +11,7 @@
 
     <modules>
         <module>./rest-api-java-client-builder</module>
+        <module>./examples/okta</module>
     </modules>
 
     <properties>

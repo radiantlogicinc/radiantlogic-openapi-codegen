@@ -2,6 +2,15 @@
 
 set -euo pipefail
 
-mvn clean compile \
-  exec:exec@generate \
-  -DprogramArgs="-p=$(pwd)/radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml"
+generate() {
+  local yaml
+  yaml="$1"
+
+  mvn clean compile \
+    exec:exec@generate \
+    -DprogramArgs="-p=$yaml"
+}
+
+generate "$(pwd)/examples/okta/idp-minimal.yaml"
+generate "$(pwd)/examples/okta/management-minimal.yaml"
+generate "$(pwd)/examples/okta/oauth-minimal.yaml"

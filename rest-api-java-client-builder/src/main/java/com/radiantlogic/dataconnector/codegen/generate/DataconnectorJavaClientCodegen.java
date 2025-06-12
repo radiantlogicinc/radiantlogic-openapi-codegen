@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.CodegenDiscriminator;
@@ -21,7 +19,6 @@ import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelsMap;
-import org.openapitools.codegen.utils.ModelUtils;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
@@ -60,6 +57,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     additionalProperties.put("useOneOfInterfaces", false); // TODO delete this
     setUseOneOfDiscriminatorLookup(true);
     setTemplateDir("templates");
+    setLegacyDiscriminatorBehavior(false);
 
     // TODO need to fix the scm output
     // TODO need to fix the license output
@@ -116,27 +114,28 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   // TODO cleanup or delete
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
-    objs.keySet().stream()
-        .map(key -> ModelUtils.getModelByName(key, objs))
-        .filter(
-            model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
-        .forEach(
-            model -> {
-              final Set<CodegenDiscriminator.MappedModel> mappedModels =
-                  model.discriminator.getMappedModels().stream()
-                      .filter(this::isExplicitMapping)
-                      .map(
-                          mappedModel -> {
-                            final CodegenModel codegenMappedModel =
-                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                            codegenMappedModel.setParent(model.getClassname());
-                            reconcileInlineEnums(codegenMappedModel, model);
-                            return mappedModel;
-                          })
-                      .collect(Collectors.toSet());
-
-              model.getDiscriminator().setMappedModels(mappedModels);
-            });
+    //    objs.keySet().stream()
+    //        .map(key -> ModelUtils.getModelByName(key, objs))
+    //        .filter(
+    //            model -> model.discriminator != null && model.discriminator.getMappedModels() !=
+    // null)
+    //        .forEach(
+    //            model -> {
+    //              final Set<CodegenDiscriminator.MappedModel> mappedModels =
+    //                  model.discriminator.getMappedModels().stream()
+    //                      .filter(this::isExplicitMapping)
+    //                      .map(
+    //                          mappedModel -> {
+    //                            final CodegenModel codegenMappedModel =
+    //                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+    //                            codegenMappedModel.setParent(model.getClassname());
+    //                            reconcileInlineEnums(codegenMappedModel, model);
+    //                            return mappedModel;
+    //                          })
+    //                      .collect(Collectors.toSet());
+    //
+    //              model.getDiscriminator().setMappedModels(mappedModels);
+    //            });
 
     return super.postProcessAllModels(objs);
   }

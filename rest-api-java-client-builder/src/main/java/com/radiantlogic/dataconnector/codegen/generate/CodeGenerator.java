@@ -33,8 +33,8 @@ public class CodeGenerator {
     preProcessOpenAPI(openAPI);
 
     log.debug("Performing code generation");
-    final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(openAPI, args);
+    final DataconnectorJavaClientCodegenV2 codegen =
+        new DataconnectorJavaClientCodegenV2(openAPI, args);
     new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
   }
 

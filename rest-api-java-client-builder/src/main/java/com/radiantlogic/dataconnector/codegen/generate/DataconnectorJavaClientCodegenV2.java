@@ -13,7 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 
 public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
-  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
+  public DataconnectorJavaClientCodegenV2(
+      @NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
     init(args);
   }
@@ -39,7 +40,6 @@ public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
     setArtifactId(title);
     setArtifactVersion(version);
     setDisallowAdditionalPropertiesIfNotPresent(false);
-    setLibrary("apache-httpclient");
     setUseBeanValidation(true);
     setUseOneOfInterfaces(true); // TODO delete this
     additionalProperties.put("useOneOfInterfaces", true); // TODO delete this
@@ -47,6 +47,8 @@ public class DataconnectorJavaClientCodegenV2 extends JavaClientCodegen {
     setTemplateDir("templates");
     setLegacyDiscriminatorBehavior(false);
     setUseEnumCaseInsensitive(false);
+
+    setLibrary("google-api-client");
   }
 
   // TODO need tests

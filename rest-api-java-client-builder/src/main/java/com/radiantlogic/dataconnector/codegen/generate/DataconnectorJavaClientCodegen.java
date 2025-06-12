@@ -4,6 +4,7 @@ import com.radiantlogic.dataconnector.codegen.args.Args;
 import com.radiantlogic.dataconnector.codegen.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -129,12 +130,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           mappedModel -> {
                             final CodegenModel codegenMappedModel =
                                 ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                            codegenMappedModel.setParent(model.classname);
+                            codegenMappedModel.setParent(model.getClassname());
                             reconcileInlineEnums(codegenMappedModel, model);
                             return mappedModel;
                           })
                       .collect(Collectors.toSet());
-              model.discriminator.setMappedModels(mappedModels);
+
+              model.getDiscriminator().setMappedModels(mappedModels);
+
+              final Schema schema = openAPI.getComponents().getSchemas().get(model.schemaName);
+              final List<CodegenProperty> actualVars =
+                  model.getVars().stream()
+                      .filter(prop -> schema.getProperties().containsKey(prop.baseName))
+                      .toList();
+              model.setVars(actualVars);
             });
 
     return super.postProcessAllModels(objs);

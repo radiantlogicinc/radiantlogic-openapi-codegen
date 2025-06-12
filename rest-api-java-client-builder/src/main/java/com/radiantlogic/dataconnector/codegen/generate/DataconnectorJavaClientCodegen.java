@@ -26,7 +26,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    if (Files.exists(outputDir)) {
+    if (Files.exists(outputDir)) { // TODO move to post-init
       try {
         FileUtils.deleteDirectory(outputDir.toFile());
       } catch (IOException ex) {

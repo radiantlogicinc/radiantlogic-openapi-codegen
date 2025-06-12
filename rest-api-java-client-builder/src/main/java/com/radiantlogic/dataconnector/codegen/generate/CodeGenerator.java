@@ -24,7 +24,7 @@ public class CodeGenerator {
     log.info("Generating code");
     final ParseOptions parseOptions = new ParseOptions();
     parseOptions.setResolve(true);
-    parseOptions.setResolveFully(true);
+    parseOptions.setResolveFully(false);
 
     log.debug("Parsing OpenAPI specification");
     final OpenAPI openAPI =

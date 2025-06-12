@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "help": "openapi-generator-cli help generate",
+    "start": "openapi-generator-cli generate -i oauth-minimal.yaml -g java -o output"
   },
   "author": "",
   "license": "ISC",

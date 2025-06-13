@@ -22,6 +22,7 @@ import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.utils.ModelUtils;
 
@@ -226,6 +227,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                               childVar.isEnumRef = true;
                                             });
                                   });
+
+                          final CodegenModel enumModel = new CodegenModel();
+                          enumModel.name = var.datatypeWithEnum;
+                          enumModel.classname = var.datatypeWithEnum;
+                          enumModel.isEnum = true;
+                          enumModel.allowableValues = var.allowableValues;
+                          enumModel.classFilename = var.datatypeWithEnum;
+                          enumModel.dataType = "String";
+                          ModelMap mo = new ModelMap();
+                          mo.setModel(enumModel);
+                          mo.put("importPath", toModelImport(enumModel.classname));
+                          final ModelsMap modelsMap = new ModelsMap();
+                          modelsMap.setModels(List.of(mo));
+                          objs.put(enumModel.name, modelsMap);
                         });
               }
             });

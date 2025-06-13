@@ -166,10 +166,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .map(key -> ModelUtils.getModelByName(key, objs))
         .forEach(
             model -> {
+              resolveStringEnumConflictAllParents(model, model.getParent(), objs);
               reconcileEnumsAllParents(model, model.getParent(), objs);
             });
 
     return super.postProcessAllModels(objs);
+  }
+
+  private void resolveStringEnumConflictAllParents(
+      final CodegenModel mode, final String parentName, final Map<String, ModelsMap> objs) {
+    if (parentName == null) {
+      return;
+    }
+
+    final CodegenModel parent = ModelUtils.getModelByName(parentName, objs);
+    System.out.println("Hello");
   }
 
   // TODO cleanup

@@ -46,14 +46,5 @@ public class CodeGenerator {
         .orElseGet(Map::of)
         // Clear the title to prevent accidental identification of duplicate schemas
         .forEach((key, schema) -> schema.setTitle(null));
-
-    Optional.ofNullable(openAPI.getComponents()).map(Components::getSchemas).stream()
-        .flatMap(schemas -> schemas.entrySet().stream())
-        .forEach(
-            schema -> {
-              if (schema.getKey().toLowerCase().equals("inputsource")) {
-                System.out.println("Found");
-              }
-            });
   }
 }

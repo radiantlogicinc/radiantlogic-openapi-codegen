@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.CodegenDiscriminator;
@@ -260,37 +258,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
           objs.put(model.classname, modelsMap);
         });
-
-    // TODO probably don't need anything below here
-    objs.keySet().stream()
-        .map(k -> ModelUtils.getModelByName(k, objs))
-        .filter(
-            model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
-        .forEach(
-            model -> {
-              final Set<CodegenDiscriminator.MappedModel> mappedModels =
-                  model.discriminator.getMappedModels().stream()
-                      .filter(this::isExplicitMapping)
-                      .map(
-                          mappedModel -> {
-                            final CodegenModel codegenMappedModel =
-                                ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                            // TODO need reconcilation here
-                            //                            reconcileInlineEnums(codegenMappedModel,
-                            // model);
-                            return mappedModel;
-                          })
-                      .collect(Collectors.toSet());
-
-              //              model.getDiscriminator().setMappedModels(mappedModels);
-            });
-
-    //    objs.keySet().stream()
-    //        .map(key -> ModelUtils.getModelByName(key, objs))
-    //        .forEach(
-    //            model -> {
-    //              reconcileEnumsAllParents(model, model.getParent(), objs);
-    //            });
 
     return super.postProcessAllModels(objs);
   }

@@ -43,7 +43,8 @@ public class Runner {
 
     log.info("Starting code generation");
     final ArgsParser argsParser = new ArgsParser(props);
-    final Args parsedArgs = argsParser.parse(args);
+    final String[] argsAfterDevHandling = handleDevArgs(args);
+    final Args parsedArgs = argsParser.parse(argsAfterDevHandling);
     if (parsedArgs.status() == ProgramArgStatus.EXIT) {
       System.exit(0);
       return;

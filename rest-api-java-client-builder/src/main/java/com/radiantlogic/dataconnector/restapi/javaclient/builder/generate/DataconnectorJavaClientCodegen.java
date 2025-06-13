@@ -183,7 +183,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           })
                       .collect(Collectors.toSet());
 
-              model.getDiscriminator().setMappedModels(mappedModels);
+              //              model.getDiscriminator().setMappedModels(mappedModels);
             });
 
     //    objs.keySet().stream()

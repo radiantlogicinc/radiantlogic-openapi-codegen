@@ -152,6 +152,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               model.getDiscriminator().setMappedModels(mappedModels);
             });
 
+    // TODO this is an experiment
+    final ModelsMap grandchildMap = objs.get("TokenRequestDirectAuthReferenceValue");
+    final ModelsMap childMap = objs.get("TokenRequestDirectAuthenticationOtp");
+    final ModelsMap parentMap = objs.get("TokenRequest");
+
+    final CodegenModel grandchild =
+        ModelUtils.getModelByName("TokenRequestDirectAuthReferenceValue", objs);
+    final CodegenModel child =
+        ModelUtils.getModelByName("TokenRequestDirectAuthenticationOtp", objs);
+    final CodegenModel parent = ModelUtils.getModelByName("TokenRequest", objs);
+    reconcileInlineEnums(child, parent);
+    reconcileInlineEnums(grandchild, child);
+    reconcileInlineEnums(grandchild, parent);
+
     return super.postProcessAllModels(objs);
   }
 

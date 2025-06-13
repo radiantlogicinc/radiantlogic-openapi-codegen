@@ -157,19 +157,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final List<String> required,
       final Map<String, Schema> allProperties,
       final List<String> allRequired) {
-    // ModelUtils.getSchema(openAPI, "ChangeType")
-    properties.forEach(
-        (key, value) -> {
-          final var result =
-              ModelUtils.getAllSchemas(openAPI).stream()
-                  .filter(schema -> schema.equals(value))
-                  .toList();
-          if (key.endsWith("Enum")) {
-            final CodegenModel match = modelsByClassName.get(key.replaceAll("Enum$", ""));
-            System.out.println(match);
-          }
-        });
-
     super.addVars(m, properties, required, allProperties, allRequired);
   }
 
@@ -190,7 +177,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                             final CodegenModel codegenMappedModel =
                                 ModelUtils.getModelByName(mappedModel.getModelName(), objs);
                             // TODO need reconcilation here
-                            reconcileInlineEnums(codegenMappedModel, model);
+                            //                            reconcileInlineEnums(codegenMappedModel,
+                            // model);
                             return mappedModel;
                           })
                       .collect(Collectors.toSet());
@@ -198,12 +186,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               model.getDiscriminator().setMappedModels(mappedModels);
             });
 
-    objs.keySet().stream()
-        .map(key -> ModelUtils.getModelByName(key, objs))
-        .forEach(
-            model -> {
-              reconcileEnumsAllParents(model, model.getParent(), objs);
-            });
+    //    objs.keySet().stream()
+    //        .map(key -> ModelUtils.getModelByName(key, objs))
+    //        .forEach(
+    //            model -> {
+    //              reconcileEnumsAllParents(model, model.getParent(), objs);
+    //            });
 
     return super.postProcessAllModels(objs);
   }

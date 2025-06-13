@@ -187,20 +187,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .forEach(
             key -> {
               final CodegenModel model = ModelUtils.getModelByName(key, objs);
-              //              objs.get(key).getImports().add();
               if (model.parentModel != null) {
                 model.parentModel.vars.stream()
                     .filter(var -> var.isEnum)
                     .forEach(
                         var -> {
+                          var.isEnum = false;
+                          var.isEnumRef = true;
                           model.vars.stream()
                               .filter(childVar -> childVar.baseName.equals(var.baseName))
                               .findFirst()
                               .ifPresent(
                                   childVar -> {
                                     childVar.isEnum = false;
-                                    final String importStatement =
-                                        "%s.%s".formatted(modelPackage, model.classname);
+                                    childVar.isEnumRef = true;
                                   });
                         });
               }
@@ -210,6 +210,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     .filter(var -> var.isEnum)
                     .forEach(
                         var -> {
+                          var.isEnum = false;
+                          var.isEnumRef = true;
                           model.discriminator.getMappedModels().stream()
                               .forEach(
                                   mappedModel -> {
@@ -221,12 +223,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                         .ifPresent(
                                             childVar -> {
                                               childVar.isEnum = false;
-                                              childVar.dataType =
-                                                  "%s.%s".formatted(model.classname, var.dataType);
-                                              childVar.datatypeWithEnum =
-                                                  "%s.%s"
-                                                      .formatted(
-                                                          model.classname, var.datatypeWithEnum);
+                                              childVar.isEnumRef = true;
                                             });
                                   });
                         });

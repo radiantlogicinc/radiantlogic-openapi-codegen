@@ -8,11 +8,13 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class OktaIdpMinimalIntegrationTest {
+  private static final String OPENAPI_YAML = "openapi/okta-idp-minimal-2025.01.1.yaml";
+  private static final String OUTPUT_DIR = "output/MyAccount-Management/2025.01.1";
+
   @Test
   @SneakyThrows
   void itGeneratesAndBuilds() {
-    final URL url =
-        getClass().getClassLoader().getResource("openapi/okta-idp-minimal-2025.01.1.yaml");
+    final URL url = getClass().getClassLoader().getResource(OPENAPI_YAML);
     final Path yamlPath = Paths.get(url.toURI());
     final Runner runner = new Runner();
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};

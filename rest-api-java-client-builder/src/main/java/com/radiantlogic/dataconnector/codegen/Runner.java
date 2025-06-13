@@ -30,30 +30,35 @@ public class Runner {
    */
   public static void main(final String[] args) {
     try {
-      final PropsReader propsReader = new PropsReader();
-      final Props props = propsReader.readProps();
-
-      log.info("Starting code generation");
-      final ArgsParser argsParser = new ArgsParser(props);
-      final Args parsedArgs = argsParser.parse(args);
-      if (parsedArgs.status() == ProgramArgStatus.EXIT) {
-        System.exit(0);
-        return;
-      }
-
-      final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
-      final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
-      final Args validatedParedArgs = parsedArgs.withOpenapiPath(parsedPath);
-
-      log.info("Path to OpenAPI specification: {}", validatedParedArgs.openapiPath());
-
-      final CodeGenerator codeGenerator = new CodeGenerator(validatedParedArgs);
-      codeGenerator.generate();
-      log.info("Finished code generation");
+      new Runner().run(args);
     } catch (final Exception ex) {
       log.error("Application has failed to execute", ex);
       System.exit(1);
     }
+  }
+
+  public void run(final String[] args) throws Exception {
+    final PropsReader propsReader = new PropsReader();
+    final Props props = propsReader.readProps();
+
+    log.info("Starting code generation");
+    final ArgsParser argsParser = new ArgsParser(props);
+    final String[] argsAfterDevHandling = handleDevArgs(args);
+    final Args parsedArgs = argsParser.parse(argsAfterDevHandling);
+    if (parsedArgs.status() == ProgramArgStatus.EXIT) {
+      System.exit(0);
+      return;
+    }
+
+    final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
+    final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
+    final Args validatedParedArgs = parsedArgs.withOpenapiPath(parsedPath);
+
+    log.info("Path to OpenAPI specification: {}", validatedParedArgs.openapiPath());
+
+    final CodeGenerator codeGenerator = new CodeGenerator(validatedParedArgs);
+    codeGenerator.generate();
+    log.info("Finished code generation");
   }
 
   /**

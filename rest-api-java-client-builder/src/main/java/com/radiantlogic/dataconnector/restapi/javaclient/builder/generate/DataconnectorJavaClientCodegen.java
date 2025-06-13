@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -184,6 +185,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
+    final List<CodegenModel> newOnes = new ArrayList<>();
     objs.keySet().stream()
         .forEach(
             key -> {
@@ -228,6 +230,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                             });
                                   });
 
+                          // TODO major cleanup needed
                           final CodegenModel enumModel = new CodegenModel();
                           enumModel.name = var.datatypeWithEnum;
                           enumModel.classname = var.datatypeWithEnum;
@@ -235,15 +238,28 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           enumModel.allowableValues = var.allowableValues;
                           enumModel.classFilename = var.datatypeWithEnum;
                           enumModel.dataType = "String";
-                          ModelMap mo = new ModelMap();
-                          mo.setModel(enumModel);
-                          mo.put("importPath", toModelImport(enumModel.classname));
-                          final ModelsMap modelsMap = new ModelsMap();
-                          modelsMap.setModels(List.of(mo));
-                          objs.put(enumModel.name, modelsMap);
+                          newOnes.add(enumModel);
                         });
               }
             });
+
+    // Name -> models -> importPath/model -> CodegenModel
+    // The root map can be cloned from any other.
+
+    final String key = objs.keySet().stream().findFirst().orElseThrow();
+    newOnes.forEach(
+        model -> {
+          final ModelsMap modelsMap = new ModelsMap();
+          modelsMap.putAll(objs.get(key));
+
+          final String importPath = toModelImport(model.classname);
+          final ModelMap modelMap = new ModelMap();
+          modelMap.setModel(model);
+          modelMap.put("importPath", importPath);
+          modelsMap.setModels(List.of(modelMap));
+
+          objs.put(model.classname, modelsMap);
+        });
 
     // TODO probably don't need anything below here
     objs.keySet().stream()

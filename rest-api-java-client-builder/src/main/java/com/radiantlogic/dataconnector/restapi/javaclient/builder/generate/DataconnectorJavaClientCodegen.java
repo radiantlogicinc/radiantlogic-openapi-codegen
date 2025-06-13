@@ -216,6 +216,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     }
 
     final CodegenModel parent = ModelUtils.getModelByName(parentName, objs);
+    if (parent == null) {
+      return;
+    }
     reconcileInlineEnums(model, parent);
     final String grandparentName = parent.getParent();
     reconcileEnumsAllParents(model, grandparentName, objs);

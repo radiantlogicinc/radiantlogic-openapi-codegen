@@ -182,11 +182,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private CodegenModel createEnumModel(final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
-    enumModel.name = var.datatypeWithEnum;
-    enumModel.classname = var.datatypeWithEnum;
+    enumModel.name = enumProp.datatypeWithEnum;
+    enumModel.classname = enumProp.datatypeWithEnum;
     enumModel.isEnum = true;
-    enumModel.allowableValues = var.allowableValues;
-    enumModel.classFilename = var.datatypeWithEnum;
+    enumModel.allowableValues = enumProp.allowableValues;
+    enumModel.classFilename = enumProp.datatypeWithEnum;
     enumModel.dataType = "String";
     return enumModel;
   }

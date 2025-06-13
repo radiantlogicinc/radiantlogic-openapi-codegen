@@ -73,12 +73,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO this is to prevent an NPE
   @Override
-  protected static String getEnumValueForProperty(
-      final String modelName, final CodegenDiscriminator discriminator, final CodegenProperty var) {
-    if (var.allowableValues == null) {
-      var.allowableValues = new HashMap<>();
+  public void postProcessModelProperty(final CodegenModel model, final CodegenProperty property) {
+    super.postProcessModelProperty(model, property);
+    if (property.allowableValues == null) {
+      property.allowableValues = new HashMap<>();
     }
-    return super.getEnumValueForProperty(modelName, discriminator, var);
   }
 
   // TODO need tests

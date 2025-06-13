@@ -16,6 +16,7 @@ main -> feature/end-to-end-test -> feature/e2e-test
 
 STILL BROKEN
 
-1. IDDM - parent has string, child has enum
+1. IDDM - parent has string, child has enum [DONE]
 2. OKTA MANAGE MIN - hash code call missing first argument
-3. IDDM - child is not linked to parent in discriminated unions, then compile errors if it is.
+3. IDDM - child is not linked to parent in discriminated unions, then compile errors if it is. [DONE]
+4. ALL - JsonNullable<?> types polluting models

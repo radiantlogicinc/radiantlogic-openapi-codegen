@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.api.AuthTokenApiApi;
 import com.radiantlogic.custom.dataconnector.api.DataSourcesApi;
 import com.radiantlogic.custom.dataconnector.invoker.ApiClient;
@@ -12,7 +13,7 @@ public class Example {
     apiClient.setDebugging(true);
 
     final AuthTokenApiApi authTokenApiApi = new AuthTokenApiApi(apiClient);
-    final String basicAuth = "%s:%s".formatted("cn=directory manager", "");
+    final String basicAuth = "%s:%s".formatted("cn=directory manager", "kJ3UmB6KDYt12gr!");
     final String base64EncodedAuth = Base64.getEncoder().encodeToString(basicAuth.getBytes());
     final String token =
         authTokenApiApi.postLogin("Basic %s".formatted(base64EncodedAuth)).getToken();
@@ -25,6 +26,9 @@ public class Example {
     ldapDataSource.setPort(389);
     ldapDataSource.setCategory(RequiredDataSourceCategory.LDAP);
     ldapDataSource.setType("Active Directory");
+    final ObjectMapper objectMappper = new ObjectMapper();
+    System.out.println(objectMappper.writeValueAsString(ldapDataSource));
+
     dataSourcesApi.createDataSource(ldapDataSource);
   }
 }

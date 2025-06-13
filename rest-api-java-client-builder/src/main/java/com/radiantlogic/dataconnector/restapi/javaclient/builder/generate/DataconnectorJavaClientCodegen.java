@@ -154,6 +154,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 result.discriminator.setPropertyType(prop.getDataType());
               });
     }
+    // TODO do I need these? unclear
     modelsByClassName.put(result.classname, result);
     schemasByClassName.put(result.classname, model);
     return result;

@@ -1,0 +1,19 @@
+{{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
+    {{#discriminator}}
+    public {{propertyType}} {{propertyGetter}}();
+    {{/discriminator}}
+
+{{#vars}}
+    {{#isEnum}}
+        {{^isContainer}}
+{{>modelInnerEnum}}
+        {{/isContainer}}
+        {{#isContainer}}
+            {{#mostInnerItems}}
+{{>modelInnerEnum}}
+            {{/mostInnerItems}}
+        {{/isContainer}}
+    {{/isEnum}}
+{{/vars}}
+}

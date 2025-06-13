@@ -21,7 +21,12 @@
 })
 {{#isClassnameSanitized}}
 {{^hasDiscriminatorWithNonEmptyMapping}}
+{{#vendorExtensions.x-discriminator-mapping-value}}
+@JsonTypeName("{{vendorExtensions.x-discriminator-mapping-value}}")
+{{/vendorExtensions.x-discriminator-mapping-value}}
+{{^vendorExtensions.x-discriminator-mapping-value}}
 @JsonTypeName("{{name}}")
+{{/vendorExtensions.x-discriminator-mapping-value}}
 {{/hasDiscriminatorWithNonEmptyMapping}}
 {{/isClassnameSanitized}}
 {{/jackson}}

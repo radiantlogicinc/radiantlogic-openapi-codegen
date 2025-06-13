@@ -287,11 +287,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
                           newOnes.add(createEnumModel(var));
                         });
+                model
+                    .discriminator
+                    .getMappedModels()
+                    .forEach(
+                        mappedModel -> {
+                          final CodegenModel childModel =
+                              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                          childModel.vendorExtensions.put(
+                              "x-discriminator-mapping-value", mappedModel.getMappingName());
+                        });
               }
             });
-
-    // Name -> models -> importPath/model -> CodegenModel
-    // The root map can be cloned from any other.
 
     final String key = objs.keySet().stream().findFirst().orElseThrow();
     newOnes.forEach(

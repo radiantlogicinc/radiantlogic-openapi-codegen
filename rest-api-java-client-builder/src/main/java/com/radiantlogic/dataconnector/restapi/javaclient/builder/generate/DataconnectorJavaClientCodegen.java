@@ -31,6 +31,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private final Map<String, CodegenModel> modelsByClassName = new HashMap<>();
+  private final Map<String, Schema> schemasByClassName = new HashMap<>();
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -145,6 +146,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   public CodegenModel fromModel(final String name, final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
     modelsByClassName.put(result.classname, result);
+    schemasByClassName.put(result.classname, model);
     return result;
   }
 
@@ -155,6 +157,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final List<String> required,
       final Map<String, Schema> allProperties,
       final List<String> allRequired) {
+    // ModelUtils.getSchema(openAPI, "ChangeType")
+    properties.forEach(
+        (key, value) -> {
+          final var result =
+              ModelUtils.getAllSchemas(openAPI).stream()
+                  .filter(schema -> schema.equals(value))
+                  .toList();
+          if (key.endsWith("Enum")) {
+            final CodegenModel match = modelsByClassName.get(key.replaceAll("Enum$", ""));
+            System.out.println(match);
+          }
+        });
+
     super.addVars(m, properties, required, allProperties, allRequired);
   }
 

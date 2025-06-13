@@ -263,7 +263,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     // TODO probably don't need anything below here
     objs.keySet().stream()
-        .map(key -> ModelUtils.getModelByName(key, objs))
+        .map(k -> ModelUtils.getModelByName(k, objs))
         .filter(
             model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
         .forEach(

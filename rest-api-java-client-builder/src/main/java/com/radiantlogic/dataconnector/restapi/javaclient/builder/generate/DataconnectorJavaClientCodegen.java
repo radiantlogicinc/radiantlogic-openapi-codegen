@@ -166,7 +166,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final Schema p,
       final boolean required,
       final boolean schemaIsFromAdditionalProperties) {
-    return super.fromProperty(name, p, required);
+    return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
   }
 
   @Override

@@ -180,6 +180,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     super.addVars(m, properties, required, allProperties, allRequired);
   }
 
+  private CodegenModel createEnumModel(final CodegenProperty enumProp) {
+    final CodegenModel enumModel = new CodegenModel();
+    enumModel.name = var.datatypeWithEnum;
+    enumModel.classname = var.datatypeWithEnum;
+    enumModel.isEnum = true;
+    enumModel.allowableValues = var.allowableValues;
+    enumModel.classFilename = var.datatypeWithEnum;
+    enumModel.dataType = "String";
+    return enumModel;
+  }
+
   // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
@@ -203,6 +214,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                     childVar.isEnum = false;
                                     childVar.isEnumRef = true;
                                   });
+                          newOnes.add(createEnumModel(var));
                         });
               }
 
@@ -228,15 +240,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                             });
                                   });
 
-                          // TODO major cleanup needed
-                          final CodegenModel enumModel = new CodegenModel();
-                          enumModel.name = var.datatypeWithEnum;
-                          enumModel.classname = var.datatypeWithEnum;
-                          enumModel.isEnum = true;
-                          enumModel.allowableValues = var.allowableValues;
-                          enumModel.classFilename = var.datatypeWithEnum;
-                          enumModel.dataType = "String";
-                          newOnes.add(enumModel);
+                          newOnes.add(createEnumModel(var));
                         });
               }
             });

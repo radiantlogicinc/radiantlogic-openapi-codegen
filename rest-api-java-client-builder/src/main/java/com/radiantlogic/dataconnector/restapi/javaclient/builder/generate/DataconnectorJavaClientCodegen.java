@@ -185,6 +185,46 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
     objs.keySet().stream()
         .map(key -> ModelUtils.getModelByName(key, objs))
+        .forEach(
+            model -> {
+              if (model.parentModel != null) {
+                model.parentModel.vars.stream()
+                    .filter(var -> var.isEnum)
+                    .forEach(
+                        var -> {
+                          model.vars.stream()
+                              .filter(childVar -> childVar.baseName.equals(var.baseName))
+                              .findFirst()
+                              .ifPresent(childVar -> childVar.isEnum = false);
+                        });
+                // model.parentModel
+                // model.discriminator.getMappedModels() &&
+                // ModelUtils.getModelByName(mappedModel.getModelName(), objs)
+                System.out.println("Match");
+              }
+
+              if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
+                model.vars.stream()
+                    .filter(var -> var.isEnum)
+                    .forEach(
+                        var -> {
+                          model.discriminator.getMappedModels().stream()
+                              .forEach(
+                                  mappedModel -> {
+                                    final CodegenModel childModel =
+                                        ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                                    childModel.vars.stream()
+                                        .filter(childVar -> childVar.baseName.equals(var.baseName))
+                                        .findFirst()
+                                        .ifPresent(childVar -> childVar.isEnum = false);
+                                  });
+                        });
+              }
+            });
+
+    // TODO probably don't need anything below here
+    objs.keySet().stream()
+        .map(key -> ModelUtils.getModelByName(key, objs))
         .filter(
             model -> model.discriminator != null && model.discriminator.getMappedModels() != null)
         .forEach(

@@ -152,21 +152,37 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               model.getDiscriminator().setMappedModels(mappedModels);
             });
 
-    // TODO this is an experiment
-    final ModelsMap grandchildMap = objs.get("TokenRequestDirectAuthReferenceValue");
-    final ModelsMap childMap = objs.get("TokenRequestDirectAuthenticationOtp");
-    final ModelsMap parentMap = objs.get("TokenRequest");
+    objs.keySet().stream()
+        .map(key -> ModelUtils.getModelByName(key, objs))
+        .forEach(
+            model -> {
+              reconcileEnumsAllParents(model, model.getParent(), objs);
+            });
 
-    final CodegenModel grandchild =
-        ModelUtils.getModelByName("TokenRequestDirectAuthReferenceValue", objs);
-    final CodegenModel child =
-        ModelUtils.getModelByName("TokenRequestDirectAuthenticationOtp", objs);
-    final CodegenModel parent = ModelUtils.getModelByName("TokenRequest", objs);
-    reconcileInlineEnums(child, parent);
-    reconcileInlineEnums(grandchild, child);
-    reconcileInlineEnums(grandchild, parent);
+    // TODO this is an experiment
+    //    final CodegenModel grandchild =
+    //        ModelUtils.getModelByName("TokenRequestDirectAuthReferenceValue", objs);
+    //    final CodegenModel child =
+    //        ModelUtils.getModelByName("TokenRequestDirectAuthenticationOtp", objs);
+    //    final CodegenModel parent = ModelUtils.getModelByName("TokenRequest", objs);
+    //    reconcileInlineEnums(child, parent);
+    //    reconcileInlineEnums(grandchild, child);
+    //    reconcileInlineEnums(grandchild, parent);
 
     return super.postProcessAllModels(objs);
+  }
+
+  // TODO cleanup
+  private void reconcileEnumsAllParents(
+      final CodegenModel model, final String parentName, final Map<String, ModelsMap> objs) {
+    if (parentName == null) {
+      return;
+    }
+
+    final CodegenModel parent = ModelUtils.getModelByName(parentName, objs);
+    reconcileInlineEnums(model, parent);
+    final String grandparentName = parent.getParent();
+    reconcileEnumsAllParents(model, grandparentName, objs);
   }
 
   private boolean isExplicitMapping(@NonNull final CodegenDiscriminator.MappedModel mappedModel) {

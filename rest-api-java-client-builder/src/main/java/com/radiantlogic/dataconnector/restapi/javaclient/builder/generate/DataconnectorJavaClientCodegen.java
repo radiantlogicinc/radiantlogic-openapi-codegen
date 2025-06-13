@@ -161,6 +161,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   @Override
+  public CodegenProperty fromProperty(
+      final String name,
+      final Schema p,
+      final boolean required,
+      final boolean schemaIsFromAdditionalProperties) {
+    return super.fromProperty(name, p, required);
+  }
+
+  @Override
   protected void addVars(
       final CodegenModel m,
       final Map<String, Schema> properties,

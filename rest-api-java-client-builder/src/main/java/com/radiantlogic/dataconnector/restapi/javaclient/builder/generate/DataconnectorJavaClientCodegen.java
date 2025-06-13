@@ -138,7 +138,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return codegenModel;
   }
 
-  // TODO cleanup or delete
+  // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
     objs.keySet().stream()

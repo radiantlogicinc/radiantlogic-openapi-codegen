@@ -13,7 +13,7 @@ public class Example {
     apiClient.setDebugging(true);
 
     final AuthTokenApiApi authTokenApiApi = new AuthTokenApiApi(apiClient);
-    final String basicAuth = "%s:%s".formatted("cn=directory manager", "kJ3UmB6KDYt12gr!");
+    final String basicAuth = "%s:%s".formatted("cn=directory manager", "PASSWORD");
     final String base64EncodedAuth = Base64.getEncoder().encodeToString(basicAuth.getBytes());
     final String token =
         authTokenApiApi.postLogin("Basic %s".formatted(base64EncodedAuth)).getToken();

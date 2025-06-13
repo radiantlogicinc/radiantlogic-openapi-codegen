@@ -145,6 +145,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public CodegenModel fromModel(final String name, final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
+    if (result.discriminator != null) {
+      result.getVars().stream()
+          .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
+          .findFirst()
+          .ifPresent(
+              prop -> {
+                result.discriminator.setPropertyType(prop.getDataType());
+              });
+    }
     modelsByClassName.put(result.classname, result);
     schemasByClassName.put(result.classname, model);
     return result;

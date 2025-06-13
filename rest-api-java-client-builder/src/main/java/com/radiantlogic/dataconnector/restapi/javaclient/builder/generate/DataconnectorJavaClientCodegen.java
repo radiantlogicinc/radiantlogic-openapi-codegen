@@ -42,7 +42,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final List<String> ignorePatterns =
         List.of(
             ".travis.yml",
-            "gradle",
+            "gradle/**",
             "build.gradle",
             "build.sbt",
             "git_push.sh",

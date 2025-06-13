@@ -184,9 +184,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
     objs.keySet().stream()
-        .map(key -> ModelUtils.getModelByName(key, objs))
         .forEach(
-            model -> {
+            key -> {
+              final CodegenModel model = ModelUtils.getModelByName(key, objs);
+              //              objs.get(key).getImports().add();
               if (model.parentModel != null) {
                 model.parentModel.vars.stream()
                     .filter(var -> var.isEnum)
@@ -195,12 +196,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           model.vars.stream()
                               .filter(childVar -> childVar.baseName.equals(var.baseName))
                               .findFirst()
-                              .ifPresent(childVar -> childVar.isEnum = false);
+                              .ifPresent(
+                                  childVar -> {
+                                    childVar.isEnum = false;
+                                    final String importStatement =
+                                        "%s.%s".formatted(modelPackage, model.classname);
+                                  });
                         });
-                // model.parentModel
-                // model.discriminator.getMappedModels() &&
-                // ModelUtils.getModelByName(mappedModel.getModelName(), objs)
-                System.out.println("Match");
               }
 
               if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
@@ -216,7 +218,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                     childModel.vars.stream()
                                         .filter(childVar -> childVar.baseName.equals(var.baseName))
                                         .findFirst()
-                                        .ifPresent(childVar -> childVar.isEnum = false);
+                                        .ifPresent(
+                                            childVar -> {
+                                              childVar.isEnum = false;
+                                              childVar.dataType =
+                                                  "%s.%s".formatted(model.classname, var.dataType);
+                                              childVar.datatypeWithEnum =
+                                                  "%s.%s"
+                                                      .formatted(
+                                                          model.classname, var.datatypeWithEnum);
+                                            });
                                   });
                         });
               }

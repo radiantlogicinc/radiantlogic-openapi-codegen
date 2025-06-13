@@ -287,6 +287,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
                           newOnes.add(createEnumModel(var));
                         });
+                model
+                    .discriminator
+                    .getMappedModels()
+                    .forEach(
+                        mappedModel -> {
+                          final CodegenModel childModel =
+                              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                          childModel.vendorExtensions.put(
+                              "x-discriminator-mapping-value", mappedModel.getMappingName());
+                        });
               }
             });
 

@@ -39,7 +39,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private void writeIgnorePatterns(final Path outputDir) {
-    final List<String> ignorePatterns = List.of("travis.yml");
+    final List<String> ignorePatterns =
+        List.of(
+            ".travis.yml",
+            "gradle",
+            "build.gradle",
+            "build.sbt",
+            "git_push.sh",
+            "gradle.properties",
+            "gradlew",
+            "gradlew.bat",
+            "settings.gradle",
+            "src/test/**");
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {
       Files.write(ignoreFile, ignorePatterns);

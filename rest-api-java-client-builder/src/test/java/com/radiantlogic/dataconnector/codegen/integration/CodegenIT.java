@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,13 +27,8 @@ public class CodegenIT {
         Arguments.arguments(
             "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1"),
         Arguments.arguments(
-            "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/2025.01.1"));
-  }
-
-  @BeforeEach
-  @SneakyThrows
-  void beforeEach() {
-    FileUtils.deleteDirectory(OUTPUT_DIR.toFile());
+            "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml",
+            "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT"));
   }
 
   /**
@@ -57,13 +51,15 @@ public class CodegenIT {
   @SneakyThrows
   void itGeneratesAndBuilds(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {
+    final Path outputPath = OUTPUT_DIR.resolve(relativeOutputPath);
+    FileUtils.deleteDirectory(outputPath.toFile());
+
     final URL url = getClass().getClassLoader().getResource("openapi/%s".formatted(yamlFilename));
     final Path yamlPath = Paths.get(url.toURI());
     final Runner runner = new Runner();
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};
     runner.run(args);
 
-    final Path outputPath = OUTPUT_DIR.resolve(relativeOutputPath);
     final Process process =
         new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
             .directory(outputPath.toFile())

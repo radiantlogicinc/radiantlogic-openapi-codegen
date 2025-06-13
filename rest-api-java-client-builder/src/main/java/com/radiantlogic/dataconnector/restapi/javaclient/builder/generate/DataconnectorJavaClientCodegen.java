@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.CodegenDiscriminator;
@@ -30,6 +32,8 @@ import org.openapitools.codegen.utils.ModelUtils;
  * style we want.
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
+  private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
+
   private final Map<String, CodegenModel> modelsByClassName = new HashMap<>();
   private final Map<String, Schema> schemasByClassName = new HashMap<>();
 
@@ -209,11 +213,25 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private CodegenModel createEnumModel(final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
-    enumModel.name = enumProp.datatypeWithEnum;
-    enumModel.classname = enumProp.datatypeWithEnum;
+
+    final String typeName;
+    if (enumProp.openApiType.equals("array")) {
+      final Matcher matcher = LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
+      if (!matcher.matches()) {
+        throw new IllegalStateException(
+            "Array enum property has a name that doesn't match pattern: %s"
+                .formatted(enumProp.datatypeWithEnum));
+      }
+      typeName = matcher.group(1);
+    } else {
+      typeName = enumProp.datatypeWithEnum;
+    }
+
+    enumModel.name = typeName;
+    enumModel.classname = typeName;
     enumModel.isEnum = true;
     enumModel.allowableValues = enumProp.allowableValues;
-    enumModel.classFilename = enumProp.datatypeWithEnum;
+    enumModel.classFilename = typeName;
     enumModel.dataType = "String";
     return enumModel;
   }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     // TODO need to fix the dev output
     // TODO need to not be fat jar
     // TODO needs to be unsigned
+  }
+
+  // TODO this is to prevent an NPE
+  @Override
+  protected static String getEnumValueForProperty(
+      final String modelName, final CodegenDiscriminator discriminator, final CodegenProperty var) {
+    if (var.allowableValues == null) {
+      var.allowableValues = new HashMap<>();
+    }
+    return super.getEnumValueForProperty(modelName, discriminator, var);
   }
 
   // TODO need tests

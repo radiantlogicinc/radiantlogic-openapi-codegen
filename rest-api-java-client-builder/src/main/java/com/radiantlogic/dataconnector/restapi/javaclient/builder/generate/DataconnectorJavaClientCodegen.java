@@ -151,9 +151,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           .findFirst()
           .ifPresent(
               prop -> {
-                result.discriminator.setPropertyType(prop.getDataType());
+                result.discriminator.setPropertyType(prop.getDatatypeWithEnum());
               });
     }
+
     // TODO do I need these? unclear
     modelsByClassName.put(result.classname, result);
     schemasByClassName.put(result.classname, model);

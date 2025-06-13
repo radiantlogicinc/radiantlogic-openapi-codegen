@@ -3,4 +3,17 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{#discriminator}}
     public {{propertyType}} {{propertyGetter}}();
     {{/discriminator}}
+
+{{#vars}}
+    {{#isEnum}}
+        {{^isContainer}}
+{{>modelInnerEnum}}
+        {{/isContainer}}
+        {{#isContainer}}
+            {{#mostInnerItems}}
+{{>modelInnerEnum}}
+            {{/mostInnerItems}}
+        {{/isContainer}}
+    {{/isEnum}}
+{{/vars}}
 }

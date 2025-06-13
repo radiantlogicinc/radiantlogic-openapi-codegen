@@ -4,6 +4,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -29,6 +30,8 @@ import org.openapitools.codegen.utils.ModelUtils;
  * style we want.
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
+  private final Map<String, CodegenModel> modelsByClassName = new HashMap<>();
+
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
     init(args);
@@ -136,6 +139,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       codegenModel.vars = codegenProperties;
     }
     return codegenModel;
+  }
+
+  @Override
+  public CodegenModel fromModel(final String name, final Schema model) {
+    final CodegenModel result = super.fromModel(name, model);
+    modelsByClassName.put(result.classname, result);
+    return result;
+  }
+
+  @Override
+  protected void addVars(
+      final CodegenModel m,
+      final Map<String, Schema> properties,
+      final List<String> required,
+      final Map<String, Schema> allProperties,
+      final List<String> allRequired) {
+    super.addVars(m, properties, required, allProperties, allRequired);
   }
 
   // TODO cleanup

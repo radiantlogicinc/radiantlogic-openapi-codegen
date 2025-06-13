@@ -12,6 +12,7 @@
     <modules>
         <module>./rest-api-java-client-builder</module>
         <module>./examples/okta</module>
+        <module>./examples/iddm</module>
     </modules>
 
     <properties>

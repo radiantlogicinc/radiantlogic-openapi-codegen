@@ -11,6 +11,6 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>okta-example</artifactId>
+    <artifactId>iddm-example</artifactId>
     <version>${revision}</version>
 </project>

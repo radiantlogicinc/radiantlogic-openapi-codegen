@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /** Integration tests that validate this codegen against various openapi specifications. */
-public class CodegenIntegrationTest {
+public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
 

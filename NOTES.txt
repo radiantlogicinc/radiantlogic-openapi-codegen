@@ -2,6 +2,7 @@
 2. Must work with OpenAPI 2 & 3.
 3. Must work with local files and URLs.
 4. Must work with YAML and JSON
+5. Use spaces instead of = for arguments, matches the help text better.
 
 
 

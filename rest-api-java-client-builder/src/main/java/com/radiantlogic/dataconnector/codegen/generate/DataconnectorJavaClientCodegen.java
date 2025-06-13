@@ -144,9 +144,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           mappedModel -> {
                             final CodegenModel codegenMappedModel =
                                 ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-
-                            //
-                            // codegenMappedModel.setParent(model.getClassname());
                             reconcileInlineEnums(codegenMappedModel, model);
                             return mappedModel;
                           })

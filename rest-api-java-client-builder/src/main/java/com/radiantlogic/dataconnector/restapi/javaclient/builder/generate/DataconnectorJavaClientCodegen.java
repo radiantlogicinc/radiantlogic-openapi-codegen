@@ -38,6 +38,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     init(args);
   }
 
+  private void writeIgnorePatterns(final Path outputDir) {
+    final List<String> ignorePatterns = List.of("travis.yml");
+    final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
+    try {
+      Files.write(ignoreFile, ignorePatterns);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
@@ -50,6 +60,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             "Unable to delete existing output directory: %s".formatted(outputDir), ex);
       }
     }
+    try {
+      Files.createDirectories(outputDir);
+    } catch (IOException e) {
+      throw new RuntimeException(e); // TODO cleanup
+    }
+    writeIgnorePatterns(outputDir);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
     // TODO need to validate groupId

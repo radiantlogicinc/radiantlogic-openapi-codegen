@@ -12,3 +12,8 @@ https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/m
 https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/oauth-minimal.yaml
 
 main -> feature/end-to-end-test -> feature/e2e-test
+
+STILL BROKEN
+
+1. IDDM - parent has string, child has enum
+2.OKTA MANAGE MIN - hash code call missing first argument

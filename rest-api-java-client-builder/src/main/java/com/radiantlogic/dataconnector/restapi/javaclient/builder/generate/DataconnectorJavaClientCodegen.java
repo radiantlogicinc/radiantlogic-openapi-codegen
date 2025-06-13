@@ -173,6 +173,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return super.postProcessAllModels(objs);
   }
 
+  // TODO cleanup
   private void resolveStringEnumConflictAllParents(
       final CodegenModel mode, final String parentName, final Map<String, ModelsMap> objs) {
     if (parentName == null) {

@@ -159,16 +159,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               reconcileEnumsAllParents(model, model.getParent(), objs);
             });
 
-    // TODO this is an experiment
-    //    final CodegenModel grandchild =
-    //        ModelUtils.getModelByName("TokenRequestDirectAuthReferenceValue", objs);
-    //    final CodegenModel child =
-    //        ModelUtils.getModelByName("TokenRequestDirectAuthenticationOtp", objs);
-    //    final CodegenModel parent = ModelUtils.getModelByName("TokenRequest", objs);
-    //    reconcileInlineEnums(child, parent);
-    //    reconcileInlineEnums(grandchild, child);
-    //    reconcileInlineEnums(grandchild, parent);
-
     return super.postProcessAllModels(objs);
   }
 

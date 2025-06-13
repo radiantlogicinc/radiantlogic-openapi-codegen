@@ -23,7 +23,8 @@ public class CodegenIT {
   static Stream<Arguments> codegenArgs() {
     return Stream.of(
         Arguments.arguments("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1"),
-        Arguments.arguments("okta-management-minimal-2025.01.1", "Okta-Admin-Management/2025.01.1"),
+        Arguments.arguments(
+            "okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1"),
         Arguments.arguments(
             "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1"),
         Arguments.arguments(

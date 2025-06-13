@@ -13,4 +13,12 @@
 
     <artifactId>iddm-example</artifactId>
     <version>${revision}</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.radiantlogic.custom.dataconnector</groupId>
+            <artifactId>RadiantOne-V8-API</artifactId>
+            <version>8.1.4-beta.2-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

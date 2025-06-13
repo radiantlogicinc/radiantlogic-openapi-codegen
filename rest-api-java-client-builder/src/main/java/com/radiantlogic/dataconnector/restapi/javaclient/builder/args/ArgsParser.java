@@ -1,6 +1,6 @@
-package com.radiantlogic.dataconnector.codegen.args;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.args;
 
-import com.radiantlogic.dataconnector.codegen.properties.Props;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import java.util.Arrays;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
-package com.radiantlogic.dataconnector.codegen;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder;
 
-import com.radiantlogic.dataconnector.codegen.args.Args;
-import com.radiantlogic.dataconnector.codegen.args.ArgsParser;
-import com.radiantlogic.dataconnector.codegen.args.ProgramArgStatus;
-import com.radiantlogic.dataconnector.codegen.generate.CodeGenerator;
-import com.radiantlogic.dataconnector.codegen.openapi.OpenapiPathValidator;
-import com.radiantlogic.dataconnector.codegen.properties.Props;
-import com.radiantlogic.dataconnector.codegen.properties.PropsReader;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ArgsParser;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ProgramArgStatus;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGenerator;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.codegen.openapi;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

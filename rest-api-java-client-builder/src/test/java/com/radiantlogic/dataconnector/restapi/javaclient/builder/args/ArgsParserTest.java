@@ -1,9 +1,9 @@
-package com.radiantlogic.dataconnector.codegen.args;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.args;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.radiantlogic.dataconnector.codegen.properties.Props;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import org.junit.jupiter.api.Test;
 
 public class ArgsParserTest {

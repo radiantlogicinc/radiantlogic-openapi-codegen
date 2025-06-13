@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.codegen.io;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.io;
 
 import java.nio.file.Path;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.codegen.properties;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.properties;
 
 import lombok.NonNull;
 

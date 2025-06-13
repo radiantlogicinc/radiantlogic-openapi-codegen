@@ -1,8 +1,8 @@
-package com.radiantlogic.dataconnector.codegen.integration;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.radiantlogic.dataconnector.codegen.Runner;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;

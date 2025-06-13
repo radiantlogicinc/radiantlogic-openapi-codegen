@@ -1,7 +1,7 @@
-package com.radiantlogic.dataconnector.codegen.generate;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
-import com.radiantlogic.dataconnector.codegen.args.Args;
-import com.radiantlogic.dataconnector.codegen.io.CodegenPaths;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import java.io.IOException;

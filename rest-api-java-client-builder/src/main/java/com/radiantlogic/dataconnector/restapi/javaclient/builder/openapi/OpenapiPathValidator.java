@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.codegen.openapi;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi;
 
 import java.net.MalformedURLException;
 import java.net.URI;

@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,6 +46,26 @@ public class CodegenIT {
         Arguments.arguments(
             "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml",
             "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT"));
+  }
+
+  @Test
+  void oktaIdpMinimal() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void oktaManagementMinimal() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void oktaOauthMinimal() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void radiantone() {
+    throw new RuntimeException();
   }
 
   @ParameterizedTest(name = "Generates and builds code for {0}")

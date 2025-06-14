@@ -285,6 +285,25 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  private void addNewEnumModelMaps(
+      @NonNull final Map<String, ModelsMap> allModelMaps,
+      @NonNull final List<CodegenModel> newEnumsFromParentModels,
+      @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels) {
+    final ModelsMap enumModelBase =
+        allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
+    final Map<String, ModelsMap> allNewEnumModels =
+        Stream.concat(
+                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
+            .collect(
+                Collectors.toMap(
+                    CodegenModel::getClassname,
+                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
+                    // If there are two duplicate keys, they are duplicate models so handle it
+                    // gracefully
+                    (a, b) -> b));
+    allModelMaps.putAll(allNewEnumModels);
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
@@ -296,20 +315,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         handleInheritedEnumsFromParentModels(allModels);
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+    addNewEnumModelMaps(
+        allModelMaps, newEnumsFromParentModels, newEnumsFromDiscriminatorParentModels);
 
     handleDiscriminatorChildMappingValues(allModels, allModelMaps);
-
-    final ModelsMap enumModelBase =
-        allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
-    final Map<String, ModelsMap> allNewEnumModels =
-        Stream.concat(
-                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
-            .collect(
-                Collectors.toMap(
-                    CodegenModel::getClassname,
-                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
-                    (a, b) -> b));
-    allModelMaps.putAll(allNewEnumModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

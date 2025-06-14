@@ -210,14 +210,6 @@
             <version>${jakarta-annotation-version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -243,6 +235,5 @@
         {{#performBeanValidation}}
             <hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
         {{/performBeanValidation}}
-        <junit-version>5.10.2</junit-version>
     </properties>
 </project>

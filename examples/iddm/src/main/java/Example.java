@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.radiantlogic.custom.dataconnector.api.AuthTokenApiApi;
-import com.radiantlogic.custom.dataconnector.api.DataSourcesApi;
-import com.radiantlogic.custom.dataconnector.invoker.ApiClient;
-import com.radiantlogic.custom.dataconnector.model.LdapDataSource;
-import com.radiantlogic.custom.dataconnector.model.RequiredDataSourceCategory;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.api.AuthTokenApiApi;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.api.DataSourcesApi;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
 import java.util.Base64;
 
 public class Example {

@@ -12,9 +12,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Integration tests that validate this codegen against various openapi specifications. If run via
@@ -50,28 +48,28 @@ public class CodegenIT {
 
   @Test
   void oktaIdpMinimal() {
-    throw new RuntimeException();
+    generateAndBuild("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1");
   }
 
   @Test
   void oktaManagementMinimal() {
-    throw new RuntimeException();
+    generateAndBuild("okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1");
   }
 
   @Test
   void oktaOauthMinimal() {
-    throw new RuntimeException();
+    generateAndBuild(
+        "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1");
   }
 
   @Test
   void radiantone() {
-    throw new RuntimeException();
+    generateAndBuild(
+        "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT");
   }
 
-  @ParameterizedTest(name = "Generates and builds code for {0}")
-  @MethodSource("codegenArgs")
   @SneakyThrows
-  void itGeneratesAndBuilds(
+  private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {
     final Path outputPath = OUTPUT_DIR.resolve(relativeOutputPath);
     FileUtils.deleteDirectory(outputPath.toFile());

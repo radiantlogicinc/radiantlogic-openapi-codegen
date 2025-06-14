@@ -190,9 +190,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     property.isEnumRef = true;
   }
 
+  private static boolean hasEnumRefProps(@NonNull final CodegenProperty property) {
+    return !property.isEnum && !property.isInnerEnum && property.isEnumRef;
+  }
+
   private static void ensureChildModelPropertyNotInnerEnum(
       @NonNull final CodegenProperty parentEnumProperty,
       @NonNull final CodegenProperty matchingChildProperty) {
+    // If the property is already an enum ref, don't re-assign it
+    if (hasEnumRefProps(matchingChildProperty)) {
+      return;
+    }
+
     setEnumRefProps(matchingChildProperty);
     matchingChildProperty.dataType = parentEnumProperty.dataType;
     matchingChildProperty.datatypeWithEnum = parentEnumProperty.datatypeWithEnum;
@@ -232,7 +241,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               setEnumRefProps(var);
                               ensureChildModelHasNoInlineEnums(var, model);
                             })
-                        .map(DataconnectorJavaClientCodegen::createEnumModel))
+                        .map(
+                            var -> {
+                              System.out.println("FROM PARENT");
+                              System.out.println(
+                                  "PARENT MODEL: "
+                                      + model.parentModel.classname); // TODO delete this
+                              System.out.println("VAR: " + var.baseName); // TODO delete this
+                              return createEnumModel(var); // TODO this is the problem
+                            }))
             .toList();
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         allModels.stream()
@@ -255,7 +272,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                       ensureChildModelHasNoInlineEnums(var, childModel);
                                     });
 
-                            return createEnumModel(var);
+                            System.out.println("FROM DISCRIMINATOR PARENT");
+                            System.out.println(
+                                "PARENT MODEL: " + model.classname); // TODO delete this
+                            System.out.println("VAR: " + var.baseName); // TODO delete this
+                            return createEnumModel(var); // TODO this is the problem
                           });
                 })
             .toList();

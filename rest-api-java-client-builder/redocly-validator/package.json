@@ -1,6 +1,9 @@
 {
   "name": "spec-validator",
   "version": "1.0.0",
+  "scripts": {
+    "lint": "redocly lint"
+  },
   "dependencies": {
     "@redocly/cli": "^1.25.11"
   }

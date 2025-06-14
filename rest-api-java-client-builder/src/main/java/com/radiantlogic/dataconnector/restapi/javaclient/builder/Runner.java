@@ -27,6 +27,9 @@ public class Runner {
    * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
    * This program generates a properties file at compile time with the maven-resources-plugin, which
    * is necessary.
+   *
+   * <p>In addition, make sure the IntelliJ working directory is set to
+   * rest-api-java-client-builder.
    */
   public static void main(final String[] args) {
     try {

@@ -39,38 +39,27 @@ public class CodeGenerator {
     log.debug("Performing code generation");
     final DataconnectorJavaClientCodegen codegen =
         new DataconnectorJavaClientCodegen(openAPI, args);
-    prepareOutputDirectory(codegen.getOutputDir());
+    prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
     new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
   }
 
-  private void prepareOutputDirectory(final String outputDir) {
+  private void prepareOutputDirectory(
+      @NonNull final String outputDir, @NonNull final List<String> ignorePatterns) {
     try {
       final Path path = Path.of(outputDir);
       if (Files.exists(path)) {
         FileUtils.deleteDirectory(path.toFile());
       }
       Files.createDirectories(path);
-      writeIgnorePatterns(path);
+      writeIgnorePatterns(path, ignorePatterns);
     } catch (final IOException ex) {
       throw new IllegalStateException(
           "Unable to prepare output directory: %s".formatted(outputDir), ex);
     }
   }
 
-  private void writeIgnorePatterns(final Path outputDir) {
-    final List<String> ignorePatterns =
-        List.of(
-            ".travis.yml",
-            "gradle/**",
-            "build.gradle",
-            "build.sbt",
-            "git_push.sh",
-            "gradle.properties",
-            "gradlew",
-            "gradlew.bat",
-            "settings.gradle",
-            "src/main/AndroidManifest.xml",
-            "src/test/**");
+  private void writeIgnorePatterns(
+      @NonNull final Path outputDir, @NonNull final List<String> ignorePatterns) {
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {
       Files.write(ignoreFile, ignorePatterns);

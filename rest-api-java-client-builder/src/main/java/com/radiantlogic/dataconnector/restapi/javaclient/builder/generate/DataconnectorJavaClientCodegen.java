@@ -35,6 +35,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     init(args);
   }
 
+  public List<String> getIgnorePatterns() {
+    return List.of(
+        ".travis.yml",
+        "gradle/**",
+        "build.gradle",
+        "build.sbt",
+        "git_push.sh",
+        "gradle.properties",
+        "gradlew",
+        "gradlew.bat",
+        "settings.gradle",
+        "src/main/AndroidManifest.xml",
+        "src/test/**");
+  }
+
   private static String ensureValidPackageName(@NonNull final String packageName) {
     return packageName.replaceAll("[^a-zA-Z0-9]", "");
   }

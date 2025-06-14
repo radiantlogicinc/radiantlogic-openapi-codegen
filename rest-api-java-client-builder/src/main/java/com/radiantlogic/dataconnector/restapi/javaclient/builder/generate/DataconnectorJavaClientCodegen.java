@@ -95,6 +95,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setUseOneOfDiscriminatorLookup(true);
     setLegacyDiscriminatorBehavior(true);
     setUseEnumCaseInsensitive(false);
+    setOpenApiNullable(false);
 
     setTemplateDir("templates");
     setLibrary("resttemplate");

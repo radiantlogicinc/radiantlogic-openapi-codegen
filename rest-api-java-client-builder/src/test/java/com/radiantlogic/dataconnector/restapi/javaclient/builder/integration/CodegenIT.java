@@ -15,7 +15,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-/** Integration tests that validate this codegen against various openapi specifications. */
+/**
+ * Integration tests that validate this codegen against various openapi specifications. If run via
+ * IntelliJ, this will not work unless you do the following:
+ *
+ * <p>1. Open the run configuration for the test.
+ *
+ * <p>2. Select Modify Options -> Before Launch Task
+ *
+ * <p>3. Add a new task, "Add Maven Goal"
+ *
+ * <p>4. The "command line options" should be "generate-resources"
+ *
+ * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
+ * This test depends on a properties file generated at compile time with the maven-resources-plugin,
+ * which is necessary.
+ */
 public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
@@ -32,21 +47,6 @@ public class CodegenIT {
             "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT"));
   }
 
-  /**
-   * If run via IntelliJ, this will not work unless you do the following:
-   *
-   * <p>1. Open the run configuration for the test.
-   *
-   * <p>2. Select Modify Options -> Before Launch Task
-   *
-   * <p>3. Add a new task, "Add Maven Goal"
-   *
-   * <p>4. The "command line options" should be "generate-resources"
-   *
-   * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
-   * This test depends on a properties file generated at compile time with the
-   * maven-resources-plugin, which is necessary.
-   */
   @ParameterizedTest(name = "Generates and builds code for {0}")
   @MethodSource("codegenArgs")
   @SneakyThrows

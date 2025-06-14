@@ -247,10 +247,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               final CodegenModel model = ModelUtils.getModelByName(key, objs);
               if (model.parentModel != null) {
                 model.parentModel.vars.stream()
-                    .filter(var -> var.isEnum)
+                    .filter(var -> var.isEnum || var.isEnumRef)
                     .forEach(
                         var -> {
                           var.isEnum = false;
+                          var.isInnerEnum = false;
                           var.isEnumRef = true;
                           model.vars.stream()
                               .filter(childVar -> childVar.baseName.equals(var.baseName))
@@ -258,20 +259,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               .ifPresent(
                                   childVar -> {
                                     childVar.isEnum = false;
+                                    childVar.isInnerEnum = false;
                                     childVar.isEnumRef = true;
+                                    childVar.dataType = var.dataType;
+                                    childVar.datatypeWithEnum = var.datatypeWithEnum;
+                                    childVar.openApiType = var.openApiType;
                                   });
                           newOnes.add(createEnumModel(var));
                         });
               }
 
               if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-                // TODO if property is enumRef already, this code doesn't run
                 model.vars.stream()
-                    .filter(var -> var.isEnum || var.isEnumRef) // TODO if this works, apply above
+                    .filter(var -> var.isEnum || var.isEnumRef)
                     .forEach(
                         var -> {
                           var.isEnum = false;
-                          var.isInnerEnum = false; // TODO if works, apply above
+                          var.isInnerEnum = false;
                           var.isEnumRef = true;
                           model.discriminator.getMappedModels().stream()
                               .forEach(
@@ -284,8 +288,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                         .ifPresent(
                                             childVar -> {
                                               childVar.isEnum = false;
-                                              childVar.isInnerEnum =
-                                                  false; // TODO if works, apply above
+                                              childVar.isInnerEnum = false;
                                               childVar.isEnumRef = true;
                                               childVar.dataType = var.dataType;
                                               childVar.datatypeWithEnum = var.datatypeWithEnum;

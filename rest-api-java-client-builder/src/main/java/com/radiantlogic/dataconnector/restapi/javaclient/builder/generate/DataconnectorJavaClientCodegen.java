@@ -51,7 +51,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private static String ensureValidPackageName(@NonNull final String packageName) {
-    return packageName.replaceAll("[^a-zA-Z0-9]", "");
+    return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }
 
   private void init(@NonNull final Args args) {

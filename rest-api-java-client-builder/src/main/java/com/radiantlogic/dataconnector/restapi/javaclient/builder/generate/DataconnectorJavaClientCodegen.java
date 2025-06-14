@@ -283,7 +283,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .collect(
                 Collectors.toMap(
                     CodegenModel::getClassname,
-                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase)));
+                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
+                    (a, b) -> b));
     allModelMaps.putAll(allNewEnumModels);
 
     return super.postProcessAllModels(allModelMaps);

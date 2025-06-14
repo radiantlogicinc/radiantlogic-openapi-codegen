@@ -98,9 +98,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     setTemplateDir("templates");
     setLibrary("resttemplate");
-
-    // TODO need to not be fat jar
-    // TODO needs to be unsigned
   }
 
   @Override

@@ -193,25 +193,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return result;
   }
 
-  @Override
-  public CodegenProperty fromProperty(
-      final String name,
-      final Schema p,
-      final boolean required,
-      final boolean schemaIsFromAdditionalProperties) {
-    return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
-  }
-
-  @Override
-  protected void addVars(
-      final CodegenModel m,
-      final Map<String, Schema> properties,
-      final List<String> required,
-      final Map<String, Schema> allProperties,
-      final List<String> allRequired) {
-    super.addVars(m, properties, required, allProperties, allRequired);
-  }
-
   private CodegenModel createEnumModel(final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
 

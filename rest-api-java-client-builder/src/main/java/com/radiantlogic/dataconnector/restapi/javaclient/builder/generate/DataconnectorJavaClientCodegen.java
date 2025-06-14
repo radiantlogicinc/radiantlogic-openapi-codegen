@@ -229,11 +229,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return childProperty.baseName.equals(parentProperty.baseName);
   }
 
+  private static void setEnumRefProps(final CodegenProperty property) {
+    property.isEnum = false;
+    property.isInnerEnum = false;
+    property.isEnumRef = true;
+  }
+
   private static void ensureChildNotInnerEnum(
       final CodegenProperty parentProperty, final CodegenProperty childProperty) {
-    childProperty.isEnum = false;
-    childProperty.isInnerEnum = false;
-    childProperty.isEnumRef = true;
+    setEnumRefProps(childProperty);
     childProperty.dataType = parentProperty.dataType;
     childProperty.datatypeWithEnum = parentProperty.datatypeWithEnum;
     childProperty.openApiType = parentProperty.openApiType;
@@ -252,9 +256,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     .filter(DataconnectorJavaClientCodegen::isEnumProperty)
                     .forEach(
                         var -> {
-                          var.isEnum = false;
-                          var.isInnerEnum = false;
-                          var.isEnumRef = true;
+                          setEnumRefProps(var);
                           model.vars.stream()
                               .filter(childVar -> isSamePropertyInChild(var, childVar))
                               .findFirst()
@@ -268,9 +270,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     .filter(DataconnectorJavaClientCodegen::isEnumProperty)
                     .forEach(
                         var -> {
-                          var.isEnum = false;
-                          var.isInnerEnum = false;
-                          var.isEnumRef = true;
+                          setEnumRefProps(var);
                           model.discriminator.getMappedModels().stream()
                               .forEach(
                                   mappedModel -> {

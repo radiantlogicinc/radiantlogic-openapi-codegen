@@ -8,11 +8,6 @@
     <version>{{artifactVersion}}</version>
     <url>{{artifactUrl}}</url>
     <description>{{artifactDescription}}</description>
-    <scm>
-        <connection>{{scmConnection}}</connection>
-        <developerConnection>{{scmDeveloperConnection}}</developerConnection>
-        <url>{{scmUrl}}</url>
-    </scm>
     {{#parentOverridden}}
         <parent>
             <groupId>{{{parentGroupId}}}</groupId>
@@ -28,15 +23,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <name>{{developerName}}</name>
-            <email>{{developerEmail}}</email>
-            <organization>{{developerOrganization}}</organization>
-            <organizationUrl>{{developerOrganizationUrl}}</organizationUrl>
-        </developer>
-    </developers>
 
     <build>
         <plugins>

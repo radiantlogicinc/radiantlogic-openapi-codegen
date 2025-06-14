@@ -93,11 +93,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setLegacyDiscriminatorBehavior(true);
     setUseEnumCaseInsensitive(false);
     setOpenApiNullable(false);
+    setLicenseName("The Apache Software License, Version 2.0");
+    setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.txt");
 
     setTemplateDir("templates");
     setLibrary("resttemplate");
 
-    // TODO need to fix the scm output
     // TODO need to fix the license output
     // TODO need to fix the dev output
     // TODO need to not be fat jar

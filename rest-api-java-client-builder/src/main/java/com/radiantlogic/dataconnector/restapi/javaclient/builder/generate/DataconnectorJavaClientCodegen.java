@@ -220,41 +220,52 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return modelsMap;
   }
 
+  private static boolean isEnumProperty(final CodegenProperty codegenProperty) {
+    return codegenProperty.isEnum || codegenProperty.isEnumRef || codegenProperty.isInnerEnum;
+  }
+
+  private static boolean isSamePropertyInChild(
+      final CodegenProperty parentProperty, final CodegenProperty childProperty) {
+    return childProperty.baseName.equals(parentProperty.baseName);
+  }
+
+  private static void ensureChildNotInnerEnum(
+      final CodegenProperty parentProperty, final CodegenProperty childProperty) {
+    childProperty.isEnum = false;
+    childProperty.isInnerEnum = false;
+    childProperty.isEnumRef = true;
+    childProperty.dataType = parentProperty.dataType;
+    childProperty.datatypeWithEnum = parentProperty.datatypeWithEnum;
+    childProperty.openApiType = parentProperty.openApiType;
+  }
+
   // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
-    final List<CodegenModel> newOnes = new ArrayList<>();
+    final List<CodegenModel> newEnums = new ArrayList<>();
     objs.keySet().stream()
         .forEach(
             key -> {
               final CodegenModel model = ModelUtils.getModelByName(key, objs);
               if (model.parentModel != null) {
                 model.parentModel.vars.stream()
-                    .filter(var -> var.isEnum || var.isEnumRef)
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
                     .forEach(
                         var -> {
                           var.isEnum = false;
                           var.isInnerEnum = false;
                           var.isEnumRef = true;
                           model.vars.stream()
-                              .filter(childVar -> childVar.baseName.equals(var.baseName))
+                              .filter(childVar -> isSamePropertyInChild(var, childVar))
                               .findFirst()
-                              .ifPresent(
-                                  childVar -> {
-                                    childVar.isEnum = false;
-                                    childVar.isInnerEnum = false;
-                                    childVar.isEnumRef = true;
-                                    childVar.dataType = var.dataType;
-                                    childVar.datatypeWithEnum = var.datatypeWithEnum;
-                                    childVar.openApiType = var.openApiType;
-                                  });
-                          newOnes.add(createEnumModel(var));
+                              .ifPresent(childVar -> ensureChildNotInnerEnum(var, childVar));
+                          newEnums.add(createEnumModel(var));
                         });
               }
 
               if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
                 model.vars.stream()
-                    .filter(var -> var.isEnum || var.isEnumRef)
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
                     .forEach(
                         var -> {
                           var.isEnum = false;
@@ -266,20 +277,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                     final CodegenModel childModel =
                                         ModelUtils.getModelByName(mappedModel.getModelName(), objs);
                                     childModel.vars.stream()
-                                        .filter(childVar -> childVar.baseName.equals(var.baseName))
+                                        .filter(childVar -> isSamePropertyInChild(var, childVar))
                                         .findFirst()
                                         .ifPresent(
-                                            childVar -> {
-                                              childVar.isEnum = false;
-                                              childVar.isInnerEnum = false;
-                                              childVar.isEnumRef = true;
-                                              childVar.dataType = var.dataType;
-                                              childVar.datatypeWithEnum = var.datatypeWithEnum;
-                                              childVar.openApiType = var.openApiType;
-                                            });
+                                            childVar -> ensureChildNotInnerEnum(var, childVar));
                                   });
 
-                          newOnes.add(createEnumModel(var));
+                          newEnums.add(createEnumModel(var));
                         });
                 model
                     .discriminator
@@ -295,7 +299,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
 
     final ModelsMap enumModelBase = objs.get(objs.keySet().stream().findFirst().orElseThrow());
-    newOnes.forEach(
+    newEnums.forEach(
         enumModel -> {
           final ModelsMap enumModelsMap = enumModelToModelsMap(enumModel, enumModelBase);
           objs.put(enumModel.classname, enumModelsMap);

@@ -220,7 +220,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return model.discriminator != null && model.discriminator.getMappedModels() != null;
   }
 
-  // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
@@ -263,7 +262,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                               mappedModel.getModelName(), allModelMaps);
                                       ensureChildModelHasNoInlineEnums(var, childModel);
                                     });
-                            return createEnumModel(var); // TODO this is the problem
+                            return createEnumModel(var);
                           });
                 })
             .toList();

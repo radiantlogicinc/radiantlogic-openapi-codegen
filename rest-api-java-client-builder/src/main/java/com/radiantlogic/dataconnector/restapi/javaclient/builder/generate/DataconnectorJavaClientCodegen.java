@@ -247,12 +247,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                   final CodegenModel childModel =
                                       ModelUtils.getModelByName(
                                           mappedModel.getModelName(), allModelMaps);
-                                  childModel.vars.stream()
-                                      .filter(childVar -> isSamePropertyInChild(var, childVar))
-                                      .findFirst()
-                                      .ifPresent(
-                                          childVar ->
-                                              ensureChildModelPropertyNotInnerEnum(var, childVar));
+                                  ensureChildModelHasNoInlineEnums(var, childModel);
                                 });
 
                         newEnums.add(createEnumModel(var));

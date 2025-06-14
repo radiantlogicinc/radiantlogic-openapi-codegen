@@ -124,7 +124,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   @Override
-  public CodegenModel fromModel(final String name, final Schema model) {
+  public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
     if (result.discriminator != null) {
       result.getVars().stream()
@@ -135,7 +135,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return result;
   }
 
-  private CodegenModel createEnumModel(final CodegenProperty enumProp) {
+  private CodegenModel createEnumModel(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
 
     final String typeName;
@@ -160,7 +160,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return enumModel;
   }
 
-  private ModelsMap enumModelToModelsMap(final CodegenModel enumModel, final ModelsMap base) {
+  private ModelsMap enumModelToModelsMap(
+      @NonNull final CodegenModel enumModel, @NonNull final ModelsMap base) {
     final ModelsMap modelsMap = new ModelsMap();
     modelsMap.putAll(base);
 
@@ -172,23 +173,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return modelsMap;
   }
 
-  private static boolean isEnumProperty(final CodegenProperty codegenProperty) {
+  private static boolean isEnumProperty(@NonNull final CodegenProperty codegenProperty) {
     return codegenProperty.isEnum || codegenProperty.isEnumRef || codegenProperty.isInnerEnum;
   }
 
   private static boolean isSamePropertyInChild(
-      final CodegenProperty parentProperty, final CodegenProperty childProperty) {
+      @NonNull final CodegenProperty parentProperty, @NonNull final CodegenProperty childProperty) {
     return childProperty.baseName.equals(parentProperty.baseName);
   }
 
-  private static void setEnumRefProps(final CodegenProperty property) {
+  private static void setEnumRefProps(@NonNull final CodegenProperty property) {
     property.isEnum = false;
     property.isInnerEnum = false;
     property.isEnumRef = true;
   }
 
   private static void ensureChildNotInnerEnum(
-      final CodegenProperty parentProperty, final CodegenProperty childProperty) {
+      @NonNull final CodegenProperty parentProperty, @NonNull final CodegenProperty childProperty) {
     setEnumRefProps(childProperty);
     childProperty.dataType = parentProperty.dataType;
     childProperty.datatypeWithEnum = parentProperty.datatypeWithEnum;
@@ -197,12 +198,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO cleanup
   @Override
-  public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
+  public Map<String, ModelsMap> postProcessAllModels(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    final List<CodegenModel> allModels =
+        allModelMaps.keySet().stream()
+            .map(key -> ModelUtils.getModelByName(key, allModelMaps))
+            .toList();
+
     final List<CodegenModel> newEnums = new ArrayList<>();
-    objs.keySet().stream()
+    allModelMaps.keySet().stream()
         .forEach(
             key -> {
-              final CodegenModel model = ModelUtils.getModelByName(key, objs);
+              final CodegenModel model = ModelUtils.getModelByName(key, allModelMaps);
               if (model.parentModel != null) {
                 model.parentModel.vars.stream()
                     .filter(DataconnectorJavaClientCodegen::isEnumProperty)
@@ -227,7 +234,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               .forEach(
                                   mappedModel -> {
                                     final CodegenModel childModel =
-                                        ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                                        ModelUtils.getModelByName(
+                                            mappedModel.getModelName(), allModelMaps);
                                     childModel.vars.stream()
                                         .filter(childVar -> isSamePropertyInChild(var, childVar))
                                         .findFirst()
@@ -243,20 +251,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     .forEach(
                         mappedModel -> {
                           final CodegenModel childModel =
-                              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
+                              ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
                           childModel.vendorExtensions.put(
                               "x-discriminator-mapping-value", mappedModel.getMappingName());
                         });
               }
             });
 
-    final ModelsMap enumModelBase = objs.get(objs.keySet().stream().findFirst().orElseThrow());
+    final ModelsMap enumModelBase =
+        allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
     newEnums.forEach(
         enumModel -> {
           final ModelsMap enumModelsMap = enumModelToModelsMap(enumModel, enumModelBase);
-          objs.put(enumModel.classname, enumModelsMap);
+          allModelMaps.put(enumModel.classname, enumModelsMap);
         });
 
-    return super.postProcessAllModels(objs);
+    return super.postProcessAllModels(allModelMaps);
   }
 }

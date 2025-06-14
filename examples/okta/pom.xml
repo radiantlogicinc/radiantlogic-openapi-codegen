@@ -13,4 +13,8 @@
 
     <artifactId>okta-example</artifactId>
     <version>${revision}</version>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
 </project>

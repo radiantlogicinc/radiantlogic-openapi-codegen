@@ -34,9 +34,6 @@ import org.openapitools.codegen.utils.ModelUtils;
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
 
-  private final Map<String, CodegenModel> modelsByClassName = new HashMap<>();
-  private final Map<String, Schema> schemasByClassName = new HashMap<>();
-
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
     init(args);
@@ -183,10 +180,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           .findFirst()
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
-
-    // TODO do I need these? unclear
-    modelsByClassName.put(result.classname, result);
-    schemasByClassName.put(result.classname, model);
     return result;
   }
 

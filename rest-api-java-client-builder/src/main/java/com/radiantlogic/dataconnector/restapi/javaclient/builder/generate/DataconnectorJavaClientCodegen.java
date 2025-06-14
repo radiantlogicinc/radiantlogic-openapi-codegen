@@ -265,18 +265,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .toList();
   }
 
-  @Override
-  public Map<String, ModelsMap> postProcessAllModels(
+  private void handleDiscriminatorChildMappingValues(
+      @NonNull final Collection<CodegenModel> allModels,
       @NonNull final Map<String, ModelsMap> allModelMaps) {
-    final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
-
-    // Parent/child should come before discriminator parent/child due to certain edge cases
-    // The one that runs first is the one that will modify the children
-    final List<CodegenModel> newEnumsFromParentModels =
-        handleInheritedEnumsFromParentModels(allModels);
-    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
-        handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
-
     allModels.stream()
         .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
         .forEach(
@@ -292,6 +283,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                             "x-discriminator-mapping-value", mappedModel.getMappingName());
                       });
             });
+  }
+
+  @Override
+  public Map<String, ModelsMap> postProcessAllModels(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
+
+    // Parent/child should come before discriminator parent/child due to certain edge cases
+    // The one that runs first is the one that will modify the children
+    final List<CodegenModel> newEnumsFromParentModels =
+        handleInheritedEnumsFromParentModels(allModels);
+    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
+        handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+
+    handleDiscriminatorChildMappingValues(allModels, allModelMaps);
 
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());

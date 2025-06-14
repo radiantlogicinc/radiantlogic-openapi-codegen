@@ -7,12 +7,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Integration tests that validate this codegen against various openapi specifications. If run via
@@ -33,18 +31,6 @@ import org.junit.jupiter.params.provider.Arguments;
 public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
-
-  static Stream<Arguments> codegenArgs() {
-    return Stream.of(
-        Arguments.arguments("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1"),
-        Arguments.arguments(
-            "okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1"),
-        Arguments.arguments(
-            "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1"),
-        Arguments.arguments(
-            "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml",
-            "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT"));
-  }
 
   @Test
   void oktaIdpMinimal() {

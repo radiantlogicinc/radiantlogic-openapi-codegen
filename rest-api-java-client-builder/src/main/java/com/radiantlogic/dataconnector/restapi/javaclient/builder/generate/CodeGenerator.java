@@ -50,9 +50,32 @@ public class CodeGenerator {
         FileUtils.deleteDirectory(path.toFile());
       }
       Files.createDirectories(path);
+      writeIgnorePatterns(path);
     } catch (final IOException ex) {
       throw new IllegalStateException(
           "Unable to prepare output directory: %s".formatted(outputDir), ex);
+    }
+  }
+
+  private void writeIgnorePatterns(final Path outputDir) {
+    final List<String> ignorePatterns =
+        List.of(
+            ".travis.yml",
+            "gradle/**",
+            "build.gradle",
+            "build.sbt",
+            "git_push.sh",
+            "gradle.properties",
+            "gradlew",
+            "gradlew.bat",
+            "settings.gradle",
+            "src/main/AndroidManifest.xml",
+            "src/test/**");
+    final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
+    try {
+      Files.write(ignoreFile, ignorePatterns);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

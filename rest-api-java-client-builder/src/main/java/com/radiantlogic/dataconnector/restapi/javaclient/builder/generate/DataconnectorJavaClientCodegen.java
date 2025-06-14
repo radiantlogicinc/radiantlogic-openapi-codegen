@@ -5,8 +5,6 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,39 +35,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     init(args);
   }
 
-  private void writeIgnorePatterns(final Path outputDir) {
-    final List<String> ignorePatterns =
-        List.of(
-            ".travis.yml",
-            "gradle/**",
-            "build.gradle",
-            "build.sbt",
-            "git_push.sh",
-            "gradle.properties",
-            "gradlew",
-            "gradlew.bat",
-            "settings.gradle",
-            "src/main/AndroidManifest.xml",
-            "src/test/**");
-    final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
-    try {
-      Files.write(ignoreFile, ignorePatterns);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  private static String ensureValidPackageName(@NonNull final String packageName) {
+    return packageName.replaceAll("[^a-zA-Z0-9]", "");
   }
 
   private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    writeIgnorePatterns(outputDir);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
-    // TODO need to validate groupId
-    setApiPackage("%s.api".formatted(args.groupId()));
-    setModelPackage("%s.model".formatted(args.groupId()));
-    setInvokerPackage("%s.invoker".formatted(args.groupId()));
+    final String basePackage =
+        ensureValidPackageName("%s.%s".formatted(getGroupId(), ensureValidPackageName(title)));
+    setApiPackage("%s.api".formatted(basePackage));
+    setModelPackage("%s.model".formatted(basePackage));
+    setInvokerPackage("%s.invoker".formatted(basePackage));
     setArtifactId(title);
     setArtifactVersion(version);
     setDisallowAdditionalPropertiesIfNotPresent(false);

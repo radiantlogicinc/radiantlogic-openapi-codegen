@@ -6,15 +6,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class OpenapiValidator {
   private static final Path VALIDATOR_PATH =
       Paths.get(System.getProperty("user.dir"), "redocly-validator");
   private static final Duration VALIDATION_WAIT_TIME = Duration.ofMinutes(2);
 
-  public void validate(@NonNull final Args args) {
+  @NonNull private final Args args;
+
+  public void validate() {
     if (!args.doValidate()) {
       log.info("Skipping validation of openapi specification");
     }

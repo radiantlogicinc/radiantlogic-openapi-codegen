@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -220,28 +221,29 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return model.discriminator != null && model.discriminator.getMappedModels() != null;
   }
 
+  private static List<CodegenModel> getNewEnumsFromParentModels(
+      @NonNull final Collection<CodegenModel> allModels) {
+    return allModels.stream()
+        .filter(model -> model.parentModel != null)
+        .flatMap(
+            model ->
+                model.parentModel.vars.stream()
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .peek(
+                        var -> {
+                          setEnumRefProps(var);
+                          ensureChildModelHasNoInlineEnums(var, model);
+                        })
+                    .map(DataconnectorJavaClientCodegen::createEnumModel))
+        .toList();
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
-    final List<CodegenModel> allModels =
-        allModelMaps.keySet().stream()
-            .map(key -> ModelUtils.getModelByName(key, allModelMaps))
-            .toList();
+    final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
 
-    final List<CodegenModel> newEnumsFromParentModels =
-        allModels.stream()
-            .filter(model -> model.parentModel != null)
-            .flatMap(
-                model ->
-                    model.parentModel.vars.stream()
-                        .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                        .peek(
-                            var -> {
-                              setEnumRefProps(var);
-                              ensureChildModelHasNoInlineEnums(var, model);
-                            })
-                        .map(DataconnectorJavaClientCodegen::createEnumModel))
-            .toList();
+    final List<CodegenModel> newEnumsFromParentModels = getNewEnumsFromParentModels(allModels);
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         allModels.stream()
             .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)

@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.CodegenModel;
@@ -275,11 +277,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
-    newEnums.forEach(
-        enumModel -> {
-          final ModelsMap enumModelsMap = enumModelToModelsMap(enumModel, enumModelBase);
-          allModelMaps.put(enumModel.classname, enumModelsMap);
-        });
+    final Map<String, ModelsMap> allNewEnumModels =
+        Stream.concat(
+                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
+            .collect(
+                Collectors.toMap(
+                    CodegenModel::getClassname,
+                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase)));
+    allModelMaps.putAll(allNewEnumModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

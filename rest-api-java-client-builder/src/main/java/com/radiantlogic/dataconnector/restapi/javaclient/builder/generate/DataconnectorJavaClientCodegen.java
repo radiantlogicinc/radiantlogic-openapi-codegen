@@ -60,23 +60,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     }
   }
 
+  private void prepareOutputDirectory() throws IOException {
+    final Path path = Path.of(getOutputDir());
+    if (Files.exists(path)) {
+      FileUtils.deleteDirectory(path.toFile());
+    }
+    Files.createDirectories(outputDir);
+  }
+
   private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    if (Files.exists(outputDir)) { // TODO move to post-init
-      try {
-        FileUtils.deleteDirectory(outputDir.toFile());
-      } catch (IOException ex) {
-        throw new RuntimeException(
-            "Unable to delete existing output directory: %s".formatted(outputDir), ex);
-      }
-    }
-    try {
-      Files.createDirectories(outputDir);
-    } catch (IOException e) {
-      throw new RuntimeException(e); // TODO cleanup
-    }
     writeIgnorePatterns(outputDir);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());

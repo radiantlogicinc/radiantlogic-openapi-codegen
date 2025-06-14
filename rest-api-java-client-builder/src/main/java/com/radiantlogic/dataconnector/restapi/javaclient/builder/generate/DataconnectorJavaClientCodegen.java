@@ -49,6 +49,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             "gradlew",
             "gradlew.bat",
             "settings.gradle",
+            "src/AndroidManifest.xml",
             "src/test/**");
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {

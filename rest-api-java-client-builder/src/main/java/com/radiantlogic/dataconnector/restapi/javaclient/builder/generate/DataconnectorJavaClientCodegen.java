@@ -113,6 +113,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
+    printDebugMessage(result.classname, "MODEL: a" + "" + result);
     if (result.discriminator != null) {
       result.getVars().stream()
           .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
@@ -120,6 +121,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
     return result;
+  }
+
+  // TODO delete this
+  private void printDebugMessage(@NonNull final String name, final String message) {
+    if (name.equals("ByDateTimeExpiry")) {
+      System.out.println(message);
+    }
   }
 
   // TODO copied from parent

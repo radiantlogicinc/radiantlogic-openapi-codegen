@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
-import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -58,14 +57,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private void prepareOutputDirectory() throws IOException {
-    final Path path = Path.of(getOutputDir());
-    if (Files.exists(path)) {
-      FileUtils.deleteDirectory(path.toFile());
-    }
-    Files.createDirectories(path);
   }
 
   private void init(@NonNull final Args args) {

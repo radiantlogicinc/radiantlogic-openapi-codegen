@@ -50,7 +50,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             "gradlew",
             "gradlew.bat",
             "settings.gradle",
-            "src/AndroidManifest.xml",
+            "src/main/AndroidManifest.xml",
             "src/test/**");
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {
@@ -279,6 +279,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                       mappedModel -> {
                         final CodegenModel childModel =
                             ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
+                        // This is a special extension used in the template to ensure the correct
+                        // mapping value in the JsonTypeName annotation
                         childModel.vendorExtensions.put(
                             "x-discriminator-mapping-value", mappedModel.getMappingName());
                       });

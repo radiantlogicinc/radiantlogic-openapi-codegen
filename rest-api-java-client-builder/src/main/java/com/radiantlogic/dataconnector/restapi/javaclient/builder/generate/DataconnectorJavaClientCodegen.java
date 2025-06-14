@@ -104,10 +104,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     // TODO needs to be unsigned
   }
 
-  // TODO this is to prevent an NPE
   @Override
   public void postProcessModelProperty(final CodegenModel model, final CodegenProperty property) {
     super.postProcessModelProperty(model, property);
+    // This needs to be here because some schemas result in this property being null, but downstream
+    // code expects
+    // it to be present, and then boom NPE
     if (property.allowableValues == null) {
       property.allowableValues = new HashMap<>();
     }

@@ -218,16 +218,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         allModels.stream()
             .filter(model -> model.parentModel != null)
             .flatMap(
-                model -> {
-                  return model.parentModel.vars.stream()
-                      .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                      .peek(
-                          var -> {
-                            setEnumRefProps(var);
-                            ensureChildModelHasNoInlineEnums(var, model);
-                          })
-                      .map(DataconnectorJavaClientCodegen::createEnumModel);
-                })
+                model ->
+                    model.parentModel.vars.stream()
+                        .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                        .peek(
+                            var -> {
+                              setEnumRefProps(var);
+                              ensureChildModelHasNoInlineEnums(var, model);
+                            })
+                        .map(DataconnectorJavaClientCodegen::createEnumModel))
             .toList();
 
     final List<CodegenModel> newEnums = new ArrayList<>();

@@ -181,10 +181,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       result.getVars().stream()
           .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
           .findFirst()
-          .ifPresent(
-              prop -> {
-                result.discriminator.setPropertyType(prop.getDatatypeWithEnum());
-              });
+          .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
 
     // TODO do I need these? unclear

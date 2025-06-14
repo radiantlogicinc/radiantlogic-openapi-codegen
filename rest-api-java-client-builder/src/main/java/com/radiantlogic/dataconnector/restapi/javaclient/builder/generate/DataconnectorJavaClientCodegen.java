@@ -5,21 +5,17 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
-import org.apache.commons.io.FileUtils;
-import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -34,59 +30,40 @@ import org.openapitools.codegen.utils.ModelUtils;
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
 
-  private final Map<String, CodegenModel> modelsByClassName = new HashMap<>();
-  private final Map<String, Schema> schemasByClassName = new HashMap<>();
-
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
     init(args);
   }
 
-  private void writeIgnorePatterns(final Path outputDir) {
-    final List<String> ignorePatterns =
-        List.of(
-            ".travis.yml",
-            "gradle/**",
-            "build.gradle",
-            "build.sbt",
-            "git_push.sh",
-            "gradle.properties",
-            "gradlew",
-            "gradlew.bat",
-            "settings.gradle",
-            "src/test/**");
-    final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
-    try {
-      Files.write(ignoreFile, ignorePatterns);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public List<String> getIgnorePatterns() {
+    return List.of(
+        ".travis.yml",
+        "gradle/**",
+        "build.gradle",
+        "build.sbt",
+        "git_push.sh",
+        "gradle.properties",
+        "gradlew",
+        "gradlew.bat",
+        "settings.gradle",
+        "src/main/AndroidManifest.xml",
+        "src/test/**");
+  }
+
+  private static String ensureValidPackageName(@NonNull final String packageName) {
+    return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }
 
   private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    if (Files.exists(outputDir)) { // TODO move to post-init
-      try {
-        FileUtils.deleteDirectory(outputDir.toFile());
-      } catch (IOException ex) {
-        throw new RuntimeException(
-            "Unable to delete existing output directory: %s".formatted(outputDir), ex);
-      }
-    }
-    try {
-      Files.createDirectories(outputDir);
-    } catch (IOException e) {
-      throw new RuntimeException(e); // TODO cleanup
-    }
-    writeIgnorePatterns(outputDir);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
-    // TODO need to validate groupId
-    setApiPackage("%s.api".formatted(args.groupId()));
-    setModelPackage("%s.model".formatted(args.groupId()));
-    setInvokerPackage("%s.invoker".formatted(args.groupId()));
+    final String basePackage = "%s.%s".formatted(getGroupId(), ensureValidPackageName(title));
+    setApiPackage("%s.api".formatted(basePackage));
+    setModelPackage("%s.model".formatted(basePackage));
+    setInvokerPackage("%s.invoker".formatted(basePackage));
     setArtifactId(title);
     setArtifactVersion(version);
     setDisallowAdditionalPropertiesIfNotPresent(false);
@@ -96,21 +73,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     setLegacyDiscriminatorBehavior(true);
     setUseEnumCaseInsensitive(false);
     setOpenApiNullable(false);
+    setLicenseName("The Apache Software License, Version 2.0");
+    setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.txt");
 
     setTemplateDir("templates");
     setLibrary("resttemplate");
-
-    // TODO need to fix the scm output
-    // TODO need to fix the license output
-    // TODO need to fix the dev output
-    // TODO need to not be fat jar
-    // TODO needs to be unsigned
   }
 
-  // TODO this is to prevent an NPE
   @Override
   public void postProcessModelProperty(final CodegenModel model, final CodegenProperty property) {
     super.postProcessModelProperty(model, property);
+    // This needs to be here because some schemas result in this property being null, but downstream
+    // code expects
+    // it to be present, and then boom NPE
     if (property.allowableValues == null) {
       property.allowableValues = new HashMap<>();
     }
@@ -129,90 +104,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
-  // TODO document and fix
-  private static CodegenModel reconcileInlineEnums(
-      CodegenModel codegenModel, CodegenModel parentCodegenModel) {
-    // This generator uses inline classes to define enums, which breaks when
-    // dealing with models that have subTypes. To clean this up, we will analyze
-    // the parent and child models, look for enums that match, and remove
-    // them from the child models and leave them in the parent.
-    // Because the child models extend the parents, the enums will be available via the parent.
-
-    // Only bother with reconciliation if the parent model has enums.
-    if (!parentCodegenModel.hasEnums) {
-      return codegenModel;
-    }
-
-    // Get the properties for the parent and child models
-    final List<CodegenProperty> parentModelCodegenProperties = parentCodegenModel.vars;
-    List<CodegenProperty> codegenProperties = codegenModel.vars;
-
-    // Iterate over all of the parent model properties
-    boolean removedChildEnum = false;
-    for (CodegenProperty parentModelCodegenProperty : parentModelCodegenProperties) {
-      // Look for enums
-      if (parentModelCodegenProperty.isEnum) {
-        // Now that we have found an enum in the parent class,
-        // and search the child class for the same enum.
-        Iterator<CodegenProperty> iterator = codegenProperties.iterator();
-        while (iterator.hasNext()) {
-          CodegenProperty codegenProperty = iterator.next();
-          if (codegenProperty.isEnum
-              && codegenProperty.baseName.equals(parentModelCodegenProperty.baseName)) {
-            // We found an enum in the child class that is
-            // a duplicate of the one in the parent, so remove it.
-            iterator.remove();
-            removedChildEnum = true;
-          }
-        }
-      }
-    }
-
-    if (removedChildEnum) {
-      codegenModel.vars = codegenProperties;
-    }
-    return codegenModel;
-  }
-
   @Override
-  public CodegenModel fromModel(final String name, final Schema model) {
+  public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
     if (result.discriminator != null) {
       result.getVars().stream()
           .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
           .findFirst()
-          .ifPresent(
-              prop -> {
-                result.discriminator.setPropertyType(prop.getDatatypeWithEnum());
-              });
+          .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
-
-    // TODO do I need these? unclear
-    modelsByClassName.put(result.classname, result);
-    schemasByClassName.put(result.classname, model);
     return result;
   }
 
-  @Override
-  public CodegenProperty fromProperty(
-      final String name,
-      final Schema p,
-      final boolean required,
-      final boolean schemaIsFromAdditionalProperties) {
-    return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
-  }
-
-  @Override
-  protected void addVars(
-      final CodegenModel m,
-      final Map<String, Schema> properties,
-      final List<String> required,
-      final Map<String, Schema> allProperties,
-      final List<String> allRequired) {
-    super.addVars(m, properties, required, allProperties, allRequired);
-  }
-
-  private CodegenModel createEnumModel(final CodegenProperty enumProp) {
+  private static CodegenModel createEnumModel(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
 
     final String typeName;
@@ -237,122 +141,165 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return enumModel;
   }
 
-  // TODO cleanup
-  @Override
-  public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
-    final List<CodegenModel> newOnes = new ArrayList<>();
-    objs.keySet().stream()
-        .forEach(
-            key -> {
-              final CodegenModel model = ModelUtils.getModelByName(key, objs);
-              if (model.parentModel != null) {
-                model.parentModel.vars.stream()
-                    .filter(var -> var.isEnum || var.isEnumRef)
-                    .forEach(
-                        var -> {
-                          var.isEnum = false;
-                          var.isInnerEnum = false;
-                          var.isEnumRef = true;
-                          model.vars.stream()
-                              .filter(childVar -> childVar.baseName.equals(var.baseName))
-                              .findFirst()
-                              .ifPresent(
-                                  childVar -> {
-                                    childVar.isEnum = false;
-                                    childVar.isInnerEnum = false;
-                                    childVar.isEnumRef = true;
-                                    childVar.dataType = var.dataType;
-                                    childVar.datatypeWithEnum = var.datatypeWithEnum;
-                                    childVar.openApiType = var.openApiType;
-                                  });
-                          newOnes.add(createEnumModel(var));
-                        });
-              }
+  private ModelsMap enumModelToModelsMap(
+      @NonNull final CodegenModel enumModel, @NonNull final ModelsMap base) {
+    final ModelsMap modelsMap = new ModelsMap();
+    modelsMap.putAll(base);
 
-              if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-                model.vars.stream()
-                    .filter(var -> var.isEnum || var.isEnumRef)
-                    .forEach(
+    final String importPath = toModelImport(enumModel.classname);
+    final ModelMap modelMap = new ModelMap();
+    modelMap.setModel(enumModel);
+    modelMap.put("importPath", importPath);
+    modelsMap.setModels(List.of(modelMap));
+    return modelsMap;
+  }
+
+  private static boolean isEnumProperty(@NonNull final CodegenProperty codegenProperty) {
+    return codegenProperty.isEnum || codegenProperty.isEnumRef || codegenProperty.isInnerEnum;
+  }
+
+  private static boolean isSamePropertyInChild(
+      @NonNull final CodegenProperty parentProperty, @NonNull final CodegenProperty childProperty) {
+    return childProperty.baseName.equals(parentProperty.baseName);
+  }
+
+  private static void setEnumRefProps(@NonNull final CodegenProperty property) {
+    property.isEnum = false;
+    property.isInnerEnum = false;
+    property.isEnumRef = true;
+  }
+
+  private static boolean hasEnumRefProps(@NonNull final CodegenProperty property) {
+    return !property.isEnum && !property.isInnerEnum && property.isEnumRef;
+  }
+
+  private static void ensureChildModelPropertyNotInnerEnum(
+      @NonNull final CodegenProperty parentEnumProperty,
+      @NonNull final CodegenProperty matchingChildProperty) {
+    // If the property is already an enum ref, don't re-assign it
+    if (hasEnumRefProps(matchingChildProperty)) {
+      return;
+    }
+
+    setEnumRefProps(matchingChildProperty);
+    matchingChildProperty.dataType = parentEnumProperty.dataType;
+    matchingChildProperty.datatypeWithEnum = parentEnumProperty.datatypeWithEnum;
+    matchingChildProperty.openApiType = parentEnumProperty.openApiType;
+  }
+
+  private static void ensureChildModelHasNoInlineEnums(
+      @NonNull final CodegenProperty parentEnumProperty, @NonNull final CodegenModel childModel) {
+    childModel.vars.stream()
+        .filter(childVar -> isSamePropertyInChild(parentEnumProperty, childVar))
+        .findFirst()
+        .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
+  }
+
+  private static boolean hasDiscriminatorChildren(@NonNull final CodegenModel model) {
+    return model.discriminator != null && model.discriminator.getMappedModels() != null;
+  }
+
+  private static List<CodegenModel> handleInheritedEnumsFromParentModels(
+      @NonNull final Collection<CodegenModel> allModels) {
+    return allModels.stream()
+        .filter(model -> model.parentModel != null)
+        .flatMap(
+            model ->
+                model.parentModel.vars.stream()
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .peek(
                         var -> {
-                          var.isEnum = false;
-                          var.isInnerEnum = false;
-                          var.isEnumRef = true;
-                          model.discriminator.getMappedModels().stream()
+                          setEnumRefProps(var);
+                          ensureChildModelHasNoInlineEnums(var, model);
+                        })
+                    .map(DataconnectorJavaClientCodegen::createEnumModel))
+        .toList();
+  }
+
+  private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
+      @NonNull final Collection<CodegenModel> allModels,
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    return allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+        .flatMap(
+            model ->
+                model.vars.stream()
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .map(
+                        var -> {
+                          setEnumRefProps(var);
+                          model
+                              .discriminator
+                              .getMappedModels()
                               .forEach(
                                   mappedModel -> {
                                     final CodegenModel childModel =
-                                        ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                                    childModel.vars.stream()
-                                        .filter(childVar -> childVar.baseName.equals(var.baseName))
-                                        .findFirst()
-                                        .ifPresent(
-                                            childVar -> {
-                                              childVar.isEnum = false;
-                                              childVar.isInnerEnum = false;
-                                              childVar.isEnumRef = true;
-                                              childVar.dataType = var.dataType;
-                                              childVar.datatypeWithEnum = var.datatypeWithEnum;
-                                              childVar.openApiType = var.openApiType;
-                                            });
+                                        ModelUtils.getModelByName(
+                                            mappedModel.getModelName(), allModelMaps);
+                                    ensureChildModelHasNoInlineEnums(var, childModel);
                                   });
+                          return createEnumModel(var);
+                        }))
+        .toList();
+  }
 
-                          newOnes.add(createEnumModel(var));
-                        });
-                model
-                    .discriminator
-                    .getMappedModels()
-                    .forEach(
-                        mappedModel -> {
-                          final CodegenModel childModel =
-                              ModelUtils.getModelByName(mappedModel.getModelName(), objs);
-                          childModel.vendorExtensions.put(
-                              "x-discriminator-mapping-value", mappedModel.getMappingName());
-                        });
-              }
+  private void handleDiscriminatorChildMappingValues(
+      @NonNull final Collection<CodegenModel> allModels,
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+        .forEach(
+            model -> {
+              model
+                  .discriminator
+                  .getMappedModels()
+                  .forEach(
+                      mappedModel -> {
+                        final CodegenModel childModel =
+                            ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
+                        // This is a special extension used in the template to ensure the correct
+                        // mapping value in the JsonTypeName annotation
+                        childModel.vendorExtensions.put(
+                            "x-discriminator-mapping-value", mappedModel.getMappingName());
+                      });
             });
-
-    final String key = objs.keySet().stream().findFirst().orElseThrow();
-    newOnes.forEach(
-        model -> {
-          final ModelsMap modelsMap = new ModelsMap();
-          modelsMap.putAll(objs.get(key));
-
-          final String importPath = toModelImport(model.classname);
-          final ModelMap modelMap = new ModelMap();
-          modelMap.setModel(model);
-          modelMap.put("importPath", importPath);
-          modelsMap.setModels(List.of(modelMap));
-
-          objs.put(model.classname, modelsMap);
-        });
-
-    return super.postProcessAllModels(objs);
   }
 
-  // TODO cleanup
-  private void reconcileEnumsAllParents(
-      final CodegenModel model, final String parentName, final Map<String, ModelsMap> objs) {
-    if (parentName == null) {
-      return;
-    }
-
-    final CodegenModel parent = ModelUtils.getModelByName(parentName, objs);
-    if (parent == null) {
-      return;
-    }
-    reconcileInlineEnums(model, parent);
-    final String grandparentName = parent.getParent();
-    reconcileEnumsAllParents(model, grandparentName, objs);
+  private void addNewEnumModelMaps(
+      @NonNull final Map<String, ModelsMap> allModelMaps,
+      @NonNull final List<CodegenModel> newEnumsFromParentModels,
+      @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels) {
+    final ModelsMap enumModelBase =
+        allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
+    final Map<String, ModelsMap> allNewEnumModels =
+        Stream.concat(
+                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
+            .collect(
+                Collectors.toMap(
+                    CodegenModel::getClassname,
+                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
+                    // If there are two duplicate keys, they are duplicate models so handle it
+                    // gracefully
+                    (a, b) -> b));
+    allModelMaps.putAll(allNewEnumModels);
   }
 
-  private boolean isExplicitMapping(@NonNull final CodegenDiscriminator.MappedModel mappedModel) {
-    try {
-      final Field field =
-          CodegenDiscriminator.MappedModel.class.getDeclaredField("explicitMapping");
-      field.setAccessible(true);
-      return (boolean) field.get(mappedModel);
-    } catch (final ReflectiveOperationException ex) {
-      throw new RuntimeException("Failed to check for an explicit discriminator mapping", ex);
-    }
+  @Override
+  public Map<String, ModelsMap> postProcessAllModels(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
+
+    // Parent/child should come before discriminator parent/child due to certain edge cases
+    // The one that runs first is the one that will modify the children
+    final List<CodegenModel> newEnumsFromParentModels =
+        handleInheritedEnumsFromParentModels(allModels);
+    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
+        handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+    addNewEnumModelMaps(
+        allModelMaps, newEnumsFromParentModels, newEnumsFromDiscriminatorParentModels);
+
+    handleDiscriminatorChildMappingValues(allModels, allModelMaps);
+
+    return super.postProcessAllModels(allModelMaps);
   }
 }

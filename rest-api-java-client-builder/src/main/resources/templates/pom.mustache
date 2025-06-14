@@ -8,11 +8,6 @@
     <version>{{artifactVersion}}</version>
     <url>{{artifactUrl}}</url>
     <description>{{artifactDescription}}</description>
-    <scm>
-        <connection>{{scmConnection}}</connection>
-        <developerConnection>{{scmDeveloperConnection}}</developerConnection>
-        <url>{{scmUrl}}</url>
-    </scm>
     {{#parentOverridden}}
         <parent>
             <groupId>{{{parentGroupId}}}</groupId>
@@ -29,92 +24,8 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <name>{{developerName}}</name>
-            <email>{{developerEmail}}</email>
-            <organization>{{developerOrganization}}</organization>
-            <organizationUrl>{{developerOrganizationUrl}}</organizationUrl>
-        </developer>
-    </developers>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.0</version>
-                <executions>
-                    <execution>
-                        <id>enforce-maven</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>2.2.0</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <property>
-                            <name>loggerPath</name>
-                            <value>conf/log4j.properties</value>
-                        </property>
-                    </systemPropertyVariables>
-                    <argLine>-Xms512m -Xmx1500m</argLine>
-                    <parallel>methods</parallel>
-                    <reuseForks>false</reuseForks>
-                    <useUnlimitedThreads>true</useUnlimitedThreads>
-                </configuration>
-                <dependencies>
-                    <!--Custom provider and engine for Junit 5 to surefire-->
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit-version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- attach test jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -130,18 +41,6 @@
                         <configuration>
                             <sources>
                                 <source>src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add_test_sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/test/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -193,30 +92,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>sign-artifacts</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
@@ -335,14 +210,6 @@
             <version>${jakarta-annotation-version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -368,6 +235,5 @@
         {{#performBeanValidation}}
             <hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
         {{/performBeanValidation}}
-        <junit-version>5.10.2</junit-version>
     </properties>
 </project>

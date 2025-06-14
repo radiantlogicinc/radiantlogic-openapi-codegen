@@ -232,27 +232,31 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                             })
                         .map(DataconnectorJavaClientCodegen::createEnumModel))
             .toList();
-    allModels.stream()
-        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
-        .forEach(
-            model -> {
-              model.vars.stream()
-                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                  .forEach(
-                      var -> {
-                        setEnumRefProps(var);
-                        model.discriminator.getMappedModels().stream()
-                            .forEach(
-                                mappedModel -> {
-                                  final CodegenModel childModel =
-                                      ModelUtils.getModelByName(
-                                          mappedModel.getModelName(), allModelMaps);
-                                  ensureChildModelHasNoInlineEnums(var, childModel);
-                                });
+    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
+        allModels.stream()
+            .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+            .flatMap(
+                model -> {
+                  return model.vars.stream()
+                      .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                      .map(
+                          var -> {
+                            setEnumRefProps(var);
+                            model
+                                .discriminator
+                                .getMappedModels()
+                                .forEach(
+                                    mappedModel -> {
+                                      final CodegenModel childModel =
+                                          ModelUtils.getModelByName(
+                                              mappedModel.getModelName(), allModelMaps);
+                                      ensureChildModelHasNoInlineEnums(var, childModel);
+                                    });
 
-                        newEnums.add(createEnumModel(var));
-                      });
-            });
+                            return createEnumModel(var);
+                          });
+                })
+            .toList();
 
     final List<CodegenModel> newEnums = new ArrayList<>();
     allModelMaps.keySet().stream()

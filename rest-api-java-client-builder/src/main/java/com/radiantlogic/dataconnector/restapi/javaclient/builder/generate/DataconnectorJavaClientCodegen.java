@@ -241,15 +241,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               setEnumRefProps(var);
                               ensureChildModelHasNoInlineEnums(var, model);
                             })
-                        .map(
-                            var -> {
-                              System.out.println("FROM PARENT");
-                              System.out.println(
-                                  "PARENT MODEL: "
-                                      + model.parentModel.classname); // TODO delete this
-                              System.out.println("VAR: " + var.baseName); // TODO delete this
-                              return createEnumModel(var); // TODO this is the problem
-                            }))
+                        .map(DataconnectorJavaClientCodegen::createEnumModel))
             .toList();
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         allModels.stream()
@@ -271,11 +263,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                               mappedModel.getModelName(), allModelMaps);
                                       ensureChildModelHasNoInlineEnums(var, childModel);
                                     });
-
-                            System.out.println("FROM DISCRIMINATOR PARENT");
-                            System.out.println(
-                                "PARENT MODEL: " + model.classname); // TODO delete this
-                            System.out.println("VAR: " + var.baseName); // TODO delete this
                             return createEnumModel(var); // TODO this is the problem
                           });
                 })

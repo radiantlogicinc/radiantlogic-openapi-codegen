@@ -188,12 +188,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     property.isEnumRef = true;
   }
 
-  private static void ensureChildNotInnerEnum(
-      @NonNull final CodegenProperty parentProperty, @NonNull final CodegenProperty childProperty) {
-    setEnumRefProps(childProperty);
-    childProperty.dataType = parentProperty.dataType;
-    childProperty.datatypeWithEnum = parentProperty.datatypeWithEnum;
-    childProperty.openApiType = parentProperty.openApiType;
+  private static void ensureChildModelPropertyNotInnerEnum(
+      @NonNull final CodegenProperty parentEnumProperty,
+      @NonNull final CodegenProperty matchingChildProperty) {
+    setEnumRefProps(matchingChildProperty);
+    matchingChildProperty.dataType = parentEnumProperty.dataType;
+    matchingChildProperty.datatypeWithEnum = parentEnumProperty.datatypeWithEnum;
+    matchingChildProperty.openApiType = parentEnumProperty.openApiType;
+  }
+
+  private static void ensureChildModelHasNoInlineEnums(
+      @NonNull final CodegenProperty parentEnumProperty, @NonNull final CodegenModel childModel) {
+    childModel.vars.stream()
+        .filter(childVar -> isSamePropertyInChild(parentEnumProperty, childVar))
+        .findFirst()
+        .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
 
   // TODO cleanup
@@ -215,10 +224,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                       .peek(
                           var -> {
                             setEnumRefProps(var);
-                            model.vars.stream()
-                                .filter(childVar -> isSamePropertyInChild(var, childVar))
-                                .findFirst()
-                                .ifPresent(childVar -> ensureChildNotInnerEnum(var, childVar));
+                            ensureChildModelHasNoInlineEnums(var, model);
                           })
                       .map(DataconnectorJavaClientCodegen::createEnumModel);
                 })
@@ -238,7 +244,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           model.vars.stream()
                               .filter(childVar -> isSamePropertyInChild(var, childVar))
                               .findFirst()
-                              .ifPresent(childVar -> ensureChildNotInnerEnum(var, childVar));
+                              .ifPresent(
+                                  childVar -> ensureChildModelPropertyNotInnerEnum(var, childVar));
                           newEnums.add(createEnumModel(var));
                         });
               }
@@ -259,7 +266,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                         .filter(childVar -> isSamePropertyInChild(var, childVar))
                                         .findFirst()
                                         .ifPresent(
-                                            childVar -> ensureChildNotInnerEnum(var, childVar));
+                                            childVar ->
+                                                ensureChildModelPropertyNotInnerEnum(
+                                                    var, childVar));
                                   });
 
                           newEnums.add(createEnumModel(var));

@@ -65,7 +65,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     if (Files.exists(path)) {
       FileUtils.deleteDirectory(path.toFile());
     }
-    Files.createDirectories(outputDir);
+    Files.createDirectories(path);
   }
 
   private void init(@NonNull final Args args) {

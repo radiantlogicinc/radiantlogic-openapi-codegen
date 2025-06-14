@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -258,24 +257,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 })
             .toList();
 
-    final List<CodegenModel> newEnums = new ArrayList<>();
-    allModelMaps.keySet().stream()
+    allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
         .forEach(
-            key -> {
-              final CodegenModel model = ModelUtils.getModelByName(key, allModelMaps);
-
-              if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-                model
-                    .discriminator
-                    .getMappedModels()
-                    .forEach(
-                        mappedModel -> {
-                          final CodegenModel childModel =
-                              ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
-                          childModel.vendorExtensions.put(
-                              "x-discriminator-mapping-value", mappedModel.getMappingName());
-                        });
-              }
+            model -> {
+              model
+                  .discriminator
+                  .getMappedModels()
+                  .forEach(
+                      mappedModel -> {
+                        final CodegenModel childModel =
+                            ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
+                        childModel.vendorExtensions.put(
+                            "x-discriminator-mapping-value", mappedModel.getMappingName());
+                      });
             });
 
     final ModelsMap enumModelBase =

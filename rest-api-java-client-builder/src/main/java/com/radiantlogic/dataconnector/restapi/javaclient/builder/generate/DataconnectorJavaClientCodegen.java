@@ -244,25 +244,24 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return allModels.stream()
         .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
         .flatMap(
-            model -> {
-              return model.vars.stream()
-                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                  .map(
-                      var -> {
-                        setEnumRefProps(var);
-                        model
-                            .discriminator
-                            .getMappedModels()
-                            .forEach(
-                                mappedModel -> {
-                                  final CodegenModel childModel =
-                                      ModelUtils.getModelByName(
-                                          mappedModel.getModelName(), allModelMaps);
-                                  ensureChildModelHasNoInlineEnums(var, childModel);
-                                });
-                        return createEnumModel(var);
-                      });
-            })
+            model ->
+                model.vars.stream()
+                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .map(
+                        var -> {
+                          setEnumRefProps(var);
+                          model
+                              .discriminator
+                              .getMappedModels()
+                              .forEach(
+                                  mappedModel -> {
+                                    final CodegenModel childModel =
+                                        ModelUtils.getModelByName(
+                                            mappedModel.getModelName(), allModelMaps);
+                                    ensureChildModelHasNoInlineEnums(var, childModel);
+                                  });
+                          return createEnumModel(var);
+                        }))
         .toList();
   }
 

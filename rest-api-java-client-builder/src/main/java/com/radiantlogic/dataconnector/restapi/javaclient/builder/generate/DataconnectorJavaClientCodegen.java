@@ -208,6 +208,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return enumModel;
   }
 
+  private ModelsMap enumModelToModelsMap(final CodegenModel enumModel, final ModelsMap base) {
+    final ModelsMap modelsMap = new ModelsMap();
+    modelsMap.putAll(base);
+
+    final String importPath = toModelImport(enumModel.classname);
+    final ModelMap modelMap = new ModelMap();
+    modelMap.setModel(enumModel);
+    modelMap.put("importPath", importPath);
+    modelsMap.setModels(List.of(modelMap));
+    return modelsMap;
+  }
+
   // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(final Map<String, ModelsMap> objs) {
@@ -282,19 +294,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               }
             });
 
-    final String key = objs.keySet().stream().findFirst().orElseThrow();
+    final ModelsMap enumModelBase = objs.get(objs.keySet().stream().findFirst().orElseThrow());
     newOnes.forEach(
-        model -> {
-          final ModelsMap modelsMap = new ModelsMap();
-          modelsMap.putAll(objs.get(key));
-
-          final String importPath = toModelImport(model.classname);
-          final ModelMap modelMap = new ModelMap();
-          modelMap.setModel(model);
-          modelMap.put("importPath", importPath);
-          modelsMap.setModels(List.of(modelMap));
-
-          objs.put(model.classname, modelsMap);
+        enumModel -> {
+          final ModelsMap enumModelsMap = enumModelToModelsMap(enumModel, enumModelBase);
+          objs.put(enumModel.classname, enumModelsMap);
         });
 
     return super.postProcessAllModels(objs);

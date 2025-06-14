@@ -135,7 +135,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return result;
   }
 
-  private CodegenModel createEnumModel(@NonNull final CodegenProperty enumProp) {
+  private static CodegenModel createEnumModel(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
 
     final String typeName;
@@ -203,6 +203,25 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final List<CodegenModel> allModels =
         allModelMaps.keySet().stream()
             .map(key -> ModelUtils.getModelByName(key, allModelMaps))
+            .toList();
+
+    final List<CodegenModel> newEnumsFromParentModels =
+        allModels.stream()
+            .filter(model -> model.parentModel != null)
+            .flatMap(
+                model -> {
+                  return model.parentModel.vars.stream()
+                      .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                      .peek(
+                          var -> {
+                            setEnumRefProps(var);
+                            model.vars.stream()
+                                .filter(childVar -> isSamePropertyInChild(var, childVar))
+                                .findFirst()
+                                .ifPresent(childVar -> ensureChildNotInnerEnum(var, childVar));
+                          })
+                      .map(DataconnectorJavaClientCodegen::createEnumModel);
+                })
             .toList();
 
     final List<CodegenModel> newEnums = new ArrayList<>();

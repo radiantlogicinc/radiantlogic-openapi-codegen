@@ -205,6 +205,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
 
+  private static boolean hasDiscriminatorChildren(@NonNull final CodegenModel model) {
+    return model.discriminator != null && model.discriminator.getMappedModels() != null;
+  }
+
   // TODO cleanup
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
@@ -228,50 +232,40 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                             })
                         .map(DataconnectorJavaClientCodegen::createEnumModel))
             .toList();
+    allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+        .forEach(
+            model -> {
+              model.vars.stream()
+                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                  .forEach(
+                      var -> {
+                        setEnumRefProps(var);
+                        model.discriminator.getMappedModels().stream()
+                            .forEach(
+                                mappedModel -> {
+                                  final CodegenModel childModel =
+                                      ModelUtils.getModelByName(
+                                          mappedModel.getModelName(), allModelMaps);
+                                  childModel.vars.stream()
+                                      .filter(childVar -> isSamePropertyInChild(var, childVar))
+                                      .findFirst()
+                                      .ifPresent(
+                                          childVar ->
+                                              ensureChildModelPropertyNotInnerEnum(var, childVar));
+                                });
+
+                        newEnums.add(createEnumModel(var));
+                      });
+            });
 
     final List<CodegenModel> newEnums = new ArrayList<>();
     allModelMaps.keySet().stream()
         .forEach(
             key -> {
               final CodegenModel model = ModelUtils.getModelByName(key, allModelMaps);
-              if (model.parentModel != null) {
-                model.parentModel.vars.stream()
-                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                    .forEach(
-                        var -> {
-                          setEnumRefProps(var);
-                          model.vars.stream()
-                              .filter(childVar -> isSamePropertyInChild(var, childVar))
-                              .findFirst()
-                              .ifPresent(
-                                  childVar -> ensureChildModelPropertyNotInnerEnum(var, childVar));
-                          newEnums.add(createEnumModel(var));
-                        });
-              }
 
               if (model.discriminator != null && model.discriminator.getMappedModels() != null) {
-                model.vars.stream()
-                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
-                    .forEach(
-                        var -> {
-                          setEnumRefProps(var);
-                          model.discriminator.getMappedModels().stream()
-                              .forEach(
-                                  mappedModel -> {
-                                    final CodegenModel childModel =
-                                        ModelUtils.getModelByName(
-                                            mappedModel.getModelName(), allModelMaps);
-                                    childModel.vars.stream()
-                                        .filter(childVar -> isSamePropertyInChild(var, childVar))
-                                        .findFirst()
-                                        .ifPresent(
-                                            childVar ->
-                                                ensureChildModelPropertyNotInnerEnum(
-                                                    var, childVar));
-                                  });
-
-                          newEnums.add(createEnumModel(var));
-                        });
                 model
                     .discriminator
                     .getMappedModels()

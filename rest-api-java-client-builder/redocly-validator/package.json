@@ -1,1 +1,7 @@
-{}
+{
+  "name": "spec-validator",
+  "version": "1.0.0",
+  "dependencies": {
+    "@redocly/cli": "^1.25.11"
+  }
+}

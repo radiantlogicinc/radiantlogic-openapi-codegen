@@ -27,6 +27,7 @@ npm install
 
 ```bash
 mvn clean compile \
+  -pl rest-api-java-client-builder -am \
   exec:exec@generate \
   -DprogramArgs="ARGUMENTS GO HERE"
 ```

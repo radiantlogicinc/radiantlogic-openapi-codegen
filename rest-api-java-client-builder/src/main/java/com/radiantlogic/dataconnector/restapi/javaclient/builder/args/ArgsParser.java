@@ -98,7 +98,17 @@ public class ArgsParser {
 
   private Args handleHelp() {
     final HelpFormatter helpFormatter = new HelpFormatter();
-    helpFormatter.printHelp("%s %s".formatted(props.artifactId(), props.version()), OPTIONS);
+
+    final String header =
+        """
+
+            NOTE: arguments with values are separated by an '=' sign, ie -p=http://localhost:8080/openapi.json
+
+            """
+            .stripIndent();
+
+    helpFormatter.printHelp(
+        "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
     return new Args(ProgramArgStatus.EXIT, "", "", false);
   }
 }

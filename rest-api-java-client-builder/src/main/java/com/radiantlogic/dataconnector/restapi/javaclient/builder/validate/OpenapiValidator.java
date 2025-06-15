@@ -23,7 +23,7 @@ public class OpenapiValidator {
       log.info("Skipping validation of openapi specification");
     }
 
-    log.info("Performing validation of openapi specification");
+    log.info("Performing validation of openapi specification: {}", args.openapiPath());
     try {
       final Process process =
           new ProcessBuilder("npm", "run", "lint", "--", args.openapiPath())

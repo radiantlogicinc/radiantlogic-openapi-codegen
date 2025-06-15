@@ -56,6 +56,7 @@ public class Runner {
 
     final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
     final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
+    // TODO if a URL, need to pull file down
     final Args validatedParsedArgs = parsedArgs.withOpenapiPath(parsedPath);
 
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());

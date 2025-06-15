@@ -23,10 +23,11 @@ public class OpenapiValidator {
       log.info("Skipping validation of openapi specification");
     }
 
-    log.info("Performing validation of openapi specification: {}", args.openapiPath());
+    final String pathWithoutFilePrefix = args.openapiPath().replaceAll("^file:", "");
+    log.info("Performing validation of openapi specification: {}", pathWithoutFilePrefix);
     try {
       final Process process =
-          new ProcessBuilder("npm", "run", "lint", "--", args.openapiPath())
+          new ProcessBuilder("npm", "run", "lint", "--", pathWithoutFilePrefix)
               .directory(VALIDATOR_PATH.toFile())
               .inheritIO()
               .start();

@@ -27,8 +27,12 @@ npm install
 
 ```bash
 mvn clean compile \
+  -pl rest-api-java-client-builder -am \
   exec:exec@generate \
   -DprogramArgs="ARGUMENTS GO HERE"
 ```
 
 To see all possible arguments, run with `-DprogramArgs='-h'`
+
+### From IntelliJ
+

@@ -17,10 +17,3 @@ main -> feature/end-to-end-test -> feature/e2e-test
 LOOK INTO SERDE TESTS WITH CLASSES THAT USE THESE ENUMS
 UserFactorType
 FactorTypeEnum
-
-
-
-LAST SCHEMA PROBLEMS
-
-- Schemas that are only used as form params are not generated... why?
-- If I fix this, I need to make sure that form param schemas are executed correctly

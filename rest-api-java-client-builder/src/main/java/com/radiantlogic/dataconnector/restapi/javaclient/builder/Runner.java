@@ -7,6 +7,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGe
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.validate.OpenapiValidator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +28,9 @@ public class Runner {
    * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
    * This program generates a properties file at compile time with the maven-resources-plugin, which
    * is necessary.
+   *
+   * <p>In addition, make sure the IntelliJ working directory is set to
+   * rest-api-java-client-builder.
    */
   public static void main(final String[] args) {
     try {
@@ -52,11 +56,14 @@ public class Runner {
 
     final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
     final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
-    final Args validatedParedArgs = parsedArgs.withOpenapiPath(parsedPath);
+    // TODO if a URL, need to pull file down
+    final Args validatedParsedArgs = parsedArgs.withOpenapiPath(parsedPath);
 
-    log.info("Path to OpenAPI specification: {}", validatedParedArgs.openapiPath());
+    log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
-    final CodeGenerator codeGenerator = new CodeGenerator(validatedParedArgs);
+    final OpenapiValidator openapiValidator = new OpenapiValidator(validatedParsedArgs);
+    openapiValidator.validate();
+    final CodeGenerator codeGenerator = new CodeGenerator(validatedParsedArgs);
     codeGenerator.generate();
     log.info("Finished code generation");
   }

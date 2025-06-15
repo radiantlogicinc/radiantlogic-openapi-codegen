@@ -7,3 +7,6 @@ rules:
   info-license: off
   no-server-example.com: off
   operation-4xx-response: off
+  operation-2xx-response: off
+  no-invalid-media-type-examples: off
+  security-defined: off

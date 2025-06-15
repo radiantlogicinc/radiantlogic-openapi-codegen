@@ -44,7 +44,8 @@ public class OpenapiValidator {
       }
     } catch (final IOException | InterruptedException ex) {
       throw new OpenapiValidationException(
-          "Openapi specification validation failed, cannot proceed", ex);
+          "Openapi specification validation failed, cannot proceed. Specific validation errors will appear in the logs.",
+          ex);
     }
   }
 }

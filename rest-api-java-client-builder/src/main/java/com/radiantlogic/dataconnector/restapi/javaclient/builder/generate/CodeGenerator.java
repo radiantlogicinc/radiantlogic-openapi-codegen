@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.ClientOptInput;
+import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
 
 /** The class that handles the actual code generation. */
@@ -40,7 +41,11 @@ public class CodeGenerator {
     final DataconnectorJavaClientCodegen codegen =
         new DataconnectorJavaClientCodegen(openAPI, args);
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
-    new DefaultGenerator().opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
+
+    final DefaultGenerator generator = new DefaultGenerator();
+    generator.setGeneratorPropertyDefault(CodegenConstants.SKIP_FORM_MODEL, "false");
+
+    generator.opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
   }
 
   private void prepareOutputDirectory(

@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.validate;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.OpenapiValidationException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +43,7 @@ public class OpenapiValidator {
         throw new IOException("Invalid exit status: %d".formatted(code));
       }
     } catch (final IOException | InterruptedException ex) {
-      throw new IllegalStateException(
+      throw new OpenapiValidationException(
           "Openapi specification validation failed, cannot proceed", ex);
     }
   }

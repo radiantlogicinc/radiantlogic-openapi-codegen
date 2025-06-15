@@ -9,11 +9,23 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>./rest-api-java-client-builder</module>
-        <module>./examples/okta</module>
-        <module>./examples/iddm</module>
-    </modules>
+    <profiles>
+        <profile>
+            <id>builder</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>./rest-api-java-client-builder</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>usage</id>
+            <modules>
+                <module>./usage</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>

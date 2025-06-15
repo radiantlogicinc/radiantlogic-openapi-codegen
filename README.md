@@ -32,3 +32,6 @@ mvn clean compile \
 ```
 
 To see all possible arguments, run with `-DprogramArgs='-h'`
+
+### From IntelliJ
+

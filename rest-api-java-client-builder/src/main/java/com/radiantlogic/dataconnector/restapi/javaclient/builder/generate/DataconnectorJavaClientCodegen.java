@@ -443,19 +443,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final Collection<Map<String, Object>> enumVars =
           Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
               .flatMap(Function.identity())
-              .map(
-                  map -> {
-                    final String value = map.get("value").toString();
-                    final Map<String, Object> newMap = new HashMap<>();
-                    newMap.put("name", map.get("name"));
-                    if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
-                      newMap.put("value", "\"%s\"".formatted(value));
-                    } else {
-                      newMap.put("value", value);
-                    }
-                    newMap.put("isString", true);
-                    return newMap;
-                  })
               .collect(Collectors.toMap(map -> map.get("name"), Function.identity(), (a, b) -> b))
               .values();
       final var oneValues =

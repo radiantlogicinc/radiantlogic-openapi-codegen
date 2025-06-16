@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -300,7 +301,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   return property;
                 })
             .toList();
-    result.setVars(fixedVars);
+    result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
 
     return result;
   }

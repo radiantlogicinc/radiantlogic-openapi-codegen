@@ -64,6 +64,11 @@ public class CodegenIT {
     generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
 
+  @Test
+  void googleMapsSuccess() {
+    generateAndBuild("google-maps.yaml", "Google-Maps-API");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

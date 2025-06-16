@@ -149,14 +149,24 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       return isIncorrectlyFlattened(refSchema);
     }
 
-    if (schema.getOneOf() == null) {
+    if (schema.getOneOf() == null && schema.getAnyOf() == null) {
       return false;
     }
 
-    final long nonObjectSchemaCount =
-        ((List<Schema>) schema.getOneOf())
-            .stream().filter(s -> !(s instanceof ObjectSchema)).count();
-    return nonObjectSchemaCount > 0;
+    // TODO clean this up
+    final long nonObjectOneOfCount =
+        Optional.ofNullable((List<Schema>) schema.getOneOf()).stream()
+            .flatMap(List::stream)
+            .filter(s -> !(s instanceof ObjectSchema))
+            .count();
+
+    final long nonObjectAnyOfCount =
+        Optional.ofNullable((List<Schema>) schema.getAnyOf()).stream()
+            .flatMap(List::stream)
+            .filter(s -> !(s instanceof ObjectSchema))
+            .count();
+
+    return nonObjectOneOfCount > 0 || nonObjectAnyOfCount > 0;
   }
 
   private static String parseSchemaRef(final String ref) {

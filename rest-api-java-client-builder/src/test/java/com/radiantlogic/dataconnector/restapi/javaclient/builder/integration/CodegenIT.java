@@ -94,6 +94,11 @@ public class CodegenIT {
     generateAndBuild("1password-connect-1.7.1.yaml", "1Password-Connect/1.7.1");
   }
 
+  @Test
+  void bitbucket() {
+    generateAndBuild("bitbucket-2.0.json", "Bitbucket-API/2.0");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

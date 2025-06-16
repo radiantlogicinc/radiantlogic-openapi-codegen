@@ -35,6 +35,7 @@ import org.openapitools.codegen.utils.ModelUtils;
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
+  private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -242,10 +243,39 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       typeName = enumProp.datatypeWithEnum;
     }
 
+    final List<Object> propAllowableValuesValues =
+        Optional.ofNullable(enumProp.allowableValues)
+            .map(map -> (List<Object>) map.get("values"))
+            .orElseGet(List::of);
+    final List<Map<String, Object>> propAllowableValuesEnumVars =
+        Optional.ofNullable(enumProp.allowableValues)
+            .map(map -> (List<Map<String, Object>>) map.get("enumVars"))
+            .orElseGet(List::of);
+
+    final List<Map<String, Object>> enumVars =
+        propAllowableValuesEnumVars.stream()
+            .map(
+                map -> {
+                  final String value = map.get("value").toString();
+                  final Map<String, Object> newMap = new HashMap<>();
+                  newMap.put("name", map.get("name"));
+                  if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
+                    newMap.put("value", "\"%s\"".formatted(value));
+                  } else {
+                    newMap.put("value", value);
+                  }
+                  newMap.put("isString", true);
+                  return newMap;
+                })
+            .toList();
+
+    final Map<String, Object> allowableValues =
+        Map.of("values", propAllowableValuesValues, "enumVars", enumVars);
+
     enumModel.name = typeName;
     enumModel.classname = typeName;
     enumModel.isEnum = true;
-    enumModel.allowableValues = enumProp.allowableValues;
+    enumModel.allowableValues = allowableValues;
     enumModel.classFilename = typeName;
     enumModel.dataType = "String";
     return enumModel;
@@ -400,6 +430,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     return emptyModel;
                   });
 
+      // TODO make these keys constants
       final var oneEnumVars =
           (Collection<Map<String, Object>>)
               Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);

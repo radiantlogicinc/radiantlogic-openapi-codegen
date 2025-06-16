@@ -2,6 +2,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -34,8 +35,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
-  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
-    setOpenAPI(openAPI);
+  // TODO document
+  private final OpenAPI referenceOpenAPI;
+
+  public DataconnectorJavaClientCodegen(
+      @NonNull final OpenAPI referenceOpenAPI, @NonNull final Args args) {
+    this.referenceOpenAPI = referenceOpenAPI;
     init(args);
   }
 
@@ -156,8 +161,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private Schema fixIncorrectlyFlattenedProps(
-      @NonNull final Schema schema, @NonNull final Map<String, Schema> allSchemas) {
+      @NonNull final Schema schema,
+      final Schema referenceSchema,
+      @NonNull final Map<String, Schema> allSchemas,
+      @NonNull final Map<String, Schema> allReferenceSchemas) {
+    if (referenceSchema == null) {
+      return schema;
+    }
+
     if (schema.getProperties() == null) {
+      return schema;
+    }
+
+    if (referenceSchema.getProperties() == null) {
       return schema;
     }
 
@@ -166,8 +182,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .stream()
                 .map(
                     entry -> {
-                      // TODO what if it was originally like this?
-                      if (entry.getValue().get$ref() != null) {
+                      // Should not do anything if the ref originally existed during parsing
+                      final Schema referencePropSchema =
+                          referenceSchema.getProperties().get(entry.getKey());
+                      if (entry.getValue().get$ref() != null
+                          && referencePropSchema != null
+                          && referencePropSchema.get$ref() == null) {
                         final Schema ref =
                             allSchemas.get(parseSchemaRef(entry.getValue().get$ref()));
                         isIncorrectlyFlattenedRef(ref);
@@ -183,14 +203,24 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
     final Map<String, Schema> schemas =
-        Optional.ofNullable(openAPI.getComponents().getSchemas()).orElseGet(Map::of);
+        Optional.ofNullable(openAPI.getComponents()).map(Components::getSchemas).orElseGet(Map::of);
+    final Map<String, Schema> referenceSchemas =
+        Optional.ofNullable(referenceOpenAPI.getComponents())
+            .map(Components::getSchemas)
+            .orElseGet(Map::of);
+
     schemas.entrySet().stream()
         .map(
             entry -> {
               if (entry.getValue().getType() == null
                   || entry.getValue().getType().equals("object")) {
+
+                final Schema referenceSchema = referenceSchemas.get(entry.getKey());
+
                 return Map.entry(
-                    entry.getKey(), fixIncorrectlyFlattenedProps(entry.getValue(), schemas));
+                    entry.getKey(),
+                    fixIncorrectlyFlattenedProps(
+                        entry.getValue(), referenceSchema, schemas, referenceSchemas));
               }
               return entry;
             })

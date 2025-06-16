@@ -86,7 +86,7 @@ public class CodegenIT {
 
   @Test
   void anthropic() {
-    generateAndBuild("anthropic-0.0.0.json", "Anthropic-AI/0.0.0");
+    generateAndBuild("anthropic-0.0.0.json", "Anthropic-API/0.0.0");
   }
 
   @Test

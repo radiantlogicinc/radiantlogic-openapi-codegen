@@ -5,14 +5,7 @@
 5. Figure out better package names.
 
 
-
-
-
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/idp-minimal.yaml
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/management-minimal.yaml
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/oauth-minimal.yaml
-
-main -> feature/end-to-end-test -> feature/e2e-test
+https://vlaurencena.github.io/harry-potter-openapi-swagger-ui/openapi.yaml
 
 LOOK INTO SERDE TESTS WITH CLASSES THAT USE THESE ENUMS
 UserFactorType

@@ -261,7 +261,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final String name,
       @NonNull final CodegenProperty property,
       final Schema modelSchema) {
-    final Schema propertySchema = (Schema) modelSchema.getProperties().get(property.baseName);
+    final Schema propertySchema =
+        Optional.ofNullable((Map<String, Schema>) modelSchema.getProperties())
+            .orElseGet(Map::of)
+            .get(property.baseName);
     if (propertySchema == null) {
       return property;
     }

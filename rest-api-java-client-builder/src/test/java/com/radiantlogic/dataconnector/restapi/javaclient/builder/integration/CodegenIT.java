@@ -33,39 +33,39 @@ public class CodegenIT {
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
 
   @Test
-  void oktaIdpMinimalSuccess() {
+  void oktaIdpMinimal() {
     generateAndBuild("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1");
   }
 
   @Test
-  void oktaManagementMinimalSuccess() {
+  void oktaManagementMinimal() {
     generateAndBuild("okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1");
   }
 
   @Test
-  void oktaOauthMinimalSuccess() {
+  void oktaOauthMinimal() {
     generateAndBuild(
         "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1");
   }
 
   @Test
-  void radiantoneSuccess() {
+  void radiantone() {
     generateAndBuild(
         "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT");
   }
 
   @Test
-  void githubV3Success() {
+  void githubV3() {
     generateAndBuild("github-v3.yaml", "foo");
   }
 
   @Test
-  void gitlabV4Success() {
+  void gitlabV4() {
     generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
 
   @Test
-  void googleMapsSuccess() {
+  void googleMaps() {
     generateAndBuild("google-maps-1.22.5.json", "Google-Maps-Platform/1.22.5");
   }
 
@@ -77,6 +77,11 @@ public class CodegenIT {
   @Test
   void msgraphCalendar() {
     generateAndBuild("msgraph-calendar-1.0.yaml", "Calendar/v1.0");
+  }
+
+  @Test
+  void openai() {
+    generateAndBuild("openai-2.3.0.yaml", "OpenAI-API/2.3.0");
   }
 
   @SneakyThrows

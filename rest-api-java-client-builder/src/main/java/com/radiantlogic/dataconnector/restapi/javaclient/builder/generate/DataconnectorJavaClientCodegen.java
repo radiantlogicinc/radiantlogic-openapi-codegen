@@ -364,7 +364,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private static ModelsMap mergeModelsMaps(
-      @NonNull final ModelsMap one, @NonNull final ModelsMap two) {}
+      @NonNull final ModelsMap one, @NonNull final ModelsMap two) {
+    return two;
+  }
 
   private void addNewEnumModelMaps(
       @NonNull final Map<String, ModelsMap> allModelMaps,
@@ -385,6 +387,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     CodegenModel::getClassname,
                     enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
                     DataconnectorJavaClientCodegen::mergeModelsMaps));
+
     allModelMaps.putAll(allNewEnumModels);
   }
 

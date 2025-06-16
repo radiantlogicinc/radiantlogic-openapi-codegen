@@ -71,7 +71,7 @@ public class CodegenIT {
 
   @Test
   void msgraphApplication() {
-    generateAndBuild("msgraph-application-1.0.yaml", "foo");
+    generateAndBuild("msgraph-applications-1.0.yaml", "foo");
   }
 
   @Test

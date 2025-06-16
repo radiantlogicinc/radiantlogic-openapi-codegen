@@ -208,6 +208,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   @Override
+  protected List<Map<String, Object>> buildEnumVars(
+      @NonNull final List<Object> values, @NonNull final String dataType) {
+    final var enumVars = super.buildEnumVars(values, dataType);
+    final boolean useValueOf = !dataType.equals("BigDecimal");
+
+    final var updatedEnumVars =
+        enumVars.stream().peek(map -> map.put("useValueOf", useValueOf)).toList();
+    return new ArrayList<>(updatedEnumVars);
+  }
+
+  @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
     if (result.discriminator != null) {
@@ -261,15 +272,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         propAllowableValuesEnumVars.stream()
             .map(
                 map -> {
-                  final String value = map.get(VALUE_KEY).toString();
+                  final Object value = map.get(VALUE_KEY);
                   final Map<String, Object> newMap = new HashMap<>();
                   newMap.put(NAME_KEY, map.get(NAME_KEY));
-                  if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
-                    newMap.put(VALUE_KEY, "\"%s\"".formatted(value));
+                  if (value instanceof String stringValue
+                      && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
+                    newMap.put(VALUE_KEY, "\"%s\"".formatted(stringValue));
                   } else {
                     newMap.put(VALUE_KEY, value);
                   }
-                  newMap.put(IS_STRING_KEY, true);
+                  newMap.put(IS_STRING_KEY, value instanceof String);
                   return newMap;
                 })
             .toList();

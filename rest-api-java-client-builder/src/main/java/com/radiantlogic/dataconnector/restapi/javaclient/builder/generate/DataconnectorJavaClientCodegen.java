@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -54,13 +55,42 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }
 
+  /**
+   * The package name generated here must conform to valid java package name rules. If a package
+   * element ends up with a leading number, that cannot be allowed.
+   */
+  private static String fixLeadingNumbers(@NonNull final String packageName) {
+    return Arrays.stream(packageName.split("\\."))
+        .map(
+            name -> {
+              final String beginning =
+                  switch (name.charAt(0)) {
+                    case '0' -> "zero";
+                    case '1' -> "one";
+                    case '2' -> "two";
+                    case '3' -> "three";
+                    case '4' -> "four";
+                    case '5' -> "five";
+                    case '6' -> "six";
+                    case '7' -> "seven";
+                    case '8' -> "eight";
+                    case '9' -> "nine";
+                    default -> "%s".formatted(name.charAt(0));
+                  };
+              return "%s%s".formatted(beginning, name.substring(1));
+            })
+        .collect(Collectors.joining("."));
+  }
+
   private void init(@NonNull final Args args) {
     final String title = getOpenapiTitle();
     final String version = getOpenapiVersion();
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
-    final String basePackage = "%s.%s".formatted(getGroupId(), ensureValidPackageName(title));
+
+    final String basePackage =
+        fixLeadingNumbers("%s.%s".formatted(getGroupId(), ensureValidPackageName(title)));
     setApiPackage("%s.api".formatted(basePackage));
     setModelPackage("%s.model".formatted(basePackage));
     setInvokerPackage("%s.invoker".formatted(basePackage));

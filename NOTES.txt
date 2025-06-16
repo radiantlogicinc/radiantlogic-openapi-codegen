@@ -17,3 +17,13 @@ main -> feature/end-to-end-test -> feature/e2e-test
 LOOK INTO SERDE TESTS WITH CLASSES THAT USE THESE ENUMS
 UserFactorType
 FactorTypeEnum
+
+
+TESTS THAT I NEED
+
+1. serde for discriminated unions, like super detailed
+2. form-urlencoded requests
+3. Different forms of auth
+4. all http methods
+5. multipart
+6. serde for non-discriminated inheritance

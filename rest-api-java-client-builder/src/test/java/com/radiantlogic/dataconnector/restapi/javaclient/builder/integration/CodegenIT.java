@@ -1,10 +1,8 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.OpenapiValidationException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,29 +33,80 @@ public class CodegenIT {
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
 
   @Test
-  void oktaIdpMinimalSuccess() {
+  void oktaIdpMinimal() {
     generateAndBuild("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1");
   }
 
   @Test
-  void oktaManagementMinimalFailure() {
-    assertThatThrownBy(
-            () ->
-                generateAndBuild(
-                    "okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1"))
-        .isInstanceOf(OpenapiValidationException.class);
+  void oktaManagementMinimal() {
+    generateAndBuild("okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1");
   }
 
   @Test
-  void oktaOauthMinimalSuccess() {
+  void oktaOauthMinimal() {
     generateAndBuild(
         "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1");
   }
 
   @Test
-  void radiantoneSuccess() {
+  void radiantone() {
     generateAndBuild(
         "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT");
+  }
+
+  @Test
+  void githubV3() {
+    generateAndBuild("github-v3.yaml", "foo");
+  }
+
+  @Test
+  void gitlabV4() {
+    generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
+  }
+
+  @Test
+  void googleMaps() {
+    generateAndBuild("google-maps-1.22.5.json", "Google-Maps-Platform/1.22.5");
+  }
+
+  @Test
+  void msgraphApplication() {
+    generateAndBuild("msgraph-applications-1.0.yaml", "Applications/v1.0");
+  }
+
+  @Test
+  void msgraphCalendar() {
+    generateAndBuild("msgraph-calendar-1.0.yaml", "Calendar/v1.0");
+  }
+
+  @Test
+  void openai() {
+    generateAndBuild("openai-2.3.0.yaml", "OpenAI-API/2.3.0");
+  }
+
+  @Test
+  void anthropic() {
+    generateAndBuild("anthropic-0.0.0.json", "Anthropic-API/0.0.0");
+  }
+
+  @Test
+  void onepasswordConnect() {
+    generateAndBuild("1password-connect-1.7.1.yaml", "1Password-Connect/1.7.1");
+  }
+
+  @Test
+  void bitbucket() {
+    generateAndBuild("bitbucket-2.0.json", "Bitbucket-API/2.0");
+  }
+
+  @Test
+  void radiantlogicCloudmanager() {
+    generateAndBuild("radiantlogic-cloudmanager-1.3.2.json", "Radiantlogic-CloudManager/1.3.2");
+  }
+
+  @Test
+  void swaggerPetstore() {
+    generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.26");
   }
 
   @SneakyThrows

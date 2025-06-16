@@ -297,7 +297,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return model.discriminator != null && model.discriminator.getMappedModels() != null;
   }
 
-  private static List<CodegenModel> handleInheritedEnumsFromParentModels(
+  private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(model -> model.parentModel != null)
@@ -389,12 +389,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
-    final List<CodegenModel> newEnumsFromParentModels =
-        handleInheritedEnumsFromParentModels(allModels);
+    final List<CodegenModel> newEnumsFromModelsWithParents =
+        handleInheritedEnumsFromModelsWithParents(allModels);
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
     addNewEnumModelMaps(
-        allModelMaps, newEnumsFromParentModels, newEnumsFromDiscriminatorParentModels);
+        allModelMaps, newEnumsFromModelsWithParents, newEnumsFromDiscriminatorParentModels);
 
     handleDiscriminatorChildMappingValues(allModels, allModelMaps);
 

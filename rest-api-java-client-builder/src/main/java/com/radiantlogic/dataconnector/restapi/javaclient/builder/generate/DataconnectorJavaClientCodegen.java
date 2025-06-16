@@ -60,7 +60,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .map(
             name -> {
               final String beginning =
-                  switch (name.charAt('0')) {
+                  switch (name.charAt(0)) {
                     case '0' -> "zero";
                     case '1' -> "one";
                     case '2' -> "two";

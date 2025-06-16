@@ -1,10 +1,8 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.OpenapiValidationException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,12 +38,8 @@ public class CodegenIT {
   }
 
   @Test
-  void oktaManagementMinimalFailure() {
-    assertThatThrownBy(
-            () ->
-                generateAndBuild(
-                    "okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1"))
-        .isInstanceOf(OpenapiValidationException.class);
+  void oktaManagementMinimalSuccess() {
+    generateAndBuild("okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1");
   }
 
   @Test
@@ -62,12 +56,12 @@ public class CodegenIT {
 
   @Test
   void githubV3Success() {
-    generateAndBuild("github-v3.yaml", "");
+    generateAndBuild("github-v3.yaml", "foo");
   }
 
   @Test
   void gitlabV4Success() {
-    generateAndBuild("gitlab-v4.yaml", "");
+    generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
 
   @SneakyThrows

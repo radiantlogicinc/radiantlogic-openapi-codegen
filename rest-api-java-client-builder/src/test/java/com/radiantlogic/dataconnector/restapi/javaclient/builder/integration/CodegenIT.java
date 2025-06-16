@@ -65,6 +65,11 @@ public class CodegenIT {
     generateAndBuild("github-v3.yaml", "");
   }
 
+  @Test
+  void gitlabV4Success() {
+    generateAndBuild("gitlab-v4.yaml", "");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

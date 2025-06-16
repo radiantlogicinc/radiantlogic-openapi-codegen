@@ -363,6 +363,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  // TODO delete if not needed
   private static ModelsMap mergeModelsMaps(
       @NonNull final ModelsMap one, @NonNull final ModelsMap two) {
     return two;

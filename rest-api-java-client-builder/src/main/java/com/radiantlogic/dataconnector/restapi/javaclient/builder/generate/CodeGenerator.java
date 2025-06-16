@@ -40,7 +40,6 @@ public class CodeGenerator {
           "Failed to parse OpenAPI specification, see logs for details");
     }
 
-    // TODO this has to untangle bad refs when oneOf is not actually for inheritance
     preProcessOpenAPI(openAPI);
 
     log.debug("Performing code generation");

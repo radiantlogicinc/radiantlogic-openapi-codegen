@@ -42,19 +42,11 @@ public class CodeGenerator {
           "Failed to parse OpenAPI specification, see logs for details");
     }
 
-    // Parse again so we can know the original state of the OpenAPI.
-    // The codegen will re-write the OpenAPI in a way that cannot be hooked into. Some of that will
-    // introduce bugs.
-    // This helps us identify and resolve those issues.
-    final OpenAPI preservedOpenAPI =
-        parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
-
     preProcessOpenAPI(openAPI);
-    preProcessOpenAPI(preservedOpenAPI);
 
     log.debug("Performing code generation");
     final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(preservedOpenAPI, args);
+        new DataconnectorJavaClientCodegen(openAPI, args);
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
 
     final DefaultGenerator generator = new DefaultGenerator();

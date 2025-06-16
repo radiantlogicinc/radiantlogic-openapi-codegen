@@ -2,7 +2,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -36,12 +34,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
-  // TODO document
-  private final OpenAPI originalOpenAPI;
-
-  public DataconnectorJavaClientCodegen(
-      @NonNull final OpenAPI originalOpenAPI, @NonNull final Args args) {
-    this.originalOpenAPI = originalOpenAPI;
+  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
+    setOpenAPI(openAPI);
     init(args);
   }
 
@@ -131,7 +125,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO need tests
   private String getOpenapiTitle() {
-    return Optional.ofNullable(originalOpenAPI.getInfo())
+    return Optional.ofNullable(openAPI.getInfo())
         .map(Info::getTitle)
         .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
         .orElse("unknown-api");
@@ -139,9 +133,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO need tests
   private String getOpenapiVersion() {
-    return Optional.ofNullable(originalOpenAPI.getInfo())
-        .map(Info::getVersion)
-        .orElse("unknown-version");
+    return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
   private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {
@@ -171,91 +163,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       throw new IllegalStateException("Invalid schema ref: %s".formatted(ref));
     }
     return matcher.group(1);
-  }
-
-  private Schema fixIncorrectlyFlattenedProps(
-      @NonNull final Schema schema,
-      final Schema originalSchema,
-      @NonNull final Map<String, Schema> allSchemas,
-      @NonNull final Map<String, Schema> allOriginalSchemas) {
-    if (originalSchema == null) {
-      return schema;
-    }
-
-    if (schema.getProperties() == null) {
-      return schema;
-    }
-
-    if (originalSchema.getProperties() == null) {
-      return schema;
-    }
-
-    final Map<String, Schema> fixedProperties =
-        ((Set<Map.Entry<String, Schema>>) schema.getProperties().entrySet())
-            .stream()
-                .map(
-                    entry -> {
-                      // Should not do anything if the ref originally existed during parsing
-                      final Schema originalPropSchema =
-                          ((Map<String, Schema>) originalSchema.getProperties())
-                              .get(entry.getKey());
-                      if (entry.getValue().get$ref() != null
-                          && originalPropSchema != null
-                          && originalPropSchema.get$ref() == null) {
-                        final Schema ref =
-                            allSchemas.get(parseSchemaRef(entry.getValue().get$ref()));
-                        if (isIncorrectlyFlattened(ref)) {
-                          return Map.entry(entry.getKey(), ref);
-                        }
-                      }
-                      return entry;
-                    })
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    schema.setProperties(fixedProperties);
-    return schema;
-  }
-
-  @Override
-  public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
-    // TODO delete all of this if ultimately unnecessary
-    if (true) {
-      return;
-    }
-
-    final Map<String, Schema> schemas =
-        Optional.ofNullable(openAPI.getComponents()).map(Components::getSchemas).orElseGet(Map::of);
-    final Map<String, Schema> originalSchemas =
-        Optional.ofNullable(originalOpenAPI.getComponents())
-            .map(Components::getSchemas)
-            .orElseGet(Map::of);
-
-    schemas.entrySet().stream()
-        .map(
-            entry -> {
-              if (entry.getValue().getType() == null
-                  || entry.getValue().getType().equals("object")) {
-
-                final Schema originalSchema = originalSchemas.get(entry.getKey());
-
-                return Map.entry(
-                    entry.getKey(),
-                    fixIncorrectlyFlattenedProps(
-                        entry.getValue(), originalSchema, schemas, originalSchemas));
-              }
-              return entry;
-            })
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    openAPI.getComponents().setSchemas(schemas);
-    super.preprocessOpenAPI(openAPI);
-  }
-
-  @Override
-  public CodegenProperty fromProperty(
-      final String name,
-      final Schema p,
-      final boolean required,
-      final boolean schemaIsFromAdditionalProperties) {
-    return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
   }
 
   private CodegenProperty fixIncorrectComplexType(

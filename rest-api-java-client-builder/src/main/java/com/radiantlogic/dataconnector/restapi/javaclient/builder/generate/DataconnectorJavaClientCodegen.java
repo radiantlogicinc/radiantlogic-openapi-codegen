@@ -382,6 +382,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     allModelMaps.putAll(allNewEnumModels);
   }
 
+  private static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
+    return model.oneOf != null
+        && !model.oneOf.isEmpty()
+        && (model.discriminator == null
+            || (model.discriminator.getMappedModels() == null
+                || model.discriminator.getMappedModels().isEmpty()));
+  }
+
+  private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
+      @NonNull final List<CodegenModel> allModels) {
+    allModels.stream().filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren);
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {

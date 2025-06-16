@@ -60,6 +60,11 @@ public class CodegenIT {
         "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT");
   }
 
+  @Test
+  void githubV3Success() {
+    generateAndBuild("github-v3.yaml", "");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

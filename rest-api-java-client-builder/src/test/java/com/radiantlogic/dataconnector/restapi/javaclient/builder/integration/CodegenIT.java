@@ -84,6 +84,11 @@ public class CodegenIT {
     generateAndBuild("openai-2.3.0.yaml", "OpenAI-API/2.3.0");
   }
 
+  @Test
+  void anthropic() {
+    generateAndBuild("anthropic-0.0.0.json", "Anthropic-AI/0.0.0");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

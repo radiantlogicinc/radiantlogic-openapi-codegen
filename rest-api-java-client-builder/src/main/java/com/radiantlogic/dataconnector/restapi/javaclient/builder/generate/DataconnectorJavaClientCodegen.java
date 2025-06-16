@@ -371,6 +371,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return two;
   }
 
+  // TODO clean this up
   private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
     return (one, two) -> {
@@ -431,21 +432,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     CodegenModel::getName,
                     Function.identity(),
                     mergeEnumCodegenModels(allModelMaps)));
-
-    // TODO integrate into refactored ModelsMaps below
-    final Map<String, ModelsMap> allNewEnumModels =
-        Stream.concat(
-                Stream.concat(
-                    newEnumsFromParentModels.stream(),
-                    newEnumsFromDiscriminatorParentModels.stream()),
-                newEnumsFromModelsWithNonDiscriminatorChildren.stream())
-            .collect(
-                Collectors.toMap(
-                    CodegenModel::getClassname,
-                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
-                    DataconnectorJavaClientCodegen::mergeModelsMaps));
-
-    allModelMaps.putAll(allNewEnumModels);
+    allNewEnums.forEach(
+        (key, model) -> {
+          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));
+        });
   }
 
   private static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {

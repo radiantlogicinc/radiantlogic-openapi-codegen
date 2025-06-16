@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -297,7 +299,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return model.discriminator != null && model.discriminator.getMappedModels() != null;
   }
 
-  private static List<CodegenModel> handleInheritedEnumsFromParentModels(
+  private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(model -> model.parentModel != null)
@@ -363,23 +365,121 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  // TODO delete if not needed
+  private static ModelsMap mergeModelsMaps(
+      @NonNull final ModelsMap one, @NonNull final ModelsMap two) {
+    return two;
+  }
+
+  // TODO clean this up
+  private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    return (one, two) -> {
+      if (!one.isEnum || !two.isEnum) {
+        throw new IllegalArgumentException("Cannot merge non-enum models");
+      }
+
+      // This is a pre-existing copy of this enum, which may or may not exist (probably won't, but
+      // want to take it into account)
+      final CodegenModel three =
+          Optional.ofNullable(ModelUtils.getModelByName(one.name, allModelMaps))
+              .orElseGet(
+                  () -> {
+                    final CodegenModel emptyModel = new CodegenModel();
+                    emptyModel.allowableValues = Map.of();
+                    return emptyModel;
+                  });
+
+      final var oneEnumVars =
+          (Collection<Map<String, Object>>)
+              Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);
+      final var twoEnumVars =
+          (Collection<Map<String, Object>>)
+              Optional.ofNullable(two.allowableValues.get("enumVars")).orElseGet(List::of);
+      final var threeEnumVars =
+          (Collection<Map<String, Object>>)
+              Optional.ofNullable(three.allowableValues.get("enumVars")).orElseGet(List::of);
+      final Collection<Map<String, Object>> enumVars =
+          Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
+              .flatMap(Function.identity())
+              .collect(Collectors.toMap(map -> map.get("name"), Function.identity(), (a, b) -> b))
+              .values();
+      final var oneValues =
+          (List<Object>) Optional.ofNullable(one.allowableValues.get("values")).orElseGet(List::of);
+      final var twoValues =
+          (List<Object>) Optional.ofNullable(two.allowableValues.get("values")).orElseGet(List::of);
+      final var threeValues =
+          (List<Object>)
+              Optional.ofNullable(three.allowableValues.get("values")).orElseGet(List::of);
+      final List<Object> values =
+          Stream.of(oneValues.stream(), twoValues.stream(), threeValues.stream())
+              .flatMap(Function.identity())
+              .distinct()
+              .toList();
+
+      one.allowableValues = Map.of("enumVars", enumVars, "values", values);
+      return one;
+    };
+  }
+
   private void addNewEnumModelMaps(
       @NonNull final Map<String, ModelsMap> allModelMaps,
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
-      @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels) {
+      @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
+      @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
-    final Map<String, ModelsMap> allNewEnumModels =
-        Stream.concat(
-                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
+
+    final Map<String, CodegenModel> allNewEnums =
+        Stream.of(
+                newEnumsFromParentModels.stream(),
+                newEnumsFromDiscriminatorParentModels.stream(),
+                newEnumsFromModelsWithNonDiscriminatorChildren.stream())
+            .flatMap(Function.identity())
             .collect(
                 Collectors.toMap(
-                    CodegenModel::getClassname,
-                    enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
-                    // If there are two duplicate keys, they are duplicate models so handle it
-                    // gracefully
-                    (a, b) -> b));
-    allModelMaps.putAll(allNewEnumModels);
+                    CodegenModel::getName,
+                    Function.identity(),
+                    mergeEnumCodegenModels(allModelMaps)));
+    allNewEnums.forEach(
+        (key, model) -> {
+          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));
+        });
+  }
+
+  private static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
+    final boolean hasOneOfChildren = model.oneOf != null && !model.oneOf.isEmpty();
+    final boolean hasNoDiscriminatorChildren =
+        model.discriminator == null
+            || (model.discriminator.getMappedModels() == null
+                || model.discriminator.getMappedModels().isEmpty());
+    return hasOneOfChildren && hasNoDiscriminatorChildren;
+  }
+
+  private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
+      @NonNull final Collection<CodegenModel> allModels) {
+    return allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
+        .flatMap(
+            model -> {
+              return model.vars.stream()
+                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                  .map(
+                      var -> {
+                        setEnumRefProps(var);
+                        model.oneOf.forEach(
+                            childModelName -> {
+                              allModels.stream()
+                                  .filter(m -> m.name.equals(childModelName))
+                                  .findFirst()
+                                  .ifPresent(
+                                      childModel ->
+                                          ensureChildModelHasNoInlineEnums(var, childModel));
+                            });
+                        return createEnumModel(var);
+                      });
+            })
+        .toList();
   }
 
   @Override
@@ -389,12 +489,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
-    final List<CodegenModel> newEnumsFromParentModels =
-        handleInheritedEnumsFromParentModels(allModels);
+    final List<CodegenModel> newEnumsFromModelsWithParents =
+        handleInheritedEnumsFromModelsWithParents(allModels);
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+    final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
+        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels);
     addNewEnumModelMaps(
-        allModelMaps, newEnumsFromParentModels, newEnumsFromDiscriminatorParentModels);
+        allModelMaps,
+        newEnumsFromModelsWithParents,
+        newEnumsFromDiscriminatorParentModels,
+        newEnumsFromModelsWithNonDiscriminatorChildren);
 
     handleDiscriminatorChildMappingValues(allModels, allModelMaps);
 

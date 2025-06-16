@@ -55,7 +55,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }
 
-  private static String fixLeadingNumbers(final String packageName) {
+  /**
+   * The package name generated here must conform to valid java package name rules. If a package
+   * element ends up with a leading number, that cannot be allowed.
+   */
+  private static String fixLeadingNumbers(@NonNull final String packageName) {
     return Arrays.stream(packageName.split("\\."))
         .map(
             name -> {

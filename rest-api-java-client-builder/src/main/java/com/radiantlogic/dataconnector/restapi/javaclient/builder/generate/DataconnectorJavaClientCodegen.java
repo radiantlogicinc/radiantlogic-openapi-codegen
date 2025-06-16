@@ -243,10 +243,39 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       typeName = enumProp.datatypeWithEnum;
     }
 
+    final List<Object> propAllowableValuesValues =
+        Optional.ofNullable(enumProp.allowableValues)
+            .map(map -> (List<Object>) map.get("values"))
+            .orElseGet(List::of);
+    final List<Map<String, Object>> propAllowableValuesEnumValues =
+        Optional.ofNullable(enumProp.allowableValues)
+            .map(map -> (List<Map<String, Object>>) map.get("enumVars"))
+            .orElseGet(List::of);
+
+    final List<Map<String, Object>> enumVars =
+        propAllowableValuesEnumValues.stream()
+            .map(
+                map -> {
+                  final String value = map.get("value").toString();
+                  final Map<String, Object> newMap = new HashMap<>();
+                  newMap.put("name", map.get("name"));
+                  if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
+                    newMap.put("value", "\"%s\"".formatted(value));
+                  } else {
+                    newMap.put("value", value);
+                  }
+                  newMap.put("isString", true);
+                  return newMap;
+                })
+            .toList();
+
+    final Map<String, Object> allowableValues =
+        Map.of("values", propAllowableValuesValues, "enumVars", propAllowableValuesEnumValues);
+
     enumModel.name = typeName;
     enumModel.classname = typeName;
     enumModel.isEnum = true;
-    enumModel.allowableValues = enumProp.allowableValues;
+    enumModel.allowableValues = allowableValues;
     enumModel.classFilename = typeName;
     enumModel.dataType = "String";
     return enumModel;
@@ -401,6 +430,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     return emptyModel;
                   });
 
+      // TODO make these keys constants
       final var oneEnumVars =
           (Collection<Map<String, Object>>)
               Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);

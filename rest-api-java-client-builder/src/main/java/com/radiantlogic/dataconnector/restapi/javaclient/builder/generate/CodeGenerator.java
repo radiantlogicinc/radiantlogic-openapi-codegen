@@ -33,8 +33,10 @@ public class CodeGenerator {
     parseOptions.setResolveFully(false);
 
     log.debug("Parsing OpenAPI specification");
+    final OpenAPIParser parser = new OpenAPIParser();
+
     final OpenAPI openAPI =
-        new OpenAPIParser().readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
+        parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
     if (openAPI == null) {
       throw new IllegalStateException(
           "Failed to parse OpenAPI specification, see logs for details");

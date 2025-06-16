@@ -4,8 +4,10 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
+  private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -114,8 +117,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   public void postProcessModelProperty(final CodegenModel model, final CodegenProperty property) {
     super.postProcessModelProperty(model, property);
     // This needs to be here because some schemas result in this property being null, but downstream
-    // code expects
-    // it to be present, and then boom NPE
+    // code expects it to be present, and then boom NPE
     if (property.allowableValues == null) {
       property.allowableValues = new HashMap<>();
     }
@@ -134,6 +136,59 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
+  private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {
+    if (schema.getType() != null && schema.getType().equals("object")) {
+      return false;
+    }
+
+    if (schema.get$ref() != null) {
+      final String schemaName = parseSchemaRef(schema.get$ref());
+      final Schema refSchema = ModelUtils.getSchema(openAPI, schemaName);
+      return isIncorrectlyFlattened(refSchema);
+    }
+
+    if (schema.getOneOf() == null) {
+      return false;
+    }
+
+    final long nonObjectSchemaCount =
+        ((List<Schema>) schema.getOneOf())
+            .stream().filter(s -> !(s instanceof ObjectSchema)).count();
+    return nonObjectSchemaCount > 0;
+  }
+
+  private static String parseSchemaRef(final String ref) {
+    final Matcher matcher = SCHEMA_REF_PATTERN.matcher(ref);
+    if (!matcher.matches()) {
+      throw new IllegalStateException("Invalid schema ref: %s".formatted(ref));
+    }
+    return matcher.group(1);
+  }
+
+  private CodegenProperty fixIncorrectComplexType(
+      @NonNull final String name,
+      @NonNull final CodegenProperty property,
+      final Schema modelSchema) {
+    final Schema propertySchema =
+        Optional.ofNullable((Map<String, Schema>) modelSchema.getProperties())
+            .orElseGet(Map::of)
+            .get(property.baseName);
+    if (propertySchema == null) {
+      return property;
+    }
+
+    if (!isIncorrectlyFlattened(propertySchema)) {
+      return property;
+    }
+
+    property.openApiType = "Object";
+    property.dataType = "Object";
+    property.datatypeWithEnum = "Object";
+    property.baseType = "Object";
+    property.defaultValue = null;
+    return property;
+  }
+
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
@@ -143,6 +198,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           .findFirst()
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
+
+    final List<CodegenProperty> fixedVars =
+        result.getVars().stream()
+            .map(
+                property -> {
+                  if (property.getComplexType() != null) {
+                    return fixIncorrectComplexType(name, property, model);
+                  }
+                  return property;
+                })
+            .toList();
+    result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
+
     return result;
   }
 

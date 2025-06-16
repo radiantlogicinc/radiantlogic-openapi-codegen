@@ -5,14 +5,7 @@
 5. Figure out better package names.
 
 
-
-
-
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/idp-minimal.yaml
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/management-minimal.yaml
-https://raw.githubusercontent.com/okta/okta-management-openapi-spec/refs/heads/master/dist/current/oauth-minimal.yaml
-
-main -> feature/end-to-end-test -> feature/e2e-test
+https://vlaurencena.github.io/harry-potter-openapi-swagger-ui/openapi.yaml
 
 LOOK INTO SERDE TESTS WITH CLASSES THAT USE THESE ENUMS
 UserFactorType
@@ -27,3 +20,4 @@ TESTS THAT I NEED
 4. all http methods
 5. multipart
 6. serde for non-discriminated inheritance
+7. Varied type schemas. OpenAPI CreateCompletionRequest.prompt, where the request prompt can be a string, string array, integer array, etc

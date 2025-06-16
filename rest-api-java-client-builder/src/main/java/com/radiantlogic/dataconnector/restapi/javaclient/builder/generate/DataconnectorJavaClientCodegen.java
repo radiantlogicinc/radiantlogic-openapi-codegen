@@ -254,7 +254,30 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private CodegenProperty fixIncorrectComplexType(
       @NonNull final String name,
       @NonNull final CodegenProperty property,
-      final Schema modelSchema) {}
+      final Schema modelSchema) {
+    final Schema propertySchema = (Schema) modelSchema.getProperties().get(property.baseName);
+    if (propertySchema == null) {
+      return property;
+    }
+
+    // TODO need to do this via refs
+    if (propertySchema.getOneOf() == null) {
+      return property;
+    }
+
+    final long nonObjectSchemaCount =
+        ((List<Schema>) modelSchema.getOneOf())
+            .stream().filter(s -> !(s instanceof ObjectSchema)).count();
+    if (nonObjectSchemaCount == 0) {
+      return property;
+    }
+
+    property.openApiType = "Object";
+    property.dataType = "Object";
+    property.datatypeWithEnum = "Object";
+    property.baseType = "Object";
+    return property;
+  }
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {

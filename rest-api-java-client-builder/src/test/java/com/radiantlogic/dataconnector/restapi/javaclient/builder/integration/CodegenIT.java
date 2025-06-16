@@ -66,7 +66,7 @@ public class CodegenIT {
 
   @Test
   void googleMapsSuccess() {
-    generateAndBuild("google-maps-1.22.5.json", "Google-Maps-API");
+    generateAndBuild("google-maps-1.22.5.json", "Google-Maps-Platform/1.22.5");
   }
 
   @Test

@@ -363,6 +363,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  private static ModelsMap mergeModelsMaps(
+      @NonNull final ModelsMap one, @NonNull final ModelsMap two) {}
+
   private void addNewEnumModelMaps(
       @NonNull final Map<String, ModelsMap> allModelMaps,
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
@@ -381,9 +384,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 Collectors.toMap(
                     CodegenModel::getClassname,
                     enumModel -> enumModelToModelsMap(enumModel, enumModelBase),
-                    // If there are two duplicate keys, they are duplicate models so handle it
-                    // gracefully
-                    (a, b) -> b));
+                    DataconnectorJavaClientCodegen::mergeModelsMaps));
     allModelMaps.putAll(allNewEnumModels);
   }
 

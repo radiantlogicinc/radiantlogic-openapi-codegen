@@ -111,6 +111,11 @@ public class CodegenIT {
     generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.26");
   }
 
+  @Test
+  void harryPotter() {
+    generateAndBuild("harrypotter-1.0.0.yaml", "Harry-Potter-API/1.0.0");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

@@ -130,7 +130,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO need tests
   private String getOpenapiTitle() {
-    return Optional.ofNullable(openAPI.getInfo())
+    return Optional.ofNullable(originalOpenAPI.getInfo())
         .map(Info::getTitle)
         .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
         .orElse("unknown-api");
@@ -138,7 +138,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   // TODO need tests
   private String getOpenapiVersion() {
-    return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
+    return Optional.ofNullable(originalOpenAPI.getInfo())
+        .map(Info::getVersion)
+        .orElse("unknown-version");
   }
 
   private boolean isIncorrectlyFlattenedRef(@NonNull final Schema schema) {

@@ -99,6 +99,11 @@ public class CodegenIT {
     generateAndBuild("bitbucket-2.0.json", "Bitbucket-API/2.0");
   }
 
+  @Test
+  void radiantlogicCloudmanager() {
+    generateAndBuild("radiantlogic-cloudmanager-1.3.2.json", "Radiantlogic-CloudManager/1.3.2");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

@@ -106,7 +106,7 @@ public class CodegenIT {
 
   @Test
   void swaggerPetstore() {
-    generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.0");
+    generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.26");
   }
 
   @SneakyThrows

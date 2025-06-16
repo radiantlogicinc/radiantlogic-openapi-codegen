@@ -393,7 +393,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
       @NonNull final List<CodegenModel> allModels) {
-    allModels.stream().filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren);
+    return allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
+        .flatMap(
+            model -> {
+              return model.vars.stream()
+                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                  .map(
+                      var -> {
+                        setEnumRefProps(var);
+                        model.oneOf.forEach(
+                            childModel -> {
+                              System.out.println("Hello");
+                            });
+                        return createEnumModel(var);
+                      });
+            })
+        .toList();
   }
 
   @Override
@@ -407,6 +423,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         handleInheritedEnumsFromModelsWithParents(allModels);
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
         handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+    final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
+        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels);
     addNewEnumModelMaps(
         allModelMaps, newEnumsFromModelsWithParents, newEnumsFromDiscriminatorParentModels);
 

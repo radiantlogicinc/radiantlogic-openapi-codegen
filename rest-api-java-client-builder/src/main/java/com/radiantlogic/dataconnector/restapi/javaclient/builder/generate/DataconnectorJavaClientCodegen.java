@@ -383,11 +383,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
-    return model.oneOf != null
-        && !model.oneOf.isEmpty()
-        && (model.discriminator == null
+    final boolean hasOneOfChildren = model.oneOf != null && !model.oneOf.isEmpty();
+    final boolean hasNoDiscriminatorChildren =
+        model.discriminator == null
             || (model.discriminator.getMappedModels() == null
-                || model.discriminator.getMappedModels().isEmpty()));
+                || model.discriminator.getMappedModels().isEmpty());
+    return hasOneOfChildren && hasNoDiscriminatorChildren;
   }
 
   private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(

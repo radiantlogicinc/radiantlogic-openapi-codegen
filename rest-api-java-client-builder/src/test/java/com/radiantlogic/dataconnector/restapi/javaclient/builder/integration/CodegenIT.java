@@ -104,6 +104,11 @@ public class CodegenIT {
     generateAndBuild("radiantlogic-cloudmanager-1.3.2.json", "Radiantlogic-CloudManager/1.3.2");
   }
 
+  @Test
+  void swaggerPetstore() {
+    generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.0");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

@@ -89,6 +89,11 @@ public class CodegenIT {
     generateAndBuild("anthropic-0.0.0.json", "Anthropic-AI/0.0.0");
   }
 
+  @Test
+  void onepasswordConnect() {
+    generateAndBuild("1password-connect-1.7.1", "1Password-Connect/1.7.1");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

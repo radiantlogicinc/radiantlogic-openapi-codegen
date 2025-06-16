@@ -134,14 +134,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
-  private Schema fixIncorrectlyFlattenedProps(@NonNull final Schema schema) {
+  private Schema fixIncorrectlyFlattenedProps(
+      @NonNull final Schema schema, @NonNull final Map<String, Schema> allSchemas) {
     if (schema.getProperties() == null) {
       return schema;
     }
 
     final Map<String, Schema> fixedProperties =
         ((Set<Map.Entry<String, Schema>>) schema.getProperties().entrySet())
-            .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .stream()
+                .map(
+                    entry -> {
+                      if (entry.getValue().get$ref() != null) {
+                        // TODO fix the entry here
+                      }
+                      return entry;
+                    })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     schema.setProperties(fixedProperties);
     return schema;
   }
@@ -155,7 +164,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             entry -> {
               if (entry.getValue().getType() == null
                   || entry.getValue().getType().equals("object")) {
-                return Map.entry(entry.getKey(), fixIncorrectlyFlattenedProps(entry.getValue()));
+                return Map.entry(
+                    entry.getKey(), fixIncorrectlyFlattenedProps(entry.getValue(), schemas));
               }
               return entry;
             })

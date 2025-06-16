@@ -210,6 +210,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   @Override
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
+    // TODO delete all of this if ultimately unnecessary
+    if (true) {
+      return;
+    }
+
     final Map<String, Schema> schemas =
         Optional.ofNullable(openAPI.getComponents()).map(Components::getSchemas).orElseGet(Map::of);
     final Map<String, Schema> originalSchemas =
@@ -235,6 +240,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     openAPI.getComponents().setSchemas(schemas);
     super.preprocessOpenAPI(openAPI);
+  }
+
+  @Override
+  public CodegenProperty fromProperty(
+      final String name,
+      final Schema p,
+      final boolean required,
+      final boolean schemaIsFromAdditionalProperties) {
+    return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
   }
 
   @Override

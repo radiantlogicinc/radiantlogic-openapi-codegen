@@ -247,13 +247,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         Optional.ofNullable(enumProp.allowableValues)
             .map(map -> (List<Object>) map.get("values"))
             .orElseGet(List::of);
-    final List<Map<String, Object>> propAllowableValuesEnumValues =
+    final List<Map<String, Object>> propAllowableValuesEnumVars =
         Optional.ofNullable(enumProp.allowableValues)
             .map(map -> (List<Map<String, Object>>) map.get("enumVars"))
             .orElseGet(List::of);
 
     final List<Map<String, Object>> enumVars =
-        propAllowableValuesEnumValues.stream()
+        propAllowableValuesEnumVars.stream()
             .map(
                 map -> {
                   final String value = map.get("value").toString();
@@ -270,7 +270,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .toList();
 
     final Map<String, Object> allowableValues =
-        Map.of("values", propAllowableValuesValues, "enumVars", propAllowableValuesEnumValues);
+        Map.of("values", propAllowableValuesValues, "enumVars", enumVars);
 
     enumModel.name = typeName;
     enumModel.classname = typeName;

@@ -261,15 +261,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         propAllowableValuesEnumVars.stream()
             .map(
                 map -> {
-                  final String value = map.get(VALUE_KEY).toString();
+                  final Object value = map.get(VALUE_KEY);
                   final Map<String, Object> newMap = new HashMap<>();
                   newMap.put(NAME_KEY, map.get(NAME_KEY));
-                  if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
-                    newMap.put(VALUE_KEY, "\"%s\"".formatted(value));
+                  if (value instanceof String stringValue
+                      && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
+                    newMap.put(VALUE_KEY, "\"%s\"".formatted(stringValue));
                   } else {
                     newMap.put(VALUE_KEY, value);
                   }
-                  newMap.put(IS_STRING_KEY, true);
+                  newMap.put(IS_STRING_KEY, value instanceof String);
                   return newMap;
                 })
             .toList();

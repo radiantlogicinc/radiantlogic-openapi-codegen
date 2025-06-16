@@ -33,6 +33,11 @@ import org.openapitools.codegen.utils.ModelUtils;
  * style we want.
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
+  private static final String ENUM_VARS_KEY = "enumVars";
+  private static final String VALUES_KEY = "values";
+  private static final String NAME_KEY = "name";
+  private static final String VALUE_KEY = "value";
+  private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
@@ -245,32 +250,32 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     final List<Object> propAllowableValuesValues =
         Optional.ofNullable(enumProp.allowableValues)
-            .map(map -> (List<Object>) map.get("values"))
+            .map(map -> (List<Object>) map.get(VALUES_KEY))
             .orElseGet(List::of);
     final List<Map<String, Object>> propAllowableValuesEnumVars =
         Optional.ofNullable(enumProp.allowableValues)
-            .map(map -> (List<Map<String, Object>>) map.get("enumVars"))
+            .map(map -> (List<Map<String, Object>>) map.get(ENUM_VARS_KEY))
             .orElseGet(List::of);
 
     final List<Map<String, Object>> enumVars =
         propAllowableValuesEnumVars.stream()
             .map(
                 map -> {
-                  final String value = map.get("value").toString();
+                  final String value = map.get(VALUE_KEY).toString();
                   final Map<String, Object> newMap = new HashMap<>();
-                  newMap.put("name", map.get("name"));
+                  newMap.put(NAME_KEY, map.get(NAME_KEY));
                   if (!QUOTED_STRING_PATTERN.matcher(value).matches()) {
-                    newMap.put("value", "\"%s\"".formatted(value));
+                    newMap.put(VALUE_KEY, "\"%s\"".formatted(value));
                   } else {
-                    newMap.put("value", value);
+                    newMap.put(VALUE_KEY, value);
                   }
-                  newMap.put("isString", true);
+                  newMap.put(IS_STRING_KEY, true);
                   return newMap;
                 })
             .toList();
 
     final Map<String, Object> allowableValues =
-        Map.of("values", propAllowableValuesValues, "enumVars", enumVars);
+        Map.of(VALUES_KEY, propAllowableValuesValues, ENUM_VARS_KEY, enumVars);
 
     enumModel.name = typeName;
     enumModel.classname = typeName;
@@ -429,36 +434,36 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     emptyModel.allowableValues = Map.of();
                     return emptyModel;
                   });
-
-      // TODO make these keys constants
       final var oneEnumVars =
           (Collection<Map<String, Object>>)
-              Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);
+              Optional.ofNullable(one.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
       final var twoEnumVars =
           (Collection<Map<String, Object>>)
-              Optional.ofNullable(two.allowableValues.get("enumVars")).orElseGet(List::of);
+              Optional.ofNullable(two.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
       final var threeEnumVars =
           (Collection<Map<String, Object>>)
-              Optional.ofNullable(three.allowableValues.get("enumVars")).orElseGet(List::of);
+              Optional.ofNullable(three.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
       final Collection<Map<String, Object>> enumVars =
           Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
               .flatMap(Function.identity())
-              .collect(Collectors.toMap(map -> map.get("name"), Function.identity(), (a, b) -> b))
+              .collect(Collectors.toMap(map -> map.get(NAME_KEY), Function.identity(), (a, b) -> b))
               .values();
       final var oneValues =
-          (List<Object>) Optional.ofNullable(one.allowableValues.get("values")).orElseGet(List::of);
+          (List<Object>)
+              Optional.ofNullable(one.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
       final var twoValues =
-          (List<Object>) Optional.ofNullable(two.allowableValues.get("values")).orElseGet(List::of);
+          (List<Object>)
+              Optional.ofNullable(two.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
       final var threeValues =
           (List<Object>)
-              Optional.ofNullable(three.allowableValues.get("values")).orElseGet(List::of);
+              Optional.ofNullable(three.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
       final List<Object> values =
           Stream.of(oneValues.stream(), twoValues.stream(), threeValues.stream())
               .flatMap(Function.identity())
               .distinct()
               .toList();
 
-      one.allowableValues = Map.of("enumVars", enumVars, "values", values);
+      one.allowableValues = Map.of(ENUM_VARS_KEY, enumVars, VALUES_KEY, values);
       return one;
     };
   }

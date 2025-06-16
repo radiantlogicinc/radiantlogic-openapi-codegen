@@ -1,0 +1,305 @@
+openapi: 3.0.0
+info:
+  title: Harry Potter API
+  description: |
+    A REST Harry Potter API with images and information about books, characters
+    and spells. Translated to many languages.
+    
+    This documentation was built by Víctor Laurencena and it's available on [GitHub](https://github.com/vlaurencena/harry-potter-openapi-swagger-ui).
+  version: 1.0.0
+      
+tags:
+  - name: Books
+  - name: Characters
+  - name: Houses
+  - name: Spells
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      description: Returns all Harry Potter books.
+      responses:
+        '200':
+          description: A list of books.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/404'
+      parameters:
+        - $ref: '#/components/parameters/indexParam'
+        - $ref: '#/components/parameters/maxParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/searchParam'
+  /books/random:
+    get:
+      tags:
+        - Books
+      description: Returns a random Harry Potter book.
+      responses:
+        '200':
+          description: A single random book.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  /characters:
+    get:
+      tags:
+        - Characters
+      description: Returns all Harry Potter characters.
+      responses:
+        '200':
+          description: A list of characters.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Character'
+        '404':
+          $ref: '#/components/responses/404'
+      parameters:
+        - $ref: '#/components/parameters/indexParam'
+        - $ref: '#/components/parameters/maxParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/searchParam'
+  /characters/random:
+    get:
+      tags:
+        - Characters
+      description: Returns a random Harry Potter character.
+      responses:
+        '200':
+          description: A single random character.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+  /houses:
+    get:
+      tags:
+        - Houses
+      description: Returns the four Hogwarts Houses with some extra data
+      responses:
+        '200':
+          description: A list of houses.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/House'
+        '404':
+          $ref: '#/components/responses/404'
+      parameters:
+        - $ref: '#/components/parameters/indexParam'
+        - $ref: '#/components/parameters/maxParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/searchParam'
+  /houses/random:
+    get:
+      tags:
+        - Houses
+      description: Returns a random Hogwarts House with some extra data.
+      responses:
+        '200':
+          description: A random house.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+  /spells:
+    get:
+      tags:
+        - Spells
+      description: Returns all the spells mentioned in the saga with a description.
+      responses:
+        '200':
+          description: A list of spells.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Spell'
+        '404':
+          $ref: '#/components/responses/404'
+      parameters:
+        - $ref: '#/components/parameters/indexParam'
+        - $ref: '#/components/parameters/maxParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/searchParam'
+  /spells/random:
+    get:
+      tags:
+        - Spells
+      description: Returns a random spell mentioned in the saga with a description.
+      responses:
+        '200':
+          description: A random spell.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spell'
+components:
+  responses:
+    '404':
+      description: Not Found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid Index
+  schemas:
+    Book:
+      type: object
+      properties:
+        number:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Harry Potter and the Sorcerer's Stone
+        originalTitle:
+          type: string
+          example: Harry Potter and the Sorcerer's Stone
+        releaseDate:
+          type: string
+          example: Jun 26, 1997
+        description:
+          type: string
+          example: >-
+            On his birthday, Harry Potter discovers that he is the son of two
+            well-known wizards, from whom he has inherited magical powers. He
+            must attend a famous school of magic and sorcery, where he
+            establishes a friendship with two young men who will become his
+            companions on his adventure. During his first year at Hogwarts, he
+            discovers that a malevolent and powerful wizard named Voldemort is
+            in search of a philosopher's stone that prolongs the life of its
+            owner.
+        pages:
+          type: integer
+          example: 223
+        cover:
+          type: string
+          example: >-
+            https://raw.githubusercontent.com/fedeperin/potterapi/main/public/images/covers/1.png
+        index:
+          type: integer
+          example: 0
+    Character:
+      type: object
+      properties:
+        fullname:
+          type: string
+          example: Harry James Potter
+        nickname:
+          type: string
+          example: Harry
+        hogwartsHouse:
+          type: string
+          example: Gryffindor
+        interpretedBy:
+          type: string
+          example: Daniel Radcliffe
+        children:
+          type: array
+          items:
+            type: string
+            example: James Sirius Potter
+        image:
+          type: string
+          example: >-
+            https://raw.githubusercontent.com/fedeperin/potterapi/main/public/images/characters/harry_potter.png
+        birthDate:
+          type: string
+          example: Jul 31, 1980
+        index:
+          type: integer
+          example: 0
+    Spell:
+      type: object
+      properties:
+        spell:
+          type: string
+          example: Accio
+        use:
+          type: string
+          example: Summoning charm
+        index:
+          type: number
+          example: 0
+    House:
+      type: object
+      properties:
+        house:
+          type: string
+          example: Gryffindor
+        emoji:
+          type: string
+          example: 🦁
+        founder:
+          type: string
+          example: Godric Gryffindor
+        colors:
+          type: array
+          items:
+            type: string
+            example: red
+        animal:
+          type: string
+          example: Lion
+        index:
+          type: number
+          example: 0
+  parameters:
+    indexParam:
+      name: index
+      in: query
+      schema:
+        type: integer
+      description: >-
+        Returns only one item, the one that on the whole list has the index
+        selected.
+    maxParam:
+      name: max
+      in: query
+      schema:
+        type: integer
+      description: Returns the whole list cropped by the number passed.
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+      description: >-
+        If max is used, you can also use this param to indicate where to start
+        cropping.
+    searchParam:
+      name: search
+      in: query
+      schema:
+        type: string
+      description: Searches in all the items and returns the best matches.
+servers:
+  - url: https://potterapi-fedeperin.vercel.app/{language}
+    description: Multi-language
+    variables:
+      language:
+        default: en
+        enum:
+          - en
+          - es
+          - ft
+          - it
+          - pt
+          - uk
+        description: The language for the API responses.

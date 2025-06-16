@@ -163,7 +163,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                         final Schema ref =
                             allSchemas.get(parseSchemaRef(entry.getValue().get$ref()));
                         isIncorrectlyFlattenedRef(ref);
-                        // TODO fix the entry here
+                        return Map.entry(entry.getKey(), ref);
                       }
                       return entry;
                     })

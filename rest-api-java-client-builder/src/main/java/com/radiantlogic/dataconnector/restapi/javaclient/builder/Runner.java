@@ -7,7 +7,6 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGe
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.validate.OpenapiValidator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,8 +60,9 @@ public class Runner {
 
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
-    final OpenapiValidator openapiValidator = new OpenapiValidator(validatedParsedArgs);
-    openapiValidator.validate();
+    // TODO decide what to do about validation later
+    //    final OpenapiValidator openapiValidator = new OpenapiValidator(validatedParsedArgs);
+    //    openapiValidator.validate();
     final CodeGenerator codeGenerator = new CodeGenerator(validatedParsedArgs);
     codeGenerator.generate();
     log.info("Finished code generation");

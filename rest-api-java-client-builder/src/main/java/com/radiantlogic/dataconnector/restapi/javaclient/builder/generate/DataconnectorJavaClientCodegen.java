@@ -208,6 +208,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   @Override
+  protected List<Map<String, Object>> buildEnumVars(
+      @NonNull final List<Object> values, @NonNull final String dataType) {
+    final var enumVars = super.buildEnumVars(values, dataType);
+    final boolean useValueOf = !dataType.equals("BigDecimal");
+
+    final var updatedEnumVars =
+        enumVars.stream().peek(map -> map.put("useValueOf", useValueOf)).toList();
+    return new ArrayList<>(updatedEnumVars);
+  }
+
+  @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
     if (result.discriminator != null) {

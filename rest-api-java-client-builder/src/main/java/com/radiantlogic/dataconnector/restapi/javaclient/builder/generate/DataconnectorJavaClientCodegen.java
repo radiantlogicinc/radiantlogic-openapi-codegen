@@ -374,10 +374,41 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
     return (one, two) -> {
-      if (!one.name.equals(two.name)) {
-        throw new IllegalStateException("Invalid names");
+      if (!one.isEnum || !two.isEnum) {
+        throw new IllegalArgumentException("Cannot merge non-enum models");
       }
-      return two;
+
+      // This is a pre-existing copy of this enum, which may or may not exist (probably won't, but
+      // want to take it into account)
+      final CodegenModel three =
+          Optional.ofNullable(ModelUtils.getModelByName(one.name, allModelMaps))
+              .orElseGet(
+                  () -> {
+                    final CodegenModel emptyModel = new CodegenModel();
+                    emptyModel.allowableValues = Map.of("enumVars", List.of(), "values", List.of());
+                    return emptyModel;
+                  });
+
+      final var oneEnumVars = (List<Map<String, Object>>) one.allowableValues.get("enumVars");
+      final var twoEnumVars = (List<Map<String, Object>>) two.allowableValues.get("enumVars");
+      final var threeEnumVars = (List<Map<String, Object>>) three.allowableValues.get("enumVars");
+      final Map<String, Object> enumVars =
+          Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
+              .flatMap(Function.identity())
+              .flatMap(map -> map.entrySet().stream())
+              .distinct()
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      final var oneValues = (List<Object>) one.allowableValues.get("values");
+      final var twoValues = (List<Object>) two.allowableValues.get("values");
+      final var threeValues = (List<Object>) three.allowableValues.get("values");
+      final List<Object> values =
+          Stream.of(oneValues.stream(), twoValues.stream(), threeValues.stream())
+              .flatMap(Function.identity())
+              .distinct()
+              .toList();
+
+      one.allowableValues = Map.of("enumVars", enumVars, "values", values);
+      return one;
     };
   }
 
@@ -390,11 +421,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
     final Map<String, CodegenModel> allNewEnums =
-        Stream.concat(
-                Stream.concat(
-                    newEnumsFromParentModels.stream(),
-                    newEnumsFromDiscriminatorParentModels.stream()),
+        Stream.of(
+                newEnumsFromParentModels.stream(),
+                newEnumsFromDiscriminatorParentModels.stream(),
                 newEnumsFromModelsWithNonDiscriminatorChildren.stream())
+            .flatMap(Function.identity())
             .collect(
                 Collectors.toMap(
                     CodegenModel::getName,

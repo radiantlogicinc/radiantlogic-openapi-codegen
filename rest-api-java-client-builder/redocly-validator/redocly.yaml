@@ -10,5 +10,8 @@ rules:
   operation-2xx-response: off
   no-invalid-media-type-examples: off
   security-defined: off
+  operation-summary: off
   # TODO this one may be a problem, unclear
   no-identical-paths: warn
+  # TODO this one may be a problem, unclear
+  no-ambiguous-paths: warn

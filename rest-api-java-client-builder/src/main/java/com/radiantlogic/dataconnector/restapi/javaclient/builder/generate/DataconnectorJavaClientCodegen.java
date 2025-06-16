@@ -84,7 +84,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
-    final String basePackage = "%s.%s".formatted(getGroupId(), ensureValidPackageName(title));
+
+    final String basePackage =
+        fixLeadingNumbers("%s.%s".formatted(getGroupId(), ensureValidPackageName(title)));
     setApiPackage("%s.api".formatted(basePackage));
     setModelPackage("%s.model".formatted(basePackage));
     setInvokerPackage("%s.invoker".formatted(basePackage));

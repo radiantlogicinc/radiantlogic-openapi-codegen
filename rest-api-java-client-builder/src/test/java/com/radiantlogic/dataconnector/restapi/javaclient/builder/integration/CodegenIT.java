@@ -69,6 +69,16 @@ public class CodegenIT {
     generateAndBuild("google-maps-1.22.5.json", "Google-Maps-API");
   }
 
+  @Test
+  void msgraphApplication() {
+    generateAndBuild("msgraph-application-1.0.yaml", "foo");
+  }
+
+  @Test
+  void msgraphCalendar() {
+    generateAndBuild("msgraph-calendar-1.0.yaml", "foo");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

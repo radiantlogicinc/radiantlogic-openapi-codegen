@@ -184,7 +184,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     entry -> {
                       // Should not do anything if the ref originally existed during parsing
                       final Schema originalPropSchema =
-                          originalSchema.getProperties().get(entry.getKey());
+                          ((Map<String, Schema>) originalSchema.getProperties())
+                              .get(entry.getKey());
                       if (entry.getValue().get$ref() != null
                           && originalPropSchema != null
                           && originalPropSchema.get$ref() == null) {

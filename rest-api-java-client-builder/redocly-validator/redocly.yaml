@@ -11,4 +11,4 @@ rules:
   no-invalid-media-type-examples: off
   security-defined: off
   # TODO this one may be a problem, unclear
-  no-identical-paths rule: warn
+  no-identical-paths: warn

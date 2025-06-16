@@ -10,3 +10,4 @@ rules:
   operation-2xx-response: off
   no-invalid-media-type-examples: off
   security-defined: off
+  no-identical-paths rule: warn

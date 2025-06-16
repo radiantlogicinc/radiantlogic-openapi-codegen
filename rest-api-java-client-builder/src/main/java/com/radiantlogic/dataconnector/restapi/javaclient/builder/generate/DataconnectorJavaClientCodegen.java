@@ -386,22 +386,31 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               .orElseGet(
                   () -> {
                     final CodegenModel emptyModel = new CodegenModel();
-                    emptyModel.allowableValues = Map.of("enumVars", List.of(), "values", List.of());
+                    emptyModel.allowableValues = Map.of();
                     return emptyModel;
                   });
 
-      final var oneEnumVars = (List<Map<String, Object>>) one.allowableValues.get("enumVars");
-      final var twoEnumVars = (List<Map<String, Object>>) two.allowableValues.get("enumVars");
-      final var threeEnumVars = (List<Map<String, Object>>) three.allowableValues.get("enumVars");
-      final Map<String, Object> enumVars =
+      final var oneEnumVars =
+          (List<Map<String, Object>>)
+              Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);
+      final var twoEnumVars =
+          (List<Map<String, Object>>)
+              Optional.ofNullable(two.allowableValues.get("enumVars")).orElseGet(List::of);
+      final var threeEnumVars =
+          (List<Map<String, Object>>)
+              Optional.ofNullable(three.allowableValues.get("enumVars")).orElseGet(List::of);
+      final List<Map<String, Object>> enumVars =
           Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
               .flatMap(Function.identity())
-              .flatMap(map -> map.entrySet().stream())
               .distinct()
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      final var oneValues = (List<Object>) one.allowableValues.get("values");
-      final var twoValues = (List<Object>) two.allowableValues.get("values");
-      final var threeValues = (List<Object>) three.allowableValues.get("values");
+              .toList();
+      final var oneValues =
+          (List<Object>) Optional.ofNullable(one.allowableValues.get("values")).orElseGet(List::of);
+      final var twoValues =
+          (List<Object>) Optional.ofNullable(two.allowableValues.get("values")).orElseGet(List::of);
+      final var threeValues =
+          (List<Object>)
+              Optional.ofNullable(three.allowableValues.get("values")).orElseGet(List::of);
       final List<Object> values =
           Stream.of(oneValues.stream(), twoValues.stream(), threeValues.stream())
               .flatMap(Function.identity())

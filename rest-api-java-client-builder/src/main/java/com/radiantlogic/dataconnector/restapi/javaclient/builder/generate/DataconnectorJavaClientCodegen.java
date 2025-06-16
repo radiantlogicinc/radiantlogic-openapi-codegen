@@ -278,6 +278,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     property.dataType = "Object";
     property.datatypeWithEnum = "Object";
     property.baseType = "Object";
+    property.defaultValue = null;
     return property;
   }
 

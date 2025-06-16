@@ -4,6 +4,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -136,7 +137,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private boolean isIncorrectlyFlattenedRef(@NonNull final Schema schema) {
-    if (schema.getOneOf() != null) {}
+    if (schema.getOneOf() == null) {
+      return false;
+    }
+
+    final long nonObjectSchemaCount =
+        ((List<Schema>) schema.getOneOf())
+            .stream().filter(schema -> !(schema instanceof ObjectSchema)).count();
+    return nonObjectSchemaCount > 0;
   }
 
   private static String parseSchemaRef(final String ref) {

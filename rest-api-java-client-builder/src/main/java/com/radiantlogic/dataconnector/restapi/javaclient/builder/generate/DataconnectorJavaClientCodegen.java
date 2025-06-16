@@ -251,6 +251,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
   }
 
+  private CodegenProperty fixIncorrectComplexType(
+      @NonNull final String name,
+      @NonNull final CodegenProperty property,
+      final Schema modelSchema) {}
+
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);
@@ -260,6 +265,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           .findFirst()
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
+
+    final List<CodegenProperty> fixedVars =
+        result.getVars().stream()
+            .map(
+                property -> {
+                  if (property.getComplexType() != null) {
+                    return fixIncorrectComplexType(name, property, model);
+                  }
+                  return property;
+                })
+            .toList();
+    result.setVars(fixedVars);
+
     return result;
   }
 

@@ -143,7 +143,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     final long nonObjectSchemaCount =
         ((List<Schema>) schema.getOneOf())
-            .stream().filter(schema -> !(schema instanceof ObjectSchema)).count();
+            .stream().filter(s -> !(s instanceof ObjectSchema)).count();
     return nonObjectSchemaCount > 0;
   }
 

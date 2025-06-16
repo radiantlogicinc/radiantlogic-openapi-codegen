@@ -404,16 +404,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                         setEnumRefProps(var);
                         model.oneOf.forEach(
                             childModelName -> {
-                              final CodegenModel childModel =
-                                  allModels.stream()
-                                      .filter(m -> m.name.equals(childModelName))
-                                      .findFirst()
-                                      .orElseThrow(
-                                          () ->
-                                              new IllegalStateException(
-                                                  "Cannot find model matching reference: %s"
-                                                      .formatted(childModelName)));
-                              ensureChildModelHasNoInlineEnums(var, childModel);
+                              allModels.stream()
+                                  .filter(m -> m.name.equals(childModelName))
+                                  .findFirst()
+                                  .ifPresent(
+                                      childModel ->
+                                          ensureChildModelHasNoInlineEnums(var, childModel));
                             });
                         return createEnumModel(var);
                       });

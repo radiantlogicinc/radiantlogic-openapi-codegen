@@ -133,6 +133,30 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
+  private Schema fixIncorrectlyFlattenedProps(@NonNull final Schema schema) {
+    if (schema.getProperties() == null) {
+      return schema;
+    }
+  }
+
+  @Override
+  public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
+    final Map<String, Schema> schemas =
+        Optional.ofNullable(openAPI.getComponents().getSchemas()).orElseGet(Map::of);
+    schemas.entrySet().stream()
+        .map(
+            entry -> {
+              if (entry.getValue().getType() == null
+                  || entry.getValue().getType().equals("object")) {
+                return Map.entry(entry.getKey(), fixIncorrectlyFlattenedProps(entry.getValue()));
+              }
+              return entry;
+            })
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    super.preprocessOpenAPI(openAPI);
+  }
+
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final CodegenModel result = super.fromModel(name, model);

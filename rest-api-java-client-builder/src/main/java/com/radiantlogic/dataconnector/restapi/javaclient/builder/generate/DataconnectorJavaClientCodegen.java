@@ -143,9 +143,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .orElse("unknown-version");
   }
 
-  private boolean isIncorrectlyFlattenedRef(@NonNull final Schema schema) {
+  private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {
     if (schema.getType() != null && schema.getType().equals("object")) {
       return false;
+    }
+
+    if (schema.get$ref() != null) {
+      final String schemaName = parseSchemaRef(schema.get$ref());
+      final Schema refSchema = ModelUtils.getSchema(openAPI, schemaName);
+      return isIncorrectlyFlattened(refSchema);
     }
 
     if (schema.getOneOf() == null) {
@@ -197,7 +203,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                           && originalPropSchema.get$ref() == null) {
                         final Schema ref =
                             allSchemas.get(parseSchemaRef(entry.getValue().get$ref()));
-                        if (isIncorrectlyFlattenedRef(ref)) {
+                        if (isIncorrectlyFlattened(ref)) {
                           return Map.entry(entry.getKey(), ref);
                         }
                       }
@@ -260,15 +266,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       return property;
     }
 
-    // TODO need to do this via refs
-    if (propertySchema.getOneOf() == null) {
-      return property;
-    }
-
-    final long nonObjectSchemaCount =
-        ((List<Schema>) modelSchema.getOneOf())
-            .stream().filter(s -> !(s instanceof ObjectSchema)).count();
-    if (nonObjectSchemaCount == 0) {
+    if (!isIncorrectlyFlattened(propertySchema)) {
       return property;
     }
 

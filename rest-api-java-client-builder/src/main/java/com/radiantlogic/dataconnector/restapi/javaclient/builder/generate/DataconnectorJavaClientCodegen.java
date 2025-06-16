@@ -392,7 +392,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
-      @NonNull final List<CodegenModel> allModels) {
+      @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
         .flatMap(

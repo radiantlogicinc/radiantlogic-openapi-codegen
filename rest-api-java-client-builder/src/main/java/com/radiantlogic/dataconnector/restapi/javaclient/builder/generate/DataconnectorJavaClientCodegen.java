@@ -144,6 +144,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private boolean isIncorrectlyFlattenedRef(@NonNull final Schema schema) {
+    if (schema.getType() != null && schema.getType().equals("object")) {
+      return false;
+    }
+
     if (schema.getOneOf() == null) {
       return false;
     }

@@ -91,7 +91,7 @@ public class CodegenIT {
 
   @Test
   void onepasswordConnect() {
-    generateAndBuild("1password-connect-1.7.1", "1Password-Connect/1.7.1");
+    generateAndBuild("1password-connect-1.7.1.yaml", "1Password-Connect/1.7.1");
   }
 
   @SneakyThrows

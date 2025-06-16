@@ -137,6 +137,16 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     if (schema.getProperties() == null) {
       return schema;
     }
+
+    final Map<String, Schema> fixedProperties =
+        schema.getProperties().entrySet().stream()
+            .map(
+                entry -> {
+                  return entry;
+                })
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    schema.setProperties(fixedProperties);
+    return schema;
   }
 
   @Override
@@ -153,7 +163,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               return entry;
             })
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+    openAPI.getComponents().setSchemas(schemas);
     super.preprocessOpenAPI(openAPI);
   }
 

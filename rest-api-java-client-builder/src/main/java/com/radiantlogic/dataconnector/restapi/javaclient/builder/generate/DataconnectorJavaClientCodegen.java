@@ -370,9 +370,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
+
     final Map<String, ModelsMap> allNewEnumModels =
         Stream.concat(
-                newEnumsFromParentModels.stream(), newEnumsFromDiscriminatorParentModels.stream())
+                Stream.concat(
+                    newEnumsFromParentModels.stream(),
+                    newEnumsFromDiscriminatorParentModels.stream()),
+                newEnumsFromModelsWithNonDiscriminatorChildren.stream())
             .collect(
                 Collectors.toMap(
                     CodegenModel::getClassname,

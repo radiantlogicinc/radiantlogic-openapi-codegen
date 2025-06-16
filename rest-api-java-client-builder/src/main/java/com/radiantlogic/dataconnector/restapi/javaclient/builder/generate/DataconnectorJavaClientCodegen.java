@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -139,12 +140,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     }
 
     final Map<String, Schema> fixedProperties =
-        schema.getProperties().entrySet().stream()
-            .map(
-                entry -> {
-                  return entry;
-                })
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        ((Set<Map.Entry<String, Schema>>) schema.getProperties().entrySet())
+            .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     schema.setProperties(fixedProperties);
     return schema;
   }

@@ -2,7 +2,7 @@
 2. Must work with OpenAPI 2 & 3.
 3. Must work with local files and URLs.
 4. Must work with YAML and JSON
-5. Use spaces instead of = for arguments, matches the help text better.
+5. Figure out better package names.
 
 
 
@@ -17,10 +17,3 @@ main -> feature/end-to-end-test -> feature/e2e-test
 LOOK INTO SERDE TESTS WITH CLASSES THAT USE THESE ENUMS
 UserFactorType
 FactorTypeEnum
-
-
-
-LAST SCHEMA PROBLEMS
-
-- Schemas that are only used as form params are not generated... why?
-- If I fix this, I need to make sure that form param schemas are executed correctly

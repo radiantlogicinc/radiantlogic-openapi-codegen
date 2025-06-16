@@ -31,6 +31,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  */
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
+  private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -134,6 +135,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
+  private boolean isIncorrectlyFlattenedRef(@NonNull final Schema schema) {
+    if (schema.getOneOf() != null) {}
+  }
+
+  private static String parseSchemaRef(final String ref) {
+    final Matcher matcher = SCHEMA_REF_PATTERN.matcher(ref);
+    if (!matcher.matches()) {
+      throw new IllegalStateException("Invalid schema ref: %s".formatted(ref));
+    }
+    return matcher.group(1);
+  }
+
   private Schema fixIncorrectlyFlattenedProps(
       @NonNull final Schema schema, @NonNull final Map<String, Schema> allSchemas) {
     if (schema.getProperties() == null) {
@@ -145,7 +158,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .stream()
                 .map(
                     entry -> {
+                      // TODO what if it was originally like this?
                       if (entry.getValue().get$ref() != null) {
+                        final Schema ref =
+                            allSchemas.get(parseSchemaRef(entry.getValue().get$ref()));
+                        isIncorrectlyFlattenedRef(ref);
                         // TODO fix the entry here
                       }
                       return entry;

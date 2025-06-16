@@ -71,12 +71,12 @@ public class CodegenIT {
 
   @Test
   void msgraphApplication() {
-    generateAndBuild("msgraph-applications-1.0.yaml", "foo");
+    generateAndBuild("msgraph-applications-1.0.yaml", "Applications/v1.0");
   }
 
   @Test
   void msgraphCalendar() {
-    generateAndBuild("msgraph-calendar-1.0.yaml", "foo");
+    generateAndBuild("msgraph-calendar-1.0.yaml", "Calendar/v1.0");
   }
 
   @SneakyThrows

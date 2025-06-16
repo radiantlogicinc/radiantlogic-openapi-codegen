@@ -373,7 +373,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
-    return (one, two) -> {};
+    return (one, two) -> {
+      if (!one.name.equals(two.name)) {
+        throw new IllegalStateException("Invalid names");
+      }
+      return two;
+    };
   }
 
   private void addNewEnumModelMaps(
@@ -392,7 +397,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 newEnumsFromModelsWithNonDiscriminatorChildren.stream())
             .collect(
                 Collectors.toMap(
-                    CodegenModel::getClassname,
+                    CodegenModel::getName,
                     Function.identity(),
                     mergeEnumCodegenModels(allModelMaps)));
 

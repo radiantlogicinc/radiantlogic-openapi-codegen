@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -369,6 +371,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return two;
   }
 
+  private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    return (one, two) -> {};
+  }
+
   private void addNewEnumModelMaps(
       @NonNull final Map<String, ModelsMap> allModelMaps,
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
@@ -377,6 +384,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
+    final Map<String, CodegenModel> allNewEnums =
+        Stream.concat(
+                Stream.concat(
+                    newEnumsFromParentModels.stream(),
+                    newEnumsFromDiscriminatorParentModels.stream()),
+                newEnumsFromModelsWithNonDiscriminatorChildren.stream())
+            .collect(
+                Collectors.toMap(
+                    CodegenModel::getClassname,
+                    Function.identity(),
+                    mergeEnumCodegenModels(allModelMaps)));
+
+    // TODO integrate into refactored ModelsMaps below
     final Map<String, ModelsMap> allNewEnumModels =
         Stream.concat(
                 Stream.concat(

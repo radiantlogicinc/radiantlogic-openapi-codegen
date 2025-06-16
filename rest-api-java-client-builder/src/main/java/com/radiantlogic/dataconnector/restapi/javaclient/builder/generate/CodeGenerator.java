@@ -46,15 +46,15 @@ public class CodeGenerator {
     // The codegen will re-write the OpenAPI in a way that cannot be hooked into. Some of that will
     // introduce bugs.
     // This helps us identify and resolve those issues.
-    final OpenAPI referenceOpenAPI =
+    final OpenAPI preservedOpenAPI =
         parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
 
     preProcessOpenAPI(openAPI);
-    preProcessOpenAPI(referenceOpenAPI);
+    preProcessOpenAPI(preservedOpenAPI);
 
     log.debug("Performing code generation");
     final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(openAPI, args);
+        new DataconnectorJavaClientCodegen(preservedOpenAPI, args);
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
 
     final DefaultGenerator generator = new DefaultGenerator();

@@ -391,19 +391,19 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   });
 
       final var oneEnumVars =
-          (List<Map<String, Object>>)
+          (Collection<Map<String, Object>>)
               Optional.ofNullable(one.allowableValues.get("enumVars")).orElseGet(List::of);
       final var twoEnumVars =
-          (List<Map<String, Object>>)
+          (Collection<Map<String, Object>>)
               Optional.ofNullable(two.allowableValues.get("enumVars")).orElseGet(List::of);
       final var threeEnumVars =
-          (List<Map<String, Object>>)
+          (Collection<Map<String, Object>>)
               Optional.ofNullable(three.allowableValues.get("enumVars")).orElseGet(List::of);
-      final List<Map<String, Object>> enumVars =
+      final Collection<Map<String, Object>> enumVars =
           Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
               .flatMap(Function.identity())
-              .distinct()
-              .toList();
+              .collect(Collectors.toMap(map -> map.get("name"), Function.identity(), (a, b) -> b))
+              .values();
       final var oneValues =
           (List<Object>) Optional.ofNullable(one.allowableValues.get("values")).orElseGet(List::of);
       final var twoValues =

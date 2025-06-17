@@ -588,7 +588,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final Map<String, ModelsMap> allModelMaps) {
     final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
 
-    handleMissingModelInheritance(allModels);
+    handleMissingModelInheritance(allModels, allModelMaps);
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children

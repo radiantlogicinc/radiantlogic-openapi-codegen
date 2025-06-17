@@ -5,61 +5,55 @@ import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSou
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-/**
- * Test serialization and deserialization of classes that are discriminated unions.
- */
+/** Test serialization and deserialization of classes that are discriminated unions. */
 public class DiscriminatedUnionSerdeTest {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    static Stream<Arguments> radiantoneDatasources() {
-        final LdapDataSource ldapDataSource = new LdapDataSource();
-        ldapDataSource.setName("myldap");
-        ldapDataSource.setType("Active Directory");
-        ldapDataSource.setCategory(RequiredDataSourceCategory.LDAP);
-        ldapDataSource.setHost("localhost");
-        ldapDataSource.setPort(389);
-        ldapDataSource.setActive(true);
-        ldapDataSource.bindDn("cn=user");
-        ldapDataSource.setPassword("password");
+  static Stream<Arguments> radiantoneDatasources() {
+    final LdapDataSource ldapDataSource = new LdapDataSource();
+    ldapDataSource.setName("myldap");
+    ldapDataSource.setType("Active Directory");
+    ldapDataSource.setCategory(RequiredDataSourceCategory.LDAP);
+    ldapDataSource.setHost("localhost");
+    ldapDataSource.setPort(389);
+    ldapDataSource.setActive(true);
+    ldapDataSource.bindDn("cn=user");
+    ldapDataSource.setPassword("password");
 
-        final DatabaseDataSource databaseDataSource = new DatabaseDataSource();
-        databaseDataSource.setName("mydb");
-        databaseDataSource.setType("MySQL");
-        databaseDataSource.setCategory(RequiredDataSourceCategory.DATABASE);
-        databaseDataSource.setUrl(URI.create("jdbc:mysql://localhost:3306/mydb"));
-        databaseDataSource.setUsername("user");
-        databaseDataSource.setPassword("password");
-        databaseDataSource.setActive(true);
+    final DatabaseDataSource databaseDataSource = new DatabaseDataSource();
+    databaseDataSource.setName("mydb");
+    databaseDataSource.setType("MySQL");
+    databaseDataSource.setCategory(RequiredDataSourceCategory.DATABASE);
+    databaseDataSource.setUrl(URI.create("jdbc:mysql://localhost:3306/mydb"));
+    databaseDataSource.setUsername("user");
+    databaseDataSource.setPassword("password");
+    databaseDataSource.setActive(true);
 
-        final CustomDataSource customDataSource = new CustomDataSource();
-        customDataSource.setName("mycustom");
-        customDataSource.setType("MyCustomDataSource");
-        customDataSource.setCategory(RequiredDataSourceCategory.CUSTOM);
-        customDataSource.setActive(true);
-        final Map<String, String> props = new HashMap<>();
-        props.put("foo", "bar");
-        props.put("baz", "qux");
-        customDataSource.setCustomProps(props);
+    final CustomDataSource customDataSource = new CustomDataSource();
+    customDataSource.setName("mycustom");
+    customDataSource.setType("MyCustomDataSource");
+    customDataSource.setCategory(RequiredDataSourceCategory.CUSTOM);
+    customDataSource.setActive(true);
+    final Map<String, String> props = new HashMap<>();
+    props.put("foo", "bar");
+    props.put("baz", "qux");
+    customDataSource.setCustomProps(props);
 
-        return Stream.of(
-            Arguments.of("ldap", ldapDataSource),
-                Arguments.of("database", databaseDataSource),
-                Arguments.of("custom", customDataSource)
-        );
-    }
+    return Stream.of(
+        Arguments.of("ldap", ldapDataSource),
+        Arguments.of("database", databaseDataSource),
+        Arguments.of("custom", customDataSource));
+  }
 
-    @ParameterizedTest(name = "It handles radiantone datasources: {0}")
-    @MethodSource("radiantoneDatasources")
-    void itHandlesRadiantoneDatasources() {
-
-    }
+  @ParameterizedTest(name = "It handles radiantone datasources: {0}")
+  @MethodSource("radiantoneDatasources")
+  void itHandlesRadiantoneDatasources() {}
 }

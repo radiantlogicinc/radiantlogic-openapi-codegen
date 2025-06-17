@@ -25,6 +25,13 @@
                 <module>./usage</module>
             </modules>
         </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>./rest-api-java-client-builder</module>
+                <module>./usage</module>
+            </modules>
+        </profile>
     </profiles>
 
     <properties>

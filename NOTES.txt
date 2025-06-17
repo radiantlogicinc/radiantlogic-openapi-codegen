@@ -14,7 +14,6 @@ FactorTypeEnum
 
 TESTS THAT I NEED
 
-1. serde for discriminated unions, like super detailed
 2. form-urlencoded requests
 3. Different forms of auth
 4. all http methods

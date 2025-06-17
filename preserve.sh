@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-cp -r rest-api-java-client-builder/output/Bitbucket-API/2.0/ output
+cp -r rest-api-java-client-builder/output/OpenAI-API/2.3.0/ output

@@ -60,9 +60,6 @@ public class Runner {
 
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
-    // TODO decide what to do about validation later
-    //    final OpenapiValidator openapiValidator = new OpenapiValidator(validatedParsedArgs);
-    //    openapiValidator.validate();
     final CodeGenerator codeGenerator = new CodeGenerator(validatedParsedArgs);
     codeGenerator.generate();
     log.info("Finished code generation");

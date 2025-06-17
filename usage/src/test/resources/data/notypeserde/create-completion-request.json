@@ -1,1 +1,8 @@
-{}
+{
+  "best_of": 1,
+  "echo": true,
+  "presence_penalty": 10,
+  "model": "o3",
+  "prompt": ["hello", "world"],
+  "stop": [1, 2, 3]
+}

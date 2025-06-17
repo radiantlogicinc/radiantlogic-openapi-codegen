@@ -53,15 +53,18 @@ public class DiscriminatedUnionSerdeTest {
     props.put("baz", "qux");
     customDataSource.setCustomProps(props);
 
+    final String ldapJson = readResource("data/discriminatedunionserde/ldap.json");
+
     return Stream.of(
-        Arguments.of("ldap", ldapDataSource, ""),
+        Arguments.of("ldap", ldapDataSource, ldapJson),
         Arguments.of("database", databaseDataSource, ""),
         Arguments.of("custom", customDataSource, ""));
   }
 
   @SneakyThrows
   private static String readResource(@NonNull final String resourceName) {
-    final InputStream stream = DiscriminatedUnionSerdeTest.class.getResourceAsStream(resourceName);
+    final InputStream stream =
+        DiscriminatedUnionSerdeTest.class.getClassLoader().getResourceAsStream(resourceName);
     if (stream == null) {
       throw new IllegalArgumentException("Resource not found: " + resourceName);
     }
@@ -77,8 +80,9 @@ public class DiscriminatedUnionSerdeTest {
   @MethodSource("radiantoneDatasources")
   @SneakyThrows
   void itHandlesRadiantoneDatasources(
-      @NonNull final String name, @NonNull final GenericDataSource dataSource) {
-    final String json = objectMapper.writeValueAsString(dataSource);
-    System.out.println(json);
+      @NonNull final String name,
+      @NonNull final GenericDataSource dataSource,
+      @NonNull final String json) {
+    throw new RuntimeException();
   }
 }

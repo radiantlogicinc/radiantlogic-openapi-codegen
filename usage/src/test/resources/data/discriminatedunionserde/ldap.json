@@ -1,0 +1,10 @@
+{
+  "name": "myldap",
+  "type": "Active Directory",
+  "category": "ldap",
+  "host": "localhost",
+  "port": 389,
+  "active": true,
+  "bindDn": "cn=user",
+  "password": "password"
+}

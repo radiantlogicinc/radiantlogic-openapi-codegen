@@ -6,11 +6,14 @@ import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataS
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.GenericDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,9 +54,23 @@ public class DiscriminatedUnionSerdeTest {
     customDataSource.setCustomProps(props);
 
     return Stream.of(
-        Arguments.of("ldap", ldapDataSource),
-        Arguments.of("database", databaseDataSource),
-        Arguments.of("custom", customDataSource));
+        Arguments.of("ldap", ldapDataSource, ""),
+        Arguments.of("database", databaseDataSource, ""),
+        Arguments.of("custom", customDataSource, ""));
+  }
+
+  @SneakyThrows
+  private static String readResource(@NonNull final String resourceName) {
+    final InputStream stream = DiscriminatedUnionSerdeTest.class.getResourceAsStream(resourceName);
+    if (stream == null) {
+      throw new IllegalArgumentException("Resource not found: " + resourceName);
+    }
+
+    try {
+      return IOUtils.toString(stream, StandardCharsets.UTF_8);
+    } finally {
+      stream.close();
+    }
   }
 
   @ParameterizedTest(name = "It handles radiantone datasources: {0}")

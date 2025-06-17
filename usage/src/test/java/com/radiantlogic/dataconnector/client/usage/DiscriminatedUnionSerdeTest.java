@@ -93,7 +93,7 @@ public class DiscriminatedUnionSerdeTest {
     assertThatJson(actualJson).isEqualTo(json);
 
     final GenericDataSource actualDataSource =
-        objectMapper.readValue(json, GenericDataSource.class);
+        objectMapper.readValue(actualJson, GenericDataSource.class);
     assertThat(actualDataSource).usingRecursiveComparison().isEqualTo(dataSource);
   }
 }

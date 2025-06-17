@@ -17,7 +17,7 @@ public class OpenapiPathValidatorTest {
   void itRejectsInvalidOpenapiPath() {
     assertThatThrownBy(() -> openapiPathValidator.parseAndValidate("abcdefg"))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Invalid OpenAPI path. Must be valid URL or file.");
+        .hasMessage("Invalid OpenAPI path. Must be valid URL or file. Path: abcdefg");
   }
 
   @Test

@@ -14,6 +14,7 @@ import com.radiantlogic.custom.dataconnector.openaiapi.model.ResponseItemList;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.RoleEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.StatusEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   }
 
   @Test
+  @SneakyThrows
   void testListInputItems() {
     final String responseId = "resp_123456789";
     final ResponseItemList responseItemList = new ResponseItemList();
@@ -64,12 +66,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     responseItemList.addDataItem(messageItem);
     responseItemList.addDataItem(functionCallItem);
 
-    final String jsonResponse;
-    try {
-      jsonResponse = objectMapper.writeValueAsString(responseItemList);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to serialize response", e);
-    }
+    final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
 
     stubFor(
         get(urlPathEqualTo("/responses/" + responseId + "/input_items"))

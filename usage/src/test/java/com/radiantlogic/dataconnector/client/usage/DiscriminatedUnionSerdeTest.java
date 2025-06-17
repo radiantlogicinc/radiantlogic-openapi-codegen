@@ -105,7 +105,11 @@ public class DiscriminatedUnionSerdeTest {
     relatedObject.setName("myrelated");
     primaryInputSource.addRelatedObjectsItem(relatedObject);
 
-    return Stream.empty();
+    return Stream.of(
+        Arguments.of("extensible", extensibleObject, ""),
+        Arguments.of("external", externalDataSourceInputSource, ""),
+        Arguments.of("namespace", namespaceObjectInputSource, ""),
+        Arguments.of("primary", primaryInputSource, ""));
   }
 
   @SneakyThrows

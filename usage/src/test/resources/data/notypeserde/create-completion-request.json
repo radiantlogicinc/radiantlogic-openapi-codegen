@@ -1,8 +1,20 @@
 {
-  "best_of": 1,
-  "echo": true,
-  "presence_penalty": 10,
   "model": "o3",
   "prompt": ["hello", "world"],
-  "stop": [1, 2, 3]
+  "best_of": 1,
+  "echo": true,
+  "frequency_penalty": 0,
+  "logit_bias": null,
+  "logprobs": null,
+  "max_tokens": 16,
+  "n": 1,
+  "presence_penalty": 10,
+  "seed": null,
+  "stop": [1, 2, 3],
+  "stream": false,
+  "stream_options": null,
+  "suffix": null,
+  "temperature": 1,
+  "top_p": 1,
+  "user": null
 }

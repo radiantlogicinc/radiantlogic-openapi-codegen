@@ -1,10 +1,11 @@
 package com.radiantlogic.dataconnector.client.usage;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-@ApiClientTest
+@WireMockTest(httpPort = 9000)
 public class BasicHttpRequestsTest {
 
   private static ApiClient apiClient;

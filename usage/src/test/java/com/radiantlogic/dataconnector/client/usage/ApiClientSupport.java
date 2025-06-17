@@ -40,7 +40,9 @@ public class ApiClientSupport {
             .withHeader("Content-Type", "application/json")
             .withBody(objectMapper.writeValueAsString(responseBody));
     final MappingBuilder mapping =
-        post(urlEqualTo("")).withBasicAuth(USERNAME, PASSWORD).willReturn(response);
+        post(urlEqualTo("/authentication-service/login"))
+            .withBasicAuth(USERNAME, PASSWORD)
+            .willReturn(response);
     stubFor(mapping);
 
     final com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient apiClient =

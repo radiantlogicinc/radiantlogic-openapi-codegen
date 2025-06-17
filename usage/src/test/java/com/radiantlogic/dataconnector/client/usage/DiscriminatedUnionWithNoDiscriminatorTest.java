@@ -1,7 +1,6 @@
 package com.radiantlogic.dataconnector.client.usage;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -77,16 +76,6 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(jsonResponse)));
 
-    try {
-      responsesApi.listInputItems(responseId, null, null, null, null, null);
-      assertThat(false).as("Expected exception was not thrown").isTrue();
-    } catch (Exception e) {
-      assertThat(e).isInstanceOf(org.springframework.web.client.RestClientException.class);
-      final String errorMessage = e.getMessage();
-      assertThat(errorMessage).contains("Could not resolve type id 'message' as a subtype of");
-      assertThat(errorMessage)
-          .contains("com.radiantlogic.custom.dataconnector.openaiapi.model.ItemResource");
-      assertThat(errorMessage).contains("known type ids = []");
-    }
+    responsesApi.listInputItems(responseId, null, null, null, null, null);
   }
 }

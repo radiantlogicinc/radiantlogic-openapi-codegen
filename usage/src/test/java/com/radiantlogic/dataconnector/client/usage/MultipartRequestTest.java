@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.matching.MultipartValuePattern;
 import com.radiantlogic.custom.dataconnector.gitlabapi.api.AlertManagementApi;
 import com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient;
 import com.radiantlogic.custom.dataconnector.gitlabapi.model.APIEntitiesMetricImage;
@@ -64,13 +65,35 @@ public class MultipartRequestTest {
 
     assertThat(result).usingRecursiveComparison().isEqualTo(expectedResponse);
 
+    final MultipartValuePattern filePart =
+        aMultipart("file")
+            .withHeader(
+                "Content-Disposition",
+                equalTo("form-data; name=\"file\"; filename=\"ai-generated-image.png\""))
+            .withHeader("Content-Type", equalTo("image/png"))
+            .withHeader("Content-Length", equalTo("33"))
+            .build();
+
+    final MultipartValuePattern urlPart =
+        aMultipart("url")
+            .withHeader("Content-Disposition", equalTo("form-data; name=\"url\""))
+            .withHeader("Content-Type", equalTo("text/plain; charset=UTF-8"))
+            .withHeader("Content-Length", equalTo("27"))
+            .build();
+
+    final MultipartValuePattern urlTextPart =
+        aMultipart("url_text")
+            .withHeader("Content-Disposition", equalTo("form-data; name=\"url_text\""))
+            .withHeader("Content-Type", equalTo("text/plain; charset=UTF-8"))
+            .withHeader("Content-Length", equalTo("15"))
+            .build();
+
     verify(
         postRequestedFor(urlPathEqualTo("/projects/123/alert_management_alerts/456/metric_images"))
             .withHeader("PRIVATE-TOKEN", equalTo(GITLAB_PRIVATE_TOKEN))
             .withHeader("Content-Type", containing("multipart/form-data"))
-            .withRequestBody(
-                containing(
-                    "Content-Disposition: form-data; name=\"file\"; filename=\"ai-generated-image.png\""))
-            .withRequestBody(containing("Content-Type: image/png")));
+            .withRequestBodyPart(filePart)
+            .withRequestBodyPart(urlPart)
+            .withRequestBodyPart(urlTextPart));
   }
 }

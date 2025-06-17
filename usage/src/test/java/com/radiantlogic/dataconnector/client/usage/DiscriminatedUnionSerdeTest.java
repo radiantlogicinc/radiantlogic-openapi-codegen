@@ -66,9 +66,9 @@ public class DiscriminatedUnionSerdeTest {
     props.put("baz", "qux");
     customDataSource.setCustomProps(props);
 
-    final String ldapJson = readResource("data/discriminatedunionserde/ldap.json");
-    final String dbJson = readResource("data/discriminatedunionserde/database.json");
-    final String customJson = readResource("data/discriminatedunionserde/custom.json");
+    final String ldapJson = readResource("data/discriminatedunionserde/ldap-ds.json");
+    final String dbJson = readResource("data/discriminatedunionserde/database-ds.json");
+    final String customJson = readResource("data/discriminatedunionserde/custom-ds.json");
 
     return Stream.of(
         Arguments.of("ldap", ldapDataSource, ldapJson),
@@ -150,11 +150,11 @@ public class DiscriminatedUnionSerdeTest {
       @NonNull final String name,
       @NonNull final InputSource inputSource,
       @NonNull final String json) {
-    final String actualJson = objectMapper.writeValueAsString(dataSource);
+    final String actualJson = objectMapper.writeValueAsString(inputSource);
 
     assertThatJson(actualJson).isEqualTo(json);
 
-    final InputSource actualDataSource = objectMapper.readValue(actualJson, InputSource.class);
-    assertThat(actualDataSource).usingRecursiveComparison().isEqualTo(dataSource);
+    final InputSource actualInputSource = objectMapper.readValue(actualJson, InputSource.class);
+    assertThat(actualInputSource).usingRecursiveComparison().isEqualTo(inputSource);
   }
 }

@@ -74,12 +74,7 @@ public class BasicHttpRequestsTest {
     final NamingContextNodeList result =
         directoryNamespaceApi.getRootNamingContexts(false, null, null, null, null, null);
 
-    assertThat(result).isNotNull();
-    assertThat(result.getNodes()).hasSize(2);
-    assertThat(result.getNodes().get(0).getDn()).isEqualTo("o=example");
-    assertThat(result.getNodes().get(0).getIsActive()).isTrue();
-    assertThat(result.getNodes().get(1).getDn()).isEqualTo("o=test");
-    assertThat(result.getNodes().get(1).getIsActive()).isFalse();
+    assertThat(result).usingRecursiveComparison().isEqualTo(expectedResponse);
   }
 
   @Test
@@ -102,8 +97,7 @@ public class BasicHttpRequestsTest {
 
     final NewNamingContextResponse result = directoryNamespaceApi.addNewRootNamingContext(request);
 
-    assertThat(result).isNotNull();
-    assertThat(result.getDn()).isEqualTo("o=newcontext");
+    assertThat(result).usingRecursiveComparison().isEqualTo(expectedResponse);
   }
 
   @Test

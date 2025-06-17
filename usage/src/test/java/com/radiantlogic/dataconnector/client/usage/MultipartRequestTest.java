@@ -38,23 +38,19 @@ public class MultipartRequestTest {
 
   @Test
   void testPostApiV4ProjectsIdAlertManagementAlertsAlertIidMetricImages() throws Exception {
-    // Create a temporary image file for testing
-    File imageFile = createTempImageFile();
+    final File imageFile = createTempImageFile();
 
-    // Set up test parameters
-    String projectId = "123";
-    Integer alertIid = 456;
-    String url = "https://example.com/metrics";
-    String urlText = "Example Metrics";
+    final String projectId = "123";
+    final Integer alertIid = 456;
+    final String url = "https://example.com/metrics";
+    final String urlText = "Example Metrics";
 
-    // Create expected response
-    APIEntitiesMetricImage expectedResponse = new APIEntitiesMetricImage();
+    final APIEntitiesMetricImage expectedResponse = new APIEntitiesMetricImage();
     expectedResponse.setId(789);
     expectedResponse.setUrl(url);
     expectedResponse.setUrlText(urlText);
     expectedResponse.setFilename("test-image.png");
 
-    // Set up WireMock stub for the multipart request
     stubFor(
         post(urlPathEqualTo("/projects/123/alert_management_alerts/456/metric_images"))
             .withHeader("PRIVATE-TOKEN", equalTo(GITLAB_PRIVATE_TOKEN))
@@ -64,25 +60,25 @@ public class MultipartRequestTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(objectMapper.writeValueAsString(expectedResponse))));
 
-    // Call the API method
-    APIEntitiesMetricImage result =
+    final APIEntitiesMetricImage result =
         alertManagementApi.postApiV4ProjectsIdAlertManagementAlertsAlertIidMetricImages(
             projectId, alertIid, imageFile, url, urlText);
 
-    // Verify the result
     assertThat(result).usingRecursiveComparison().isEqualTo(expectedResponse);
 
-    // Verify that the request was made with the correct parameters
     verify(
         postRequestedFor(urlPathEqualTo("/projects/123/alert_management_alerts/456/metric_images"))
             .withHeader("PRIVATE-TOKEN", equalTo(GITLAB_PRIVATE_TOKEN))
-            .withHeader("Content-Type", containing("multipart/form-data")));
+            .withHeader("Content-Type", containing("multipart/form-data"))
+            .withRequestBody(
+                containing(
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"test-image.png\""))
+            .withRequestBody(containing("Content-Type: image/png")));
   }
 
   private File createTempImageFile() throws IOException {
-    // Create a simple PNG file for testing
-    Path imagePath = tempDir.resolve("test-image.png");
-    byte[] imageData =
+    final Path imagePath = tempDir.resolve("test-image.png");
+    final byte[] imageData =
         new byte[] {
           (byte) 0x89,
           'P',
@@ -91,32 +87,32 @@ public class MultipartRequestTest {
           '\r',
           '\n',
           0x1a,
-          '\n', // PNG signature
+          '\n',
           0,
           0,
           0,
-          13, // IHDR chunk length
+          13,
           'I',
           'H',
           'D',
-          'R', // IHDR chunk type
+          'R',
           0,
           0,
           0,
-          1, // width: 1 pixel
+          1,
           0,
           0,
           0,
-          1, // height: 1 pixel
-          8, // bit depth: 8 bits per channel
-          6, // color type: RGBA
-          0, // compression method: deflate
-          0, // filter method: standard
-          0, // interlace method: no interlace
+          1,
+          8,
+          6,
           0,
           0,
           0,
-          0 // CRC (not correct, but sufficient for testing)
+          0,
+          0,
+          0,
+          0
         };
     Files.write(imagePath, imageData);
     return imagePath.toFile();

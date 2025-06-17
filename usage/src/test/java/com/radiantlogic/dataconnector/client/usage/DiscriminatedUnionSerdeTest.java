@@ -62,5 +62,6 @@ public class DiscriminatedUnionSerdeTest {
   void itHandlesRadiantoneDatasources(
       @NonNull final String name, @NonNull final GenericDataSource dataSource) {
     final String json = objectMapper.writeValueAsString(dataSource);
+    System.out.println(json);
   }
 }

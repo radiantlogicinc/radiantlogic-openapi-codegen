@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.client.usage;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.radiantlogic.dataconnector.client.usage.ApiClientSupport.ACCESS_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,8 +23,6 @@ import org.junit.jupiter.api.Test;
 
 @WireMockTest(httpPort = 9000)
 public class BasicHttpRequestsTest {
-
-  private static final String ACCESS_TOKEN = "access_token";
   private static ApiClient apiClient;
   private DirectoryNamespaceApiApi directoryNamespaceApi;
   private final ObjectMapper objectMapper = new ObjectMapper();

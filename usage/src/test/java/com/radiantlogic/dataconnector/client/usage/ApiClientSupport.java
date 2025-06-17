@@ -23,7 +23,7 @@ public class ApiClientSupport {
   private static final String BASE_URL = "http://localhost:9000";
   private static final String USERNAME = "user";
   private static final String PASSWORD = "password";
-  private static final String ACCESS_TOKEN = "access_token";
+  public static final String ACCESS_TOKEN = "access_token";
 
   @SneakyThrows
   public static com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient

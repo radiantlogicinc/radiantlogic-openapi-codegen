@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -540,6 +541,41 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .toList();
   }
 
+  // TODO document that this manipulation is being done super carefully with all the checks
+  private void handleMissingModelInheritance(@NonNull final Collection<CodegenModel> allModels) {
+    allModels.forEach(
+        model -> {
+          if (model.parent != null) {
+            return;
+          }
+
+          if (model.dataType == null || model.dataType.equals(model.classname)) {
+            return;
+          }
+
+          final String modelInterface =
+              Optional.ofNullable(model.interfaces)
+                  .filter(list -> list.size() == 1)
+                  .map(List::getFirst)
+                  .orElse(null);
+          final String modelAllOf =
+              Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
+                  .flatMap(Set::stream)
+                  .findFirst()
+                  .orElse(null);
+
+          if (modelInterface == null || modelAllOf == null) {
+            return;
+          }
+
+          if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
+            return;
+          }
+
+          model.parent = modelInterface;
+        });
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
@@ -560,6 +596,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
     handleDiscriminatorChildMappingValues(allModels, allModelMaps);
+
+    handleMissingModelInheritance(allModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

@@ -20,13 +20,17 @@ public class ResourceReader {
     }
   }
 
-  private static InputStream openStream(@NonNull final String resourceName) {
-    final InputStream stream =
-        DiscriminatedUnionSerdeTest.class.getClassLoader().getResourceAsStream(resourceName);
-    if (stream == null) {
+  private static URL getResourceUrl(@NonNull final String resourceName) {
+    final URL url = ResourceReader.class.getClassLoader().getResource(resourceName);
+    if (url == null) {
       throw new IllegalArgumentException(String.format("Resource not found: %s", resourceName));
     }
-    return stream;
+    return url;
+  }
+
+  @SneakyThrows
+  private static InputStream openStream(@NonNull final String resourceName) {
+    return getResourceUrl(resourceName).openStream();
   }
 
   @SneakyThrows
@@ -38,10 +42,6 @@ public class ResourceReader {
 
   @SneakyThrows
   public static Path getFilePath(@NonNull final String resourceName) {
-    final URL url = ResourceReader.class.getClassLoader().getResource(resourceName);
-    if (url == null) {
-      throw new IllegalArgumentException(String.format("Resource not found: %s", resourceName));
-    }
-    return Paths.get(url.toURI());
+    return Paths.get(getResourceUrl(resourceName).toURI());
   }
 }

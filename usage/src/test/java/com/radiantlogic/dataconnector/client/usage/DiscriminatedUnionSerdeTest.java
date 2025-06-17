@@ -54,11 +54,13 @@ public class DiscriminatedUnionSerdeTest {
     customDataSource.setCustomProps(props);
 
     final String ldapJson = readResource("data/discriminatedunionserde/ldap.json");
+    final String dbJson = readResource("data/discriminatedunionserde/database.json");
+    final String customJson = readResource("data/discriminatedunionserde/custom.json");
 
     return Stream.of(
         Arguments.of("ldap", ldapDataSource, ldapJson),
-        Arguments.of("database", databaseDataSource, ""),
-        Arguments.of("custom", customDataSource, ""));
+        Arguments.of("database", databaseDataSource, dbJson),
+        Arguments.of("custom", customDataSource, customJson));
   }
 
   @SneakyThrows

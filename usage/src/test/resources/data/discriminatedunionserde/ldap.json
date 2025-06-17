@@ -21,5 +21,6 @@
   "sdcMappings": {},
   "ssl": true,
   "verifySslHostname": false,
-  "baseDn": null
+  "baseDn": null,
+  "createdOn": null
 }

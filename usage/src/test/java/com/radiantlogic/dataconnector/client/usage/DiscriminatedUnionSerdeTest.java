@@ -1,8 +1,8 @@
 package com.radiantlogic.dataconnector.client.usage;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
@@ -90,9 +90,7 @@ public class DiscriminatedUnionSerdeTest {
       @NonNull final String json) {
     final String actualJson = objectMapper.writeValueAsString(dataSource);
 
-    final JsonNode actualNode = objectMapper.readTree(actualJson);
-    final JsonNode expectedNode = objectMapper.readTree(json);
-    assertThat(actualNode).usingRecursiveComparison().isEqualTo(expectedNode);
+    assertThatJson(actualJson).isEqualTo(json);
 
     final GenericDataSource actualDataSource =
         objectMapper.readValue(json, GenericDataSource.class);

@@ -70,7 +70,7 @@ public class MultipartRequestTest {
             .withHeader("Content-Type", containing("multipart/form-data"))
             .withRequestBody(
                 containing(
-                    "Content-Disposition: form-data; name=\"file\"; filename=\"test-image.png\""))
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"ai-generated-image.png\""))
             .withRequestBody(containing("Content-Type: image/png")));
   }
 }

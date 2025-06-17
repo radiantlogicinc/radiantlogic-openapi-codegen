@@ -150,6 +150,11 @@ public class DiscriminatedUnionSerdeTest {
       @NonNull final String name,
       @NonNull final InputSource inputSource,
       @NonNull final String json) {
-    throw new RuntimeException();
+    final String actualJson = objectMapper.writeValueAsString(dataSource);
+
+    assertThatJson(actualJson).isEqualTo(json);
+
+    final InputSource actualDataSource = objectMapper.readValue(actualJson, InputSource.class);
+    assertThat(actualDataSource).usingRecursiveComparison().isEqualTo(dataSource);
   }
 }

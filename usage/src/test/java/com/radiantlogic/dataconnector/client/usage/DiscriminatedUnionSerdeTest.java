@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.GenericDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.InputSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
 import java.io.InputStream;
@@ -96,5 +97,15 @@ public class DiscriminatedUnionSerdeTest {
     final GenericDataSource actualDataSource =
         objectMapper.readValue(actualJson, GenericDataSource.class);
     assertThat(actualDataSource).usingRecursiveComparison().isEqualTo(dataSource);
+  }
+
+  @ParameterizedTest(name = "It handles radiantone input sources: {0}")
+  @MethodSource("radiantoneInputSources")
+  @SneakyThrows
+  void itHandlesRadiantoneInputSources(
+      @NonNull final String name,
+      @NonNull final InputSource inputSource,
+      @NonNull final String json) {
+    throw new RuntimeException();
   }
 }

@@ -94,5 +94,9 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
         .extracting("cause")
         .isNotNull()
         .isInstanceOf(InvalidTypeIdException.class);
+
+    verify(
+        getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
+            .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN))));
   }
 }

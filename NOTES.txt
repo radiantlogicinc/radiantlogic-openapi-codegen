@@ -14,7 +14,6 @@ FactorTypeEnum
 
 TESTS THAT I NEED
 
-3. Different forms of auth
 5. multipart
 7. Varied type schemas. OpenAPI CreateCompletionRequest.prompt, where the request prompt can be a string, string array, integer array, etc
 8. Discriminated union where the discriminator is not properly mapped. OpenAI ItemResource and its sub-types is a good check for this.

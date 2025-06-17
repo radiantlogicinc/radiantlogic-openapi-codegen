@@ -45,6 +45,7 @@ public class DiscriminatedUnionSerdeTest {
     databaseDataSource.setUsername("user");
     databaseDataSource.setPassword("password");
     databaseDataSource.setActive(true);
+    databaseDataSource.setDriverClassName("com.mysql.jdbc.Driver");
 
     final CustomDataSource customDataSource = new CustomDataSource();
     customDataSource.setName("mycustom");

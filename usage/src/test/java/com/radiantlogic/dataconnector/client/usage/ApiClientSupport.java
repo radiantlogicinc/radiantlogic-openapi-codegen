@@ -20,9 +20,9 @@ import lombok.SneakyThrows;
 public class ApiClientSupport {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
-  private static final String BASE_URL = "http://localhost:9000";
-  private static final String USERNAME = "user";
-  private static final String PASSWORD = "password";
+  public static final String BASE_URL = "http://localhost:9000";
+  public static final String USERNAME = "user";
+  public static final String PASSWORD = "password";
   public static final String ACCESS_TOKEN = "access_token";
 
   @SneakyThrows

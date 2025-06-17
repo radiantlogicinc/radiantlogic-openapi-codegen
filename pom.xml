@@ -75,6 +75,11 @@
                 <version>1.9.0</version>
             </dependency>
             <dependency>
+                <groupId>net.javacrumbs.json-unit</groupId>
+                <artifactId>json-unit-assertj</artifactId>
+                <version>4.1.1</version>
+            </dependency>
+            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>1.5.18</version>

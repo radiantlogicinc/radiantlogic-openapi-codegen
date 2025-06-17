@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.client.usage;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.radiantlogic.dataconnector.client.usage.ApiClientSupport.ACCESS_TOKEN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -68,8 +69,8 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
 
     stubFor(
-        get(urlPathEqualTo("/responses/" + responseId + "/input_items"))
-            .withHeader("Authorization", equalTo("Bearer test-api-key"))
+        get(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
+            .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN)))
             .willReturn(
                 aResponse()
                     .withStatus(200)

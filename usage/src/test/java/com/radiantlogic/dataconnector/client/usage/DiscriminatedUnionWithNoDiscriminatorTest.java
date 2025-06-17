@@ -26,28 +26,12 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
   @BeforeAll
   static void beforeAll() {
-    apiClient = createOpenAIApiClient();
+    apiClient = ApiClientSupport.createAndAuthenticateOpenAIApiClient();
   }
 
   @BeforeEach
   void setUp() {
     responsesApi = new ResponsesApi(apiClient);
-  }
-
-  /**
-   * Creates and configures an OpenAI API client for testing.
-   *
-   * @return A configured OpenAI API client
-   */
-  private static ApiClient createOpenAIApiClient() {
-    final ApiClient apiClient = new ApiClient();
-    apiClient.setDebugging(true);
-    apiClient.setBasePath(ApiClientSupport.BASE_URL);
-
-    // OpenAI API uses an API key for authentication
-    apiClient.addDefaultHeader("Authorization", "Bearer test-api-key");
-
-    return apiClient;
   }
 
   @Test

@@ -37,15 +37,6 @@ public class ArgsParser {
           .hasArg()
           .valueSeparator('=')
           .build();
-  private static final Option VALIDATE_OPTION =
-      Option.builder("v")
-          .argName("Validate")
-          .longOpt("validate")
-          .desc(
-              "Whether or not to run validation on the OpenAPI specification before generating code. Strongly recommended. Defaults to true.")
-          .hasArg()
-          .valueSeparator('=')
-          .build();
   private static final Option HELP_OPTION =
       Option.builder("h")
           .argName("Help")
@@ -56,7 +47,6 @@ public class ArgsParser {
 
   static {
     OPTIONS.addOption(PATH_OPTION);
-    OPTIONS.addOption(VALIDATE_OPTION);
     OPTIONS.addOption(HELP_OPTION);
     OPTIONS.addOption(GROUP_ID_OPTION);
   }
@@ -79,9 +69,6 @@ public class ArgsParser {
         return handleHelp();
       }
 
-      final boolean doValidate =
-          Boolean.parseBoolean(
-              commandLine.getParsedOptionValue(VALIDATE_OPTION.getOpt(), Boolean.TRUE.toString()));
       final String openapiPath = commandLine.getOptionValue(PATH_OPTION.getOpt(), "");
       if (StringUtils.isBlank(openapiPath)) {
         throw new IllegalArgumentException(
@@ -89,7 +76,7 @@ public class ArgsParser {
       }
 
       final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getOpt(), DEFAULT_GROUP_ID);
-      return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId, doValidate);
+      return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId);
     } catch (final ParseException ex) {
       throw new IllegalStateException(
           "Failed to parse command line arguments, cannot proceed.", ex);
@@ -109,6 +96,6 @@ public class ArgsParser {
 
     helpFormatter.printHelp(
         "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
-    return new Args(ProgramArgStatus.EXIT, "", "", false);
+    return new Args(ProgramArgStatus.EXIT, "", "");
   }
 }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.NonNull;
@@ -46,7 +47,18 @@ public class PropsReaderTest {
 
   private static Element getSingleElement(
       @NonNull final Element base, @NonNull final String tagName) {
-    return (Element) base.getElementsByTagName(tagName).item(0);
+    return getElementStream(base)
+        .filter(elem -> elem.getTagName().equals(tagName))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  private static Stream<Element> getElementStream(@NonNull final Element base) {
+    final var nodeList = base.getChildNodes();
+    return Stream.iterate(0, i -> i < nodeList.getLength(), i -> i + 1)
+        .map(nodeList::item)
+        .filter(item -> item.getNodeType() == Element.ELEMENT_NODE)
+        .map(Element.class::cast);
   }
 
   /**

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class DiscriminatedUnionWithNoDiscriminatorTest {
   private static ApiClient apiClient;
   private ResponsesApi responsesApi;
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeAll
   static void beforeAll() {
@@ -53,29 +53,23 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   @Test
   void testListInputItems() {
     final String responseId = "resp_123456789";
-
-    // Create a response using Java objects instead of literal JSON
-    // This will be used to test if the discriminator works correctly
-    ResponseItemList responseItemList = new ResponseItemList();
+    final ResponseItemList responseItemList = new ResponseItemList();
     responseItemList.setObject(ResponseItemList.ObjectEnum.LIST);
     responseItemList.setHasMore(false);
     responseItemList.setFirstId("item_1");
     responseItemList.setLastId("item_2");
 
-    // Create a message item
-    InputMessageResource messageItem = new InputMessageResource();
+    final InputMessageResource messageItem = new InputMessageResource();
     messageItem.setType(TypeEnum.MESSAGE);
     messageItem.setRole(RoleEnum.USER);
     messageItem.setId("item_1");
     messageItem.setStatus(StatusEnum.COMPLETED);
 
-    // Create content for the message
-    InputTextContent textContent = new InputTextContent();
+    final InputTextContent textContent = new InputTextContent();
     textContent.setText("Hello, world!");
     messageItem.addContentItem(textContent);
 
-    // Create a function call item
-    FunctionToolCallResource functionCallItem = new FunctionToolCallResource();
+    final FunctionToolCallResource functionCallItem = new FunctionToolCallResource();
     functionCallItem.setType(TypeEnum.FUNCTION_CALL);
     functionCallItem.setId("item_2");
     functionCallItem.setCallId("call_123");
@@ -83,19 +77,16 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     functionCallItem.setArguments("{\"location\": \"San Francisco\", \"unit\": \"celsius\"}");
     functionCallItem.setStatus(StatusEnum.COMPLETED);
 
-    // Add items to the response
     responseItemList.addDataItem(messageItem);
     responseItemList.addDataItem(functionCallItem);
 
-    // Serialize the response to JSON
-    String jsonResponse;
+    final String jsonResponse;
     try {
       jsonResponse = objectMapper.writeValueAsString(responseItemList);
     } catch (Exception e) {
       throw new RuntimeException("Failed to serialize response", e);
     }
 
-    // Set up the mock response
     stubFor(
         get(urlPathEqualTo("/responses/" + responseId + "/input_items"))
             .withHeader("Authorization", equalTo("Bearer test-api-key"))
@@ -106,18 +97,11 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
                     .withBody(jsonResponse)));
 
     try {
-      // Call the API - this should fail due to the missing discriminator mapping
       responsesApi.listInputItems(responseId, null, null, null, null, null);
-
-      // If we get here, the test has failed because the API call should throw an exception
       assertThat(false).as("Expected exception was not thrown").isTrue();
     } catch (Exception e) {
-      // Verify that the exception is the expected one
       assertThat(e).isInstanceOf(org.springframework.web.client.RestClientException.class);
-
-      // Verify that the exception message contains the expected text about the missing type id
-      // mapping
-      String errorMessage = e.getMessage();
+      final String errorMessage = e.getMessage();
       assertThat(errorMessage).contains("Could not resolve type id 'message' as a subtype of");
       assertThat(errorMessage)
           .contains("com.radiantlogic.custom.dataconnector.openaiapi.model.ItemResource");

@@ -105,11 +105,16 @@ public class DiscriminatedUnionSerdeTest {
     relatedObject.setName("myrelated");
     primaryInputSource.addRelatedObjectsItem(relatedObject);
 
+    final String extensibleJson = readResource("data/discriminatedunionserde/extensible-is.json");
+    final String externalJson = readResource("data/discriminatedunionserde/external-is.json");
+    final String namespaceJson = readResource("data/discriminatedunionserde/namespace-is.json");
+    final String primaryJson = readResource("data/discriminatedunionserde/primary-is.json");
+
     return Stream.of(
-        Arguments.of("extensible", extensibleObject, ""),
-        Arguments.of("external", externalDataSourceInputSource, ""),
-        Arguments.of("namespace", namespaceObjectInputSource, ""),
-        Arguments.of("primary", primaryInputSource, ""));
+        Arguments.of("extensible", extensibleObject, extensibleJson),
+        Arguments.of("external", externalDataSourceInputSource, externalJson),
+        Arguments.of("namespace", namespaceObjectInputSource, namespaceJson),
+        Arguments.of("primary", primaryInputSource, primaryJson));
   }
 
   @SneakyThrows

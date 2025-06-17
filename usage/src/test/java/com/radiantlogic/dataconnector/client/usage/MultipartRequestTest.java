@@ -10,11 +10,7 @@ import com.radiantlogic.custom.dataconnector.gitlabapi.api.AlertManagementApi;
 import com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient;
 import com.radiantlogic.custom.dataconnector.gitlabapi.model.APIEntitiesMetricImage;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +36,7 @@ public class MultipartRequestTest {
 
   @Test
   void testPostApiV4ProjectsIdAlertManagementAlertsAlertIidMetricImages() throws Exception {
-    final File imageFile = createTempImageFile();
+    final File imageFile = ResourceReader.getFilePath("data/ai-generated-image.png").toFile();
 
     final String projectId = "123";
     final Integer alertIid = 456;
@@ -76,55 +72,5 @@ public class MultipartRequestTest {
                 containing(
                     "Content-Disposition: form-data; name=\"file\"; filename=\"test-image.png\""))
             .withRequestBody(containing("Content-Type: image/png")));
-  }
-
-  private File createTempImageFile() throws IOException {
-    final Path resourceImagePath = Paths.get("usage/src/test/resources/ai-generated-image.png");
-
-    if (!Files.exists(resourceImagePath)) {
-      final byte[] imageData =
-          new byte[] {
-            (byte) 0x89,
-            'P',
-            'N',
-            'G',
-            '\r',
-            '\n',
-            0x1a,
-            '\n',
-            0,
-            0,
-            0,
-            13,
-            'I',
-            'H',
-            'D',
-            'R',
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            1,
-            8,
-            6,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          };
-      Files.createDirectories(resourceImagePath.getParent());
-      Files.write(resourceImagePath, imageData);
-    }
-
-    final Path tempImagePath = tempDir.resolve("test-image.png");
-    Files.copy(resourceImagePath, tempImagePath, StandardCopyOption.REPLACE_EXISTING);
-
-    return tempImagePath.toFile();
   }
 }

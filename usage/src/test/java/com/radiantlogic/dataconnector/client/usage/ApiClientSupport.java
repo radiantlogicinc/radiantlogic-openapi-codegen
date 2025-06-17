@@ -24,6 +24,7 @@ public class ApiClientSupport {
   public static final String USERNAME = "user";
   public static final String PASSWORD = "password";
   public static final String ACCESS_TOKEN = "access_token";
+  public static final String GITLAB_PRIVATE_TOKEN = "gitlab_private_token";
 
   @SneakyThrows
   public static com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient
@@ -55,6 +56,20 @@ public class ApiClientSupport {
         authTokenApiApi.postLogin(String.format("Basic %s", base64EncodedAuth)).getToken();
 
     apiClient.setBearerToken(token);
+
+    return apiClient;
+  }
+
+  @SneakyThrows
+  public static com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient
+      createAndAuthenticateGitlabApi() {
+    final com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient apiClient =
+        new com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient();
+    apiClient.setDebugging(true);
+    apiClient.setBasePath(BASE_URL);
+
+    // GitLab API uses a private token for authentication
+    apiClient.addDefaultHeader("PRIVATE-TOKEN", GITLAB_PRIVATE_TOKEN);
 
     return apiClient;
   }

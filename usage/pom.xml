@@ -79,12 +79,9 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- TODO hoist these -->
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <version>3.13.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

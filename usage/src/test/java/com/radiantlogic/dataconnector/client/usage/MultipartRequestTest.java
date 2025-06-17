@@ -77,15 +77,17 @@ public class MultipartRequestTest {
     final MultipartValuePattern urlPart =
         aMultipart("url")
             .withHeader("Content-Disposition", equalTo("form-data; name=\"url\""))
-            .withHeader("Content-Type", equalTo("text/plain; charset=UTF-8"))
+            .withHeader("Content-Type", equalTo("text/plain;charset=UTF-8"))
             .withHeader("Content-Length", equalTo("27"))
+            .withBody(equalTo(url))
             .build();
 
     final MultipartValuePattern urlTextPart =
         aMultipart("url_text")
             .withHeader("Content-Disposition", equalTo("form-data; name=\"url_text\""))
-            .withHeader("Content-Type", equalTo("text/plain; charset=UTF-8"))
+            .withHeader("Content-Type", equalTo("text/plain;charset=UTF-8"))
             .withHeader("Content-Length", equalTo("15"))
+            .withBody(equalTo(urlText))
             .build();
 
     verify(

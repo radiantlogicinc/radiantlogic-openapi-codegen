@@ -29,7 +29,7 @@ public class NoTypeSerdeTest {
     request.setStop(Arrays.asList(1, 2, 3));
 
     final String expectedJson =
-        ResourceReader.read("data/notypeserde/create-completion-request.json");
+        ResourceReader.readString("data/notypeserde/create-completion-request.json");
     final String actualJson = objectMapper.writeValueAsString(request);
     assertThatJson(actualJson).isEqualTo(expectedJson);
 

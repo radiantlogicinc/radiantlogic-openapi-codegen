@@ -63,9 +63,11 @@ public class DiscriminatedUnionSerdeTest {
     props.put("baz", "qux");
     customDataSource.setCustomProps(props);
 
-    final String ldapJson = ResourceReader.read("data/discriminatedunionserde/ldap-ds.json");
-    final String dbJson = ResourceReader.read("data/discriminatedunionserde/database-ds.json");
-    final String customJson = ResourceReader.read("data/discriminatedunionserde/custom-ds.json");
+    final String ldapJson = ResourceReader.readString("data/discriminatedunionserde/ldap-ds.json");
+    final String dbJson =
+        ResourceReader.readString("data/discriminatedunionserde/database-ds.json");
+    final String customJson =
+        ResourceReader.readString("data/discriminatedunionserde/custom-ds.json");
 
     return Stream.of(
         Arguments.of("ldap", ldapDataSource, ldapJson),
@@ -103,12 +105,13 @@ public class DiscriminatedUnionSerdeTest {
     primaryInputSource.addRelatedObjectsItem(relatedObject);
 
     final String extensibleJson =
-        ResourceReader.read("data/discriminatedunionserde/extensible-is.json");
+        ResourceReader.readString("data/discriminatedunionserde/extensible-is.json");
     final String externalJson =
-        ResourceReader.read("data/discriminatedunionserde/external-is.json");
+        ResourceReader.readString("data/discriminatedunionserde/external-is.json");
     final String namespaceJson =
-        ResourceReader.read("data/discriminatedunionserde/namespace-is.json");
-    final String primaryJson = ResourceReader.read("data/discriminatedunionserde/primary-is.json");
+        ResourceReader.readString("data/discriminatedunionserde/namespace-is.json");
+    final String primaryJson =
+        ResourceReader.readString("data/discriminatedunionserde/primary-is.json");
 
     return Stream.of(
         Arguments.of("extensible", extensibleObject, extensibleJson),

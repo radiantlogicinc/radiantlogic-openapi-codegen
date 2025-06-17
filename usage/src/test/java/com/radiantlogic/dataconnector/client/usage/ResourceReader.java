@@ -11,17 +11,25 @@ import org.springframework.lang.NonNull;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResourceReader {
   @SneakyThrows
-  public static String read(@NonNull final String resourceName) {
+  public static String readString(@NonNull final String resourceName) {
+    try (InputStream stream = openStream(resourceName)) {
+      return IOUtils.toString(stream, StandardCharsets.UTF_8);
+    }
+  }
+
+  private static InputStream openStream(@NonNull final String resourceName) {
     final InputStream stream =
         DiscriminatedUnionSerdeTest.class.getClassLoader().getResourceAsStream(resourceName);
     if (stream == null) {
-      throw new IllegalArgumentException("Resource not found: " + resourceName);
+      throw new IllegalArgumentException(String.format("Resource not found: %s", resourceName));
     }
+    return stream;
+  }
 
-    try {
-      return IOUtils.toString(stream, StandardCharsets.UTF_8);
-    } finally {
-      stream.close();
+  @SneakyThrows
+  public static byte[] readBytes(@NonNull final String resourceName) {
+    try (InputStream stream = openStream(resourceName)) {
+      return IOUtils.toByteArray(stream);
     }
   }
 }

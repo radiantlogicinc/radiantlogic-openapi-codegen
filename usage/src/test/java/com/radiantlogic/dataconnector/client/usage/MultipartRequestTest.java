@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,44 +79,52 @@ public class MultipartRequestTest {
   }
 
   private File createTempImageFile() throws IOException {
-    final Path imagePath = tempDir.resolve("test-image.png");
-    final byte[] imageData =
-        new byte[] {
-          (byte) 0x89,
-          'P',
-          'N',
-          'G',
-          '\r',
-          '\n',
-          0x1a,
-          '\n',
-          0,
-          0,
-          0,
-          13,
-          'I',
-          'H',
-          'D',
-          'R',
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          1,
-          8,
-          6,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        };
-    Files.write(imagePath, imageData);
-    return imagePath.toFile();
+    final Path resourceImagePath = Paths.get("usage/src/test/resources/ai-generated-image.png");
+
+    if (!Files.exists(resourceImagePath)) {
+      final byte[] imageData =
+          new byte[] {
+            (byte) 0x89,
+            'P',
+            'N',
+            'G',
+            '\r',
+            '\n',
+            0x1a,
+            '\n',
+            0,
+            0,
+            0,
+            13,
+            'I',
+            'H',
+            'D',
+            'R',
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            8,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          };
+      Files.createDirectories(resourceImagePath.getParent());
+      Files.write(resourceImagePath, imageData);
+    }
+
+    final Path tempImagePath = tempDir.resolve("test-image.png");
+    Files.copy(resourceImagePath, tempImagePath, StandardCopyOption.REPLACE_EXISTING);
+
+    return tempImagePath.toFile();
   }
 }

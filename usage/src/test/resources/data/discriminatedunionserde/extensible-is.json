@@ -1,0 +1,5 @@
+{
+  "sourceType": "EXTENSIBLE_OBJECT",
+  "name": "myextobject",
+  "dataSource": "myds"
+}

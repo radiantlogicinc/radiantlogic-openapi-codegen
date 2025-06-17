@@ -1,0 +1,10 @@
+{
+  "sourceType": "PRIMARY",
+  "name": "myprimary",
+  "dataSource": "myds",
+  "relatedObjects": [
+    {
+      "name": "myrelated"
+    }
+  ]
+}

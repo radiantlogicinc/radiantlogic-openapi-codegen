@@ -1,0 +1,7 @@
+{
+  "sourceType": "NAMESPACE_OBJECT",
+  "name": "myns",
+  "dataSource": "myds",
+  "targetBaseDn": "cn=hello",
+  "scope": "ONE"
+}

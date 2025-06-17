@@ -1,0 +1,10 @@
+{
+  "name": "mycustom",
+  "type": "MyCustomDataSource",
+  "category": "custom",
+  "active": true,
+  "customProps": {
+    "foo": "bar",
+    "baz": "qux"
+  }
+}

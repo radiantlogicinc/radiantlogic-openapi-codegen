@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.client.usage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.GenericDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
 import java.net.URI;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.lang.NonNull;
 
 /** Test serialization and deserialization of classes that are discriminated unions. */
 public class DiscriminatedUnionSerdeTest {
@@ -55,5 +57,8 @@ public class DiscriminatedUnionSerdeTest {
 
   @ParameterizedTest(name = "It handles radiantone datasources: {0}")
   @MethodSource("radiantoneDatasources")
-  void itHandlesRadiantoneDatasources() {}
+  void itHandlesRadiantoneDatasources(
+      @NonNull final String name, @NonNull final GenericDataSource dataSource) {
+    System.out.println("Working");
+  }
 }

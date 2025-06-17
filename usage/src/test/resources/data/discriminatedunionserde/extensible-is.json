@@ -1,0 +1,8 @@
+{
+  "sourceType": "EXTENSIBLE_OBJECT",
+  "name": "myextobject",
+  "dataSource": "myds",
+  "attributes": [],
+  "id": null,
+  "objectClass": null
+}

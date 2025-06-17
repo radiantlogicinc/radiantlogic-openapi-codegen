@@ -1,0 +1,21 @@
+{
+  "name": "mydb",
+  "type": "MySQL",
+  "category": "database",
+  "url": "jdbc:mysql://localhost:3306/mydb",
+  "driverClassName": "com.mysql.jdbc.Driver",
+  "username": "user",
+  "password": "password",
+  "active": true,
+  "addedSchemas": null,
+  "createdOn": null,
+  "dbmsName": null,
+  "defaultSchema": null,
+  "description": null,
+  "failOverName": null,
+  "groupId": null,
+  "onPremHost": null,
+  "onPremPort": null,
+  "readOnly": false,
+  "sdcMappings": {}
+}

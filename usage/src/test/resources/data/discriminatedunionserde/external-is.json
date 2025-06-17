@@ -1,0 +1,11 @@
+{
+  "sourceType": "EXTERNAL_DATA_SOURCE",
+  "name": "myexternal",
+  "dataSource": "myds",
+  "dataSourceCategory": "CUSTOM",
+  "schema": "myschema",
+  "attributes": [],
+  "id": null,
+  "object": null,
+  "objectClass": null
+}

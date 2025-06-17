@@ -14,11 +14,4 @@ FactorTypeEnum
 
 TESTS THAT I NEED
 
-1. serde for discriminated unions, like super detailed
-2. form-urlencoded requests
-3. Different forms of auth
-4. all http methods
-5. multipart
-6. serde for non-discriminated inheritance
-7. Varied type schemas. OpenAPI CreateCompletionRequest.prompt, where the request prompt can be a string, string array, integer array, etc
 8. Discriminated union where the discriminator is not properly mapped. OpenAI ItemResource and its sub-types is a good check for this.

@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import lombok.SneakyThrows;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -57,8 +58,9 @@ public class DiscriminatedUnionSerdeTest {
 
   @ParameterizedTest(name = "It handles radiantone datasources: {0}")
   @MethodSource("radiantoneDatasources")
+  @SneakyThrows
   void itHandlesRadiantoneDatasources(
       @NonNull final String name, @NonNull final GenericDataSource dataSource) {
-    System.out.println("Working");
+    final String json = objectMapper.writeValueAsString(dataSource);
   }
 }

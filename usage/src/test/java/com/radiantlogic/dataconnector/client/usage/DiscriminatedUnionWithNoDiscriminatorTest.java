@@ -2,8 +2,10 @@ package com.radiantlogic.dataconnector.client.usage;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.radiantlogic.dataconnector.client.usage.ApiClientSupport.ACCESS_TOKEN;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.radiantlogic.custom.dataconnector.openaiapi.api.ResponsesApi;
 import com.radiantlogic.custom.dataconnector.openaiapi.invoker.ApiClient;
@@ -18,7 +20,14 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.client.RestClientException;
 
+/**
+ * This test validates a specific scenario in one of the test specs. That spec contains a
+ * discriminated union type but does not define a discriminator mapping. The result is the generated
+ * code won't be able to de-serialize the response correctly.
+ */
 @WireMockTest(httpPort = 9000)
 public class DiscriminatedUnionWithNoDiscriminatorTest {
   private static ApiClient apiClient;
@@ -77,6 +86,13 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(jsonResponse)));
 
-    responsesApi.listInputItems(responseId, null, null, null, null, null);
+    assertThatThrownBy(() -> responsesApi.listInputItems(responseId, null, null, null, null, null))
+        .isInstanceOf(RestClientException.class)
+        .extracting("cause")
+        .isNotNull()
+        .isInstanceOf(HttpMessageNotReadableException.class)
+        .extracting("cause")
+        .isNotNull()
+        .isInstanceOf(InvalidTypeIdException.class);
   }
 }

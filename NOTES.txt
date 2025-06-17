@@ -14,7 +14,6 @@ FactorTypeEnum
 
 TESTS THAT I NEED
 
-2. form-urlencoded requests
 3. Different forms of auth
 5. multipart
 7. Varied type schemas. OpenAPI CreateCompletionRequest.prompt, where the request prompt can be a string, string array, integer array, etc

@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.usage.radiantone;
+package com.radiantlogic.dataconnector.client.usage.radiantone;
 
 import com.radiantlogic.custom.dataconnector.radiantonev8api.api.AuthTokenApiApi;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient;

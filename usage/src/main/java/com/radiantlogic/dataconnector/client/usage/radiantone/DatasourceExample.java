@@ -1,8 +1,7 @@
-package com.radiantlogic.dataconnector.usage.radiantone;
+package com.radiantlogic.dataconnector.client.usage.radiantone;
 
 import com.radiantlogic.custom.dataconnector.radiantonev8api.api.DataSourcesApi;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient;
-import com.radiantlogic.custom.dataconnector.radiantonev8api.model.GenericDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
 
 public class DatasourceExample {

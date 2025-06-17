@@ -3,7 +3,6 @@ package com.radiantlogic.dataconnector.client.usage;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 @WireMockTest(httpPort = 9000)
 public class BasicHttpRequestsTest {
@@ -15,8 +14,8 @@ public class BasicHttpRequestsTest {
     apiClient = ApiClientSupport.createAndAuthenticateRadiantoneApi();
   }
 
-  @Test
-  void test() {
-    throw new RuntimeException();
-  }
+  //  @Test
+  //  void test() {
+  //    throw new RuntimeException();
+  //  }
 }

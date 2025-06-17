@@ -39,7 +39,6 @@ public class BasicHttpRequestsTest {
 
   @Test
   void testGetRootNamingContexts() throws Exception {
-    // Prepare test data
     final NamingContextNodeList expectedResponse = new NamingContextNodeList();
     final List<NamingContextNode> nodes = new ArrayList<>();
 
@@ -62,7 +61,6 @@ public class BasicHttpRequestsTest {
     pagination.setLimit(10L);
     expectedResponse.setPagination(pagination);
 
-    // Set up WireMock stubbing
     stubFor(
         get(urlPathEqualTo("/directory-namespace-service/naming_contexts"))
             .withQueryParam("activeOnly", equalTo("false"))
@@ -73,11 +71,9 @@ public class BasicHttpRequestsTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(objectMapper.writeValueAsString(expectedResponse))));
 
-    // Execute the API call
     final NamingContextNodeList result =
         directoryNamespaceApi.getRootNamingContexts(false, null, null, null, null, null);
 
-    // Verify the response with assertj
     assertThat(result).isNotNull();
     assertThat(result.getNodes()).hasSize(2);
     assertThat(result.getNodes().get(0).getDn()).isEqualTo("o=example");
@@ -88,14 +84,12 @@ public class BasicHttpRequestsTest {
 
   @Test
   void testAddNewRootNamingContext() throws Exception {
-    // Prepare test data
     final NewRootNamingContextDn request = new NewRootNamingContextDn();
     request.setDn("o=newcontext");
 
     final NewNamingContextResponse expectedResponse = new NewNamingContextResponse();
     expectedResponse.setDn("o=newcontext");
 
-    // Set up WireMock stubbing
     stubFor(
         post(urlPathEqualTo("/directory-namespace-service/naming_contexts"))
             .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
@@ -106,34 +100,28 @@ public class BasicHttpRequestsTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(objectMapper.writeValueAsString(expectedResponse))));
 
-    // Execute the API call
     final NewNamingContextResponse result = directoryNamespaceApi.addNewRootNamingContext(request);
 
-    // Verify the response with assertj
     assertThat(result).isNotNull();
     assertThat(result.getDn()).isEqualTo("o=newcontext");
   }
 
   @Test
   void testUpdateCacheProperties() throws Exception {
-    // Prepare test data
     final String dn = "o=example";
     final CacheProperties cacheProperties = new CacheProperties();
     cacheProperties.setIsActive(true);
     cacheProperties.setIsFullTextSearch(true);
     cacheProperties.setStorageLocation("/tmp/cache");
 
-    // Set up WireMock stubbing
     stubFor(
         put(urlEqualTo("/directory-namespace-service/caches/o%3Dexample/properties"))
             .withRequestBody(equalToJson(objectMapper.writeValueAsString(cacheProperties)))
             .withHeader("Authorization", equalTo("Bearer " + ACCESS_TOKEN))
             .willReturn(aResponse().withStatus(204)));
 
-    // Execute the API call
     directoryNamespaceApi.updateCacheProperties(dn, cacheProperties);
 
-    // Verify that the request was made as expected
     verify(
         putRequestedFor(urlEqualTo("/directory-namespace-service/caches/o%3Dexample/properties"))
             .withRequestBody(equalToJson(objectMapper.writeValueAsString(cacheProperties)))
@@ -142,19 +130,15 @@ public class BasicHttpRequestsTest {
 
   @Test
   void testDeleteNamingContextNode() throws Exception {
-    // Prepare test data
     final String dn = "o=example";
 
-    // Set up WireMock stubbing
     stubFor(
         delete(urlEqualTo("/directory-namespace-service/naming_contexts/o%3Dexample"))
             .withHeader("Authorization", equalTo("Bearer " + ACCESS_TOKEN))
             .willReturn(aResponse().withStatus(204)));
 
-    // Execute the API call
     directoryNamespaceApi.deleteNamingContextNode(dn);
 
-    // Verify that the request was made as expected
     verify(
         deleteRequestedFor(urlEqualTo("/directory-namespace-service/naming_contexts/o%3Dexample"))
             .withHeader("Authorization", equalTo("Bearer " + ACCESS_TOKEN)));

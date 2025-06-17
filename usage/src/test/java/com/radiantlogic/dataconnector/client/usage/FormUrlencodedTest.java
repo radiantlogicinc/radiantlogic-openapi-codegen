@@ -41,8 +41,8 @@ public class FormUrlencodedTest {
     stubFor(
         post(urlPathEqualTo("/eoc-backend/auth/local"))
             .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
-            .withRequestBody(containing("email=" + email))
-            .withRequestBody(containing("password=" + password))
+            .withFormParam("email", equalTo(email))
+            .withFormParam("password", equalTo(password))
             .willReturn(
                 aResponse()
                     .withStatus(201)
@@ -57,20 +57,14 @@ public class FormUrlencodedTest {
     assertThat(result).isInstanceOf(Map.class);
     final Map<String, Object> resultMap = (Map<String, Object>) result;
 
-    // Create expected result map for comparison
-    final Map<String, Object> expectedResult = new HashMap<>();
-    expectedResult.put("access_token", "test-token");
-    expectedResult.put("token_type", "bearer");
-    expectedResult.put("expires_in", 3600);
-
     // Compare using recursive comparator
-    assertThat(resultMap).usingRecursiveComparison().isEqualTo(expectedResult);
+    assertThat(resultMap).usingRecursiveComparison().isEqualTo(expectedResponse);
 
     // Verify the request was made with the correct form parameters
     verify(
         postRequestedFor(urlPathEqualTo("/eoc-backend/auth/local"))
             .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
-            .withRequestBody(containing("email=" + email))
-            .withRequestBody(containing("password=" + password)));
+            .withFormParam("email", equalTo(email))
+            .withFormParam("password", equalTo(password)));
   }
 }

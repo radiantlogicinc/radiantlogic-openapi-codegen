@@ -545,11 +545,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private void handleMissingModelInheritance(@NonNull final Collection<CodegenModel> allModels) {
     allModels.forEach(
         model -> {
-          if (model.parent != null) {
-            return;
-          }
-
-          if (model.dataType == null || model.dataType.equals(model.classname)) {
+          if (model.parent != null
+              || model.dataType == null
+              || model.dataType.equals(model.classname)
+              || model.isEnum) {
             return;
           }
 

@@ -11,8 +11,12 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.api.AuthTokenApiApi;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.PostLogin200Response;
 import java.util.Base64;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+/** A support class that produces pre-authenticated API clients for testing. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiClientSupport {
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -22,7 +26,7 @@ public class ApiClientSupport {
   private static final String ACCESS_TOKEN = "access_token";
 
   @SneakyThrows
-  public com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient
+  public static com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient
       createAndAuthenticateRadiantoneApi() {
     final String basicAuth = String.format("%s:%s", USERNAME, PASSWORD);
     final String base64EncodedAuth = Base64.getEncoder().encodeToString(basicAuth.getBytes());

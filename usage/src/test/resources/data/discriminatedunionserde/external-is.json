@@ -3,5 +3,9 @@
   "name": "myexternal",
   "dataSource": "myds",
   "dataSourceCategory": "CUSTOM",
-  "schema": "myschema"
+  "schema": "myschema",
+  "attributes": [],
+  "id": null,
+  "object": null,
+  "objectClass": null
 }

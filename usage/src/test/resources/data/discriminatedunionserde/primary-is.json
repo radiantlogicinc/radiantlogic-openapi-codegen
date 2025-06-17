@@ -4,7 +4,16 @@
   "dataSource": "myds",
   "relatedObjects": [
     {
-      "name": "myrelated"
+      "name": "myrelated",
+      "tableName": null,
+      "relationshipDn": null,
+      "attributes": [],
+      "id": null
     }
-  ]
+  ],
+  "attributes": [],
+  "dataSourceCategory": null,
+  "id": null,
+  "objectClass": null,
+  "schema": null
 }

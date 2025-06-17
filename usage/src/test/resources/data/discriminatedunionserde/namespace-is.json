@@ -3,5 +3,9 @@
   "name": "myns",
   "dataSource": "myds",
   "targetBaseDn": "cn=hello",
-  "scope": "ONE"
+  "scope": "ONE",
+  "attributes": [],
+  "id": null,
+  "objectClass": null,
+  "sizeLimit": 500
 }

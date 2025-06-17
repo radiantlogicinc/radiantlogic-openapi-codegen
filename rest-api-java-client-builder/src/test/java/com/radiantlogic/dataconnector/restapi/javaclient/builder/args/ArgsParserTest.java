@@ -14,7 +14,7 @@ public class ArgsParserTest {
   void itShowsHelpMenu() {
     final String[] args = {"-h"};
     final Args parsedArgs = argsParser.parse(args);
-    final Args expectedArgs = new Args(ProgramArgStatus.EXIT, "", "", false);
+    final Args expectedArgs = new Args(ProgramArgStatus.EXIT, "", "");
     assertThat(parsedArgs).isEqualTo(expectedArgs);
   }
 
@@ -23,8 +23,7 @@ public class ArgsParserTest {
     final String path = "http://localhost:8080/openapi.json";
     final String[] args = {"-p=%s".formatted(path)};
     final Args parsedArgs = argsParser.parse(args);
-    final Args expectedArgs =
-        new Args(ProgramArgStatus.PROCEED, path, ArgsParser.DEFAULT_GROUP_ID, true);
+    final Args expectedArgs = new Args(ProgramArgStatus.PROCEED, path, ArgsParser.DEFAULT_GROUP_ID);
     assertThat(parsedArgs).isEqualTo(expectedArgs);
   }
 
@@ -32,12 +31,9 @@ public class ArgsParserTest {
   void itParsesWithAllArgsProvided() {
     final String path = "http://localhost:8080/openapi.json";
     final String groupId = "org.something";
-    final boolean doValidate = false;
-    final String[] args = {
-      "-p=%s".formatted(path), "-g=%s".formatted(groupId), "-v=%s".formatted(doValidate)
-    };
+    final String[] args = {"-p=%s".formatted(path), "-g=%s".formatted(groupId)};
     final Args parsedArgs = argsParser.parse(args);
-    final Args expectedArgs = new Args(ProgramArgStatus.PROCEED, path, groupId, doValidate);
+    final Args expectedArgs = new Args(ProgramArgStatus.PROCEED, path, groupId);
     assertThat(parsedArgs).isEqualTo(expectedArgs);
   }
 

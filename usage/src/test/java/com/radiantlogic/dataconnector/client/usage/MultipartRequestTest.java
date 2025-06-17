@@ -65,6 +65,8 @@ public class MultipartRequestTest {
 
     assertThat(result).usingRecursiveComparison().isEqualTo(expectedResponse);
 
+    final byte[] imageBytes = ResourceReader.readBytes("data/ai-generated-image.png");
+
     final MultipartValuePattern filePart =
         aMultipart("file")
             .withHeader(
@@ -72,6 +74,7 @@ public class MultipartRequestTest {
                 equalTo("form-data; name=\"file\"; filename=\"ai-generated-image.png\""))
             .withHeader("Content-Type", equalTo("image/png"))
             .withHeader("Content-Length", equalTo("33"))
+            .withBody(binaryEqualTo(imageBytes))
             .build();
 
     final MultipartValuePattern urlPart =

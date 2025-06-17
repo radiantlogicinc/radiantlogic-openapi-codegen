@@ -5,11 +5,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DataSourceCategoryEnum;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DirectoryNamespaceEntryScope;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.ExtensibleObject;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.ExternalDataSourceInputSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.GenericDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.InputSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.LdapDataSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.NamespaceObjectInputSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.PrimaryInputSource;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RelatedObject;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.RequiredDataSourceCategory;
+import com.radiantlogic.custom.dataconnector.radiantonev8api.model.SourceTypeEnum;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -66,6 +74,38 @@ public class DiscriminatedUnionSerdeTest {
         Arguments.of("ldap", ldapDataSource, ldapJson),
         Arguments.of("database", databaseDataSource, dbJson),
         Arguments.of("custom", customDataSource, customJson));
+  }
+
+  static Stream<Arguments> radiantoneInputSources() {
+    final ExtensibleObject extensibleObject = new ExtensibleObject();
+    extensibleObject.setSourceType(SourceTypeEnum.EXTENSIBLE_OBJECT);
+    extensibleObject.setName("myextobject");
+    extensibleObject.setDataSource("myds");
+
+    final ExternalDataSourceInputSource externalDataSourceInputSource =
+        new ExternalDataSourceInputSource();
+    externalDataSourceInputSource.setSourceType(SourceTypeEnum.EXTERNAL_DATA_SOURCE);
+    externalDataSourceInputSource.setName("myexternal");
+    externalDataSourceInputSource.setDataSource("myds");
+    externalDataSourceInputSource.setDataSourceCategory(DataSourceCategoryEnum.CUSTOM);
+    externalDataSourceInputSource.setSchema("myschema");
+
+    final NamespaceObjectInputSource namespaceObjectInputSource = new NamespaceObjectInputSource();
+    namespaceObjectInputSource.setSourceType(SourceTypeEnum.NAMESPACE_OBJECT);
+    namespaceObjectInputSource.setName("myns");
+    namespaceObjectInputSource.setDataSource("myds");
+    namespaceObjectInputSource.setTargetBaseDn("cn=hello");
+    namespaceObjectInputSource.setScope(DirectoryNamespaceEntryScope.ONE);
+
+    final PrimaryInputSource primaryInputSource = new PrimaryInputSource();
+    primaryInputSource.setSourceType(SourceTypeEnum.PRIMARY);
+    primaryInputSource.setName("myprimary");
+    primaryInputSource.setDataSource("myds");
+    final RelatedObject relatedObject = new RelatedObject();
+    relatedObject.setName("myrelated");
+    primaryInputSource.addRelatedObjectsItem(relatedObject);
+
+    return Stream.empty();
   }
 
   @SneakyThrows

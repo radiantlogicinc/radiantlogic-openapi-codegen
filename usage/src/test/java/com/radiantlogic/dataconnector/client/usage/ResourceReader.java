@@ -1,7 +1,10 @@
 package com.radiantlogic.dataconnector.client.usage;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,5 +34,14 @@ public class ResourceReader {
     try (InputStream stream = openStream(resourceName)) {
       return IOUtils.toByteArray(stream);
     }
+  }
+
+  @SneakyThrows
+  public static Path getFilePath(@NonNull final String resourceName) {
+    final URL url = ResourceReader.class.getClassLoader().getResource(resourceName);
+    if (url == null) {
+      throw new IllegalArgumentException(String.format("Resource not found: %s", resourceName));
+    }
+    return Paths.get(url.toURI());
   }
 }

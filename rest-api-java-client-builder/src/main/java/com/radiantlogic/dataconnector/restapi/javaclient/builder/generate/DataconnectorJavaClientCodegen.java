@@ -542,7 +542,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   // TODO document that this manipulation is being done super carefully with all the checks
-  private void handleMissingModelInheritance(@NonNull final Collection<CodegenModel> allModels) {
+  private void handleMissingModelInheritance(
+      @NonNull final Collection<CodegenModel> allModels,
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
     allModels.forEach(
         model -> {
           if (model.parent != null
@@ -572,6 +574,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
           }
 
           model.parent = modelInterface;
+          final CodegenModel parentModel = ModelUtils.getModelByName(modelInterface, allModelMaps);
+          if (parentModel == null) {
+            throw new IllegalStateException(
+                "Parent model should exist but was not found: %s".formatted(modelInterface));
+          }
+          model.parentModel = parentModel;
         });
   }
 

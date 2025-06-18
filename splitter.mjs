@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace'];
+const REF_REGEX = /(#\/components\/([^'"]*))/g;
 
 const targetTag = process.argv[2];
 if (!targetTag) throw new Error('Missing target tag argument');
@@ -16,7 +17,6 @@ const componentMapEntries = Object.entries(fullSpec.components)
         return Object.entries(componentsForType)
             .map(([componentName, component]) => [`#/components/${componentType}/${componentName}`, component]);
     });
-const componentMap = Object.fromEntries(componentMapEntries);
 
 const matchingPathEntries = Object.entries(fullSpec.paths)
     .filter(([uri, pathConfig]) => {
@@ -45,5 +45,21 @@ const newSpec = {
     tags: matchingTags,
     paths: matchingPaths,
 };
-const newYaml = stringify(newSpec);
-fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), newYaml);
+const newYamlV1 = stringify(newSpec);
+
+const refMatches = [...newYamlV1.matchAll(REF_REGEX)].map(match => match[0])
+componentMapEntries.filter(([ref]) => refMatches.includes(ref))
+    .forEach(([ref, component]) => {
+        const type = ref.split('/')[2];
+        const name = ref.split('/')[3];
+        if (!newSpec.components[type]) {
+            newSpec.components[type] = {};
+        }
+        newSpec.components[type][name] = component;
+    });
+const newYamlV2 = stringify(newSpec);
+
+
+
+fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), newYamlV2);
+

@@ -579,6 +579,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  // TODO explain that enums and inheritance are a PITA and any that couldn't be easily corrected
+  // are just removed here
+  private void handleRemovingUnresolvableInheritanceEnums(
+      @NonNull final Map<String, CodegenModel> allModels) {}
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
@@ -601,6 +606,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
     handleDiscriminatorChildMappingValues(allModels);
+
+    handleRemovingUnresolvableInheritanceEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

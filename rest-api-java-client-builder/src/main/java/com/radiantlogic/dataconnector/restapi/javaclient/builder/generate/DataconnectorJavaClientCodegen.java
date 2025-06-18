@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -42,6 +43,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
+
+  private static final CodegenPropertyMapper codegenPropertyMapper =
+      Mappers.getMapper(CodegenPropertyMapper.class);
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -232,7 +236,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final CodegenProperty prop =
         super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
     fixBadLiteralPropertyNames(prop);
-    return prop;
+    final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
+    extendedProp.jsonName = "MyJsonName";
   }
 
   @Override

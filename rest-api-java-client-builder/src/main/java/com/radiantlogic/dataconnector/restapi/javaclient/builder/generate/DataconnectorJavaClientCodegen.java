@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
@@ -652,9 +653,51 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
   }
 
+  private Map<String, ModelsMap> fixProblematicKeysForFilenames(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    return allModelMaps.entrySet().stream()
+        .map(
+            entry -> {
+              final String fileName = modelFilename("model.mustache", entry.getKey());
+              final String fileBaseName = FilenameUtils.getBaseName(fileName);
+              return Map.of(fileBaseName, entry);
+            })
+        .reduce(
+            new HashMap<>(),
+            (acc, singleEntryMap) -> {
+              final String fileBaseName =
+                  singleEntryMap.keySet().stream().findFirst().orElseThrow();
+              if (!acc.containsKey(fileBaseName)) {
+                acc.put(fileBaseName, singleEntryMap.get(fileBaseName));
+                return acc;
+              }
+
+              final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
+              final CodegenModel model =
+                  entry.getValue().getModels().get(0).getModel(); // TODO null safety
+              int index = 1;
+              while (acc.containsKey(fileBaseName + index)) {
+                index++;
+              }
+              final String newFileBaseName = fileBaseName + index;
+              final String newKey = entry.getKey() + index;
+              model.classname = model.classname + index;
+              model.classFilename = model.classFilename + index;
+              model.dataType = model.dataType + index;
+
+              acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
+              return acc;
+            })
+        .values()
+        .stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
+      @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
+    final Map<String, ModelsMap> allModelMaps =
+        fixProblematicKeysForFilenames(originalAllModelMaps);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     handleMissingModelInheritance(allModels);

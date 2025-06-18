@@ -225,7 +225,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
-    if (StringUtils.isNumeric(prop.name) || "true".equals(prop.name) || "false".equals(prop.name)) {
+    if (prop.name != null && StringUtils.isNumeric(prop.name)
+        || "true".equals(prop.name)
+        || "false".equals(prop.name)) {
       prop.jsonName = prop.name;
       prop.name =
           "value%s%s"

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -224,9 +225,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
-    if ("true".equals(prop.name)) {
-      prop.name = "valueTrue";
-      prop.jsonName = "true";
+    if (StringUtils.isNumeric(prop.name) || "true".equals(prop.name) || "false".equals(prop.name)) {
+      prop.jsonName = prop.name;
+      prop.name =
+          "value%s%s"
+              .formatted(String.valueOf(prop.name.charAt(0)).toUpperCase(), prop.name.substring(1));
     }
   }
 

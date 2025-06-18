@@ -1,0 +1,175 @@
+---
+openapi: 3.0.3
+info:
+  version: 1.1.4
+  title: GitHub Actions API
+  description: GitHub's v3 REST API for Actions.
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+  termsOfService: https://docs.github.com/articles/github-terms-of-service
+  contact:
+    name: Support
+    url: https://support.github.com/contact?tags=dotcom-rest-api
+  x-github-plan: api.github.com
+tags:
+- name: actions
+  description: Endpoints to manage GitHub Actions using the REST API.
+servers:
+- url: https://api.github.com
+externalDocs:
+  description: GitHub v3 REST API
+  url: https://docs.github.com/rest/
+paths:
+  "/orgs/{org}/actions/cache/usage":
+    get:
+      summary: Get GitHub Actions cache usage for an organization
+      description: |-
+        Gets the total GitHub Actions cache usage for an organization.
+        The data fetched using this API is refreshed approximately every 5 minutes, so values returned from this endpoint may take at least 5 minutes to get updated.
+
+        OAuth tokens and personal access tokens (classic) need the `read:org` scope to use this endpoint.
+      tags:
+      - actions
+      operationId: actions/get-actions-cache-usage-for-org
+      externalDocs:
+        description: API method documentation
+        url: https://docs.github.com/rest/actions/cache#get-github-actions-cache-usage-for-an-organization
+      parameters:
+      - "$ref": "#/components/parameters/org"
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/actions-cache-usage-org-enterprise"
+              examples:
+                default:
+                  "$ref": "#/components/examples/actions-cache-usage-org-enterprise"
+          headers:
+            Link:
+              "$ref": "#/components/headers/link"
+      x-github:
+        githubCloudOnly: false
+        enabledForGitHubApps: true
+        category: actions
+        subcategory: cache
+  "/orgs/{org}/actions/cache/usage-by-repository":
+    get:
+      summary: List repositories with GitHub Actions cache usage for an organization
+      description: |-
+        Lists repositories and their GitHub Actions cache usage for an organization.
+        The data fetched using this API is refreshed approximately every 5 minutes, so values returned from this endpoint may take at least 5 minutes to get updated.
+
+        OAuth tokens and personal access tokens (classic) need the `read:org` scope to use this endpoint.
+      tags:
+      - actions
+      operationId: actions/get-actions-cache-usage-by-repo-for-org
+      externalDocs:
+        description: API method documentation
+        url: https://docs.github.com/rest/actions/cache#list-repositories-with-github-actions-cache-usage-for-an-organization
+      parameters:
+      - "$ref": "#/components/parameters/org"
+      - "$ref": "#/components/parameters/per-page"
+      - "$ref": "#/components/parameters/page"
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - total_count
+                - repository_cache_usages
+                properties:
+                  total_count:
+                    type: integer
+                  repository_cache_usages:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/actions-cache-usage-by-repository"
+              examples:
+                default:
+                  "$ref": "#/components/examples/org-actions-cache-usage-by-repo"
+          headers:
+            Link:
+              "$ref": "#/components/headers/link"
+      x-github:
+        githubCloudOnly: false
+        enabledForGitHubApps: true
+        category: actions
+        subcategory: cache
+components:
+  parameters:
+    org:
+      name: org
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The organization name. The name is not case sensitive.
+    per-page:
+      name: per_page
+      in: query
+      schema:
+        type: integer
+        default: 30
+        minimum: 1
+        maximum: 100
+      description: The number of results per page (max 100).
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: Page number of the results to fetch.
+  schemas:
+    actions-cache-usage-org-enterprise:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          description: The count of active caches across all repositories of an enterprise or organization.
+        total_size_in_bytes:
+          type: integer
+          description: The total size in bytes of all active caches across all repositories of an enterprise or organization.
+      required:
+      - total_count
+      - total_size_in_bytes
+    actions-cache-usage-by-repository:
+      type: object
+      properties:
+        full_name:
+          type: string
+          description: The full name of the repository.
+        active_caches_count:
+          type: integer
+          description: The count of active caches in the repository.
+        active_caches_size_in_bytes:
+          type: integer
+          description: The total size in bytes of all active caches in the repository.
+      required:
+      - full_name
+      - active_caches_count
+      - active_caches_size_in_bytes
+  examples:
+    actions-cache-usage-org-enterprise:
+      value:
+        total_count: 2
+        total_size_in_bytes: 200
+    org-actions-cache-usage-by-repo:
+      value:
+        total_count: 1
+        repository_cache_usages:
+        - full_name: octo-org/octo-repo
+          active_caches_count: 2
+          active_caches_size_in_bytes: 200
+  headers:
+    link:
+      schema:
+        type: string
+      description: Link to the next page of results

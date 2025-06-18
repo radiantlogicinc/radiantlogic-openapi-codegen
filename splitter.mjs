@@ -1,3 +1,6 @@
+/**
+ * This script will split an openapi spec using its tags. All paths and related resources for a specific tag will be extracted and written to another file.
+ */
 import { parse, stringify } from 'yaml'
 import path from 'path';
 import fs from 'fs';

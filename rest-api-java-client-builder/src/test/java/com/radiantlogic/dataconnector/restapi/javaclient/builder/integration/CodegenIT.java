@@ -58,12 +58,6 @@ public class CodegenIT {
   }
 
   @Test
-  @Disabled("This spec is too large to parse and will always fail")
-  void githubV3() {
-    generateAndBuild("github-v3.yaml", "foo");
-  }
-
-  @Test
   void gitlabV4() {
     generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
@@ -116,6 +110,36 @@ public class CodegenIT {
   @Test
   void harryPotter() {
     generateAndBuild("harrypotter-1.0.0.yaml", "Harry-Potter-API/1.0.0");
+  }
+
+  @Test
+  void snyk() {
+    generateAndBuild("snyk-1.0.yaml", "Snyk-API/1.0");
+  }
+
+  @Test
+  void sonarqube() {
+    generateAndBuild("sonarqube-2025.4.0.109754.json", "SonarQube-Web-API-v2/2025.4.0.109754");
+  }
+
+  @Test
+  void githubActions() {
+    generateAndBuild("github-actions-v3-1.1.4.yaml", "GitHub-v3-REST-API---actions/1.1.4");
+  }
+
+  @Test
+  void githubActivity() {
+    generateAndBuild("github-activity-v3-1.1.4.yaml", "GitHub-v3-REST-API---activity/1.1.4");
+  }
+
+  @Test
+  void githubApps() {
+    generateAndBuild("github-apps-v3-1.1.4.yaml", "GitHub-v3-REST-API---apps/1.1.4");
+  }
+
+  @Test
+  void githubBilling() {
+    generateAndBuild("github-billing-v3-1.1.4.yaml", "GitHub-v3-REST-API---billing/1.1.4");
   }
 
   @SneakyThrows

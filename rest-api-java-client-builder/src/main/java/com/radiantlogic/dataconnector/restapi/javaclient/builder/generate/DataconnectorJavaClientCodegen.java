@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -647,42 +648,55 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
-    return allModelMaps.entrySet().stream()
-        .map(
-            entry -> {
-              final String fileName = modelFilename("model.mustache", entry.getKey());
-              final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
-              return Map.of(fileBaseName, entry);
-            })
-        .reduce(
-            new HashMap<>(),
-            (acc, singleEntryMap) -> {
-              final String fileBaseName =
-                  singleEntryMap.keySet().stream().findFirst().orElseThrow();
-              final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
-              if (!acc.containsKey(fileBaseName)) {
-                acc.put(fileBaseName, entry);
-                return acc;
-              }
+    final Map<String, ModelsMap> fixedModelMaps =
+        allModelMaps.entrySet().stream()
+            .map(
+                entry -> {
+                  final String fileName = modelFilename("model.mustache", entry.getKey());
+                  final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
+                  return Map.of(fileBaseName, entry);
+                })
+            .reduce(
+                new HashMap<>(),
+                (acc, singleEntryMap) -> {
+                  final String fileBaseName =
+                      singleEntryMap.keySet().stream().findFirst().orElseThrow();
+                  final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
+                  if (!acc.containsKey(fileBaseName)) {
+                    acc.put(fileBaseName, entry);
+                    return acc;
+                  }
 
-              final CodegenModel model =
-                  entry.getValue().getModels().get(0).getModel(); // TODO null safety
-              int index = 1;
-              while (acc.containsKey(fileBaseName + index)) {
-                index++;
-              }
-              final String newFileBaseName = fileBaseName + index;
-              final String newKey = entry.getKey() + index;
-              model.classname = model.classname + index;
-              model.classFilename = model.classFilename + index;
-              model.dataType = model.dataType + index;
+                  final CodegenModel model =
+                      entry.getValue().getModels().get(0).getModel(); // TODO null safety
+                  int index = 1;
+                  while (acc.containsKey(fileBaseName + index)) {
+                    index++;
+                  }
+                  final String newFileBaseName = fileBaseName + index;
+                  final String newKey = entry.getKey() + index;
+                  model.classname = model.classname + index;
+                  model.classFilename = model.classFilename + index;
+                  model.dataType = model.dataType + index;
 
-              acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
-              return acc;
-            })
-        .values()
-        .stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                  acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
+                  return acc;
+                })
+            .values()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    // TODO clean this up
+    try {
+      final Field seenModelFilenamesField = getClass().getDeclaredField("seenModelFilenames");
+      seenModelFilenamesField.setAccessible(true);
+      final Map<String, String> seenModelFilenames =
+          (Map<String, String>) seenModelFilenamesField.get(this);
+      seenModelFilenames.clear();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return fixedModelMaps;
   }
 
   @Override

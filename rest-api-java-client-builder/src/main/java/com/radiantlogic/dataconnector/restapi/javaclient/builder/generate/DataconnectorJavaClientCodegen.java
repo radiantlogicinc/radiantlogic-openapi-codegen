@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -271,13 +270,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 })
             .toList();
     result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
-
-    // TODO experiment
-    if (result.classname.equals("UpdateexistingintegrationRequest")) {
-      result.classname = "UpdateExistingIntegrationRequestParent";
-      result.classFilename = "UpdateExistingIntegrationRequestParent";
-      result.dataType = "UpdateExistingIntegrationRequestParent";
-    }
 
     return result;
   }
@@ -721,15 +713,5 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     handleRemovingUnresolvableInheritanceEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);
-  }
-
-  @Override
-  public String modelFilename(@NonNull final String templateName, @NonNull final String modelName) {
-    // TODO experiment
-    if (modelName.equals("Updateexistingintegration_request")) {
-      return modelFileFolder() + File.separator + "UpdateExistingIntegrationRequestParent.java";
-    }
-
-    return super.modelFilename(templateName, modelName);
   }
 }

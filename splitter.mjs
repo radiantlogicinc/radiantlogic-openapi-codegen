@@ -44,6 +44,7 @@ const newSpec = {
     },
     tags: matchingTags,
     paths: matchingPaths,
+    components: {}
 };
 const newYamlV1 = stringify(newSpec);
 

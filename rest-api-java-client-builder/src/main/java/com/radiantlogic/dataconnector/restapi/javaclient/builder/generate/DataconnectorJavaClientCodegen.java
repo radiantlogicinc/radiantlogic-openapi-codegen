@@ -688,7 +688,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     // TODO clean this up
     try {
-      final Field seenModelFilenamesField = getClass().getDeclaredField("seenModelFilenames");
+      final Field seenModelFilenamesField =
+          getClass()
+              .getSuperclass()
+              .getSuperclass()
+              .getSuperclass()
+              .getDeclaredField("seenModelFilenames");
       seenModelFilenamesField.setAccessible(true);
       final Map<String, String> seenModelFilenames =
           (Map<String, String>) seenModelFilenamesField.get(this);

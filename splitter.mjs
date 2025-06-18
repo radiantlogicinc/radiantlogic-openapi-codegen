@@ -23,7 +23,7 @@ const matchingPathEntries = Object.entries(fullSpec.paths)
     })
     .map(([uri, pathConfig]) => {
         const newPathConfigEntries = Object.entries(pathConfig)
-            .filter(([method, methodConfig]) => !METHODS.includes(method) || methodConfig.tags?.includes(targetTag).length > 0);
+            .filter(([method, methodConfig]) => !METHODS.includes(method) || methodConfig.tags?.includes(targetTag));
         return [uri, Object.fromEntries(newPathConfigEntries)];
     });
 const matchingPaths = Object.fromEntries(matchingPathEntries);

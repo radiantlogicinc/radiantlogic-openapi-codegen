@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
@@ -42,6 +44,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
+
+  private static final CodegenPropertyMapper codegenPropertyMapper =
+      Mappers.getMapper(CodegenPropertyMapper.class);
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -217,6 +222,30 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final var updatedEnumVars =
         enumVars.stream().peek(map -> map.put("useValueOf", useValueOf)).toList();
     return new ArrayList<>(updatedEnumVars);
+  }
+
+  private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
+    if (prop.name != null && StringUtils.isNumeric(prop.name)
+        || "true".equals(prop.name)
+        || "false".equals(prop.name)) {
+      prop.jsonName = prop.name;
+      prop.name =
+          "value%s%s"
+              .formatted(String.valueOf(prop.name.charAt(0)).toUpperCase(), prop.name.substring(1));
+    }
+  }
+
+  @Override
+  public CodegenProperty fromProperty(
+      @NonNull final String name,
+      @NonNull final Schema p,
+      final boolean required,
+      final boolean schemaIsFromAdditionalProperties) {
+    final CodegenProperty prop =
+        super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
+    final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
+    fixBadLiteralPropertyNames(extendedProp);
+    return extendedProp;
   }
 
   @Override

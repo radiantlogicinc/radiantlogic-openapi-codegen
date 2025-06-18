@@ -229,7 +229,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final Schema p,
       final boolean required,
       final boolean schemaIsFromAdditionalProperties) {
-    final CodegenProperty prop = super.fromProperty(name, p, required);
+    final CodegenProperty prop =
+        super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
     fixBadLiteralPropertyNames(prop);
     return prop;
   }

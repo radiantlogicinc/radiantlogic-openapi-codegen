@@ -124,7 +124,7 @@ public class CodegenIT {
 
   @Test
   void githubActions() {
-    generateAndBuild("github-actions-v3.json", "GitHub-v3-REST-API---actions/1.1.4");
+    generateAndBuild("github-actions-v3.yaml", "GitHub-v3-REST-API---actions/1.1.4");
   }
 
   @SneakyThrows

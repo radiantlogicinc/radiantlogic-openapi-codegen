@@ -58,7 +58,7 @@ const recursivelyReplaceRefs = (yaml, componentMapEntries) => {
         if (refMatches.includes(ref)) {
             acc.matched.push([ref, component]);
         } else {
-            acc.unmatched.push(ref);
+            acc.unmatched.push([ref, component]);
         }
         return acc;
     }, { matched: [], unmatched: [] })

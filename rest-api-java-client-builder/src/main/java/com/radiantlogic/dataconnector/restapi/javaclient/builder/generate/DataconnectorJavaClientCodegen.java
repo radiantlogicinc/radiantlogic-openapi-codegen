@@ -579,10 +579,38 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
+  private void removeEnumIfNotEnumInParent(
+      @NonNull final CodegenModel model, final CodegenModel parentModel) {
+    if (parentModel == null) {
+      return;
+    }
+
+    model.vars.forEach(
+        var -> {
+          if (var.isEnum) {
+            parentModel.vars.stream()
+                .filter(v -> v.name.equals(var.name))
+                .findFirst()
+                .filter(parentVar -> !parentVar.isEnum)
+                .ifPresent(
+                    parentVar -> {
+                      var.isEnum = false;
+                      var.dataType = parentVar.dataType;
+                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
+                      var.openApiType = parentVar.openApiType;
+                    });
+          }
+        });
+
+    removeEnumIfNotEnumInParent(model, parentModel.parentModel);
+  }
+
   // TODO explain that enums and inheritance are a PITA and any that couldn't be easily corrected
   // are just removed here
   private void handleRemovingUnresolvableInheritanceEnums(
-      @NonNull final Map<String, CodegenModel> allModels) {}
+      @NonNull final Map<String, CodegenModel> allModels) {
+    allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
+  }
 
   @Override
   public Map<String, ModelsMap> postProcessAllModels(

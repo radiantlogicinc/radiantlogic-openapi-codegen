@@ -223,8 +223,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return new ArrayList<>(updatedEnumVars);
   }
 
-  private void fixBadLiteralPropertyNames(@NonNull final CodegenProperty prop) {
-    // TODO finish this
+  private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
+    if ("true".equals(prop.name)) {
+      prop.name = "valueTrue";
+      prop.jsonName = "true";
+    }
   }
 
   @Override
@@ -235,9 +238,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
         super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
-    fixBadLiteralPropertyNames(prop);
     final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
-    extendedProp.jsonName = "MyJsonName";
+    fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;
   }
 

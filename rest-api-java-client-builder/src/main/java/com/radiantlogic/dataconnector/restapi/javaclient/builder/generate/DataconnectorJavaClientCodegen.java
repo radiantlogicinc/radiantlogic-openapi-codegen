@@ -735,4 +735,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     return super.postProcessAllModels(allModelMaps);
   }
+
+  @Override
+  public String modelFilename(String templateName, String modelName) {
+    final String name = super.modelFilename(templateName, modelName);
+    return name;
+  }
 }

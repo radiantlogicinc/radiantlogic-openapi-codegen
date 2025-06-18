@@ -595,12 +595,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 .ifPresent(
                     parentVar -> {
                       var.isEnum = false;
-                      // TODO what about isInnerEnum and isEnumRef
                       var.dataType = parentVar.dataType;
                       var.datatypeWithEnum = parentVar.datatypeWithEnum;
                       var.openApiType = parentVar.openApiType;
                       var.allowableValues = parentVar.allowableValues;
                       var._enum = parentVar._enum;
+                      var.defaultValue = parentVar.defaultValue;
                     });
           }
         });

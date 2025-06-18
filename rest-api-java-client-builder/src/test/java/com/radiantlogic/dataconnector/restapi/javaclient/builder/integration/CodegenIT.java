@@ -118,6 +118,16 @@ public class CodegenIT {
     generateAndBuild("harrypotter-1.0.0.yaml", "Harry-Potter-API/1.0.0");
   }
 
+  @Test
+  void snyk() {
+    generateAndBuild("snyk-1.0.yaml", "Snyk-API/1.0");
+  }
+
+  @Test
+  void sonarqube() {
+    generateAndBuild("sonarqube-2025.4.0.109754.json", "SonarQube-Web-API-v2/2025.4.0.109754");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

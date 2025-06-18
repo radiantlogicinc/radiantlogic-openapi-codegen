@@ -8,7 +8,7 @@ const targetTag = process.argv[2];
 if (!targetTag) throw new Error('Missing target tag argument');
 console.log('Extracting tag', targetTag);
 
-const originalYaml = fs.readFileSync(path.join(process.cwd(), 'github-actions-v3.yaml'), 'utf8');
+const originalYaml = fs.readFileSync(path.join(process.cwd(), 'github-v3.yaml'), 'utf8');
 const fullSpec = parse(originalYaml);
 
 const matchingPathEntries = Object.entries(fullSpec.paths)
@@ -38,3 +38,5 @@ const newSpec = {
     paths: matchingPaths,
 };
 console.log(newSpec);
+const newYaml = stringify(newSpec);
+fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), newYaml);

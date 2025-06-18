@@ -375,9 +375,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
-      @NonNull final Collection<CodegenModel> allModels,
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
-    return allModels.stream()
+      @NonNull final Map<String, CodegenModel> allModels) {
+    return allModels.values().stream()
         .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
         .flatMap(
             model ->
@@ -392,8 +391,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               .forEach(
                                   mappedModel -> {
                                     final CodegenModel childModel =
-                                        ModelUtils.getModelByName(
-                                            mappedModel.getModelName(), allModelMaps);
+                                        allModels.get(mappedModel.getModelName());
                                     ensureChildModelHasNoInlineEnums(var, childModel);
                                   });
                           return createEnumModel(var);
@@ -402,9 +400,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private void handleDiscriminatorChildMappingValues(
-      @NonNull final Collection<CodegenModel> allModels,
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
-    allModels.stream()
+      @NonNull final Map<String, CodegenModel> allModels) {
+    allModels.values().stream()
         .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
         .forEach(
             model -> {
@@ -413,8 +410,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   .getMappedModels()
                   .forEach(
                       mappedModel -> {
-                        final CodegenModel childModel =
-                            ModelUtils.getModelByName(mappedModel.getModelName(), allModelMaps);
+                        final CodegenModel childModel = allModels.get(mappedModel.getModelName());
                         // This is a special extension used in the template to ensure the correct
                         // mapping value in the JsonTypeName annotation
                         childModel.vendorExtensions.put(
@@ -542,69 +538,107 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   // TODO document that this manipulation is being done super carefully with all the checks
-  private void handleMissingModelInheritance(
-      @NonNull final Collection<CodegenModel> allModels,
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
-    allModels.forEach(
-        model -> {
-          if (model.parent != null
-              || model.dataType == null
-              || model.dataType.equals(model.classname)
-              || model.isEnum) {
-            return;
-          }
+  private void handleMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {
+    allModels
+        .values()
+        .forEach(
+            model -> {
+              if (model.parent != null
+                  || model.dataType == null
+                  || model.dataType.equals(model.classname)
+                  || model.isEnum) {
+                return;
+              }
 
-          final String modelInterface =
-              Optional.ofNullable(model.interfaces)
-                  .filter(list -> list.size() == 1)
-                  .map(List::getFirst)
-                  .orElse(null);
-          final String modelAllOf =
-              Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
-                  .flatMap(Set::stream)
-                  .findFirst()
-                  .orElse(null);
+              final String modelInterface =
+                  Optional.ofNullable(model.interfaces)
+                      .filter(list -> list.size() == 1)
+                      .map(List::getFirst)
+                      .orElse(null);
+              final String modelAllOf =
+                  Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
+                      .flatMap(Set::stream)
+                      .findFirst()
+                      .orElse(null);
 
-          if (modelInterface == null || modelAllOf == null) {
-            return;
-          }
+              if (modelInterface == null || modelAllOf == null) {
+                return;
+              }
 
-          if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
-            return;
-          }
+              if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
+                return;
+              }
 
-          model.parent = modelInterface;
-          final CodegenModel parentModel = ModelUtils.getModelByName(modelInterface, allModelMaps);
-          if (parentModel == null) {
-            throw new IllegalStateException(
-                "Parent model should exist but was not found: %s".formatted(modelInterface));
+              model.parent = modelInterface;
+              final CodegenModel parentModel = allModels.get(modelInterface);
+              if (parentModel == null) {
+                throw new IllegalStateException(
+                    "Parent model should exist but was not found: %s".formatted(modelInterface));
+              }
+              model.parentModel = parentModel;
+            });
+  }
+
+  private void removeEnumIfNotEnumInParent(
+      @NonNull final CodegenModel model, final CodegenModel parentModel) {
+    if (parentModel == null) {
+      return;
+    }
+
+    model.vars.forEach(
+        var -> {
+          if (var.isEnum) {
+            parentModel.vars.stream()
+                .filter(v -> v.name.equals(var.name))
+                .findFirst()
+                .filter(parentVar -> !parentVar.isEnum)
+                .ifPresent(
+                    parentVar -> {
+                      var.isEnum = false;
+                      var.dataType = parentVar.dataType;
+                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
+                      var.openApiType = parentVar.openApiType;
+                      var.allowableValues = parentVar.allowableValues;
+                      var._enum = parentVar._enum;
+                      var.defaultValue = parentVar.defaultValue;
+                    });
           }
-          model.parentModel = parentModel;
         });
+
+    removeEnumIfNotEnumInParent(model, parentModel.parentModel);
+  }
+
+  // TODO explain that enums and inheritance are a PITA and any that couldn't be easily corrected
+  // are just removed here
+  private void handleRemovingUnresolvableInheritanceEnums(
+      @NonNull final Map<String, CodegenModel> allModels) {
+    allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
   }
 
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
-    final Collection<CodegenModel> allModels = getAllModels(allModelMaps).values();
+    final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
-    handleMissingModelInheritance(allModels, allModelMaps);
+    handleMissingModelInheritance(allModels);
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
     final List<CodegenModel> newEnumsFromModelsWithParents =
-        handleInheritedEnumsFromModelsWithParents(allModels);
+        handleInheritedEnumsFromModelsWithParents(allModels.values());
     final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
-        handleInheritedEnumsFromDiscriminatorParentModels(allModels, allModelMaps);
+        handleInheritedEnumsFromDiscriminatorParentModels(allModels);
     final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
-        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels);
+        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
     addNewEnumModelMaps(
         allModelMaps,
         newEnumsFromModelsWithParents,
         newEnumsFromDiscriminatorParentModels,
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
-    handleDiscriminatorChildMappingValues(allModels, allModelMaps);
+    handleDiscriminatorChildMappingValues(allModels);
+
+    handleRemovingUnresolvableInheritanceEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

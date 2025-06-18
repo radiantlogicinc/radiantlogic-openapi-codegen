@@ -58,12 +58,6 @@ public class CodegenIT {
   }
 
   @Test
-  @Disabled("This spec is too large to parse and will always fail")
-  void githubV3() {
-    generateAndBuild("github-v3.yaml", "foo");
-  }
-
-  @Test
   void gitlabV4() {
     generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
@@ -126,6 +120,11 @@ public class CodegenIT {
   @Test
   void sonarqube() {
     generateAndBuild("sonarqube-2025.4.0.109754.json", "SonarQube-Web-API-v2/2025.4.0.109754");
+  }
+
+  @Test
+  void githubActions() {
+    generateAndBuild("github-actions-v3.json", "GitHub-v3-REST-API---actions/1.1.4");
   }
 
   @SneakyThrows

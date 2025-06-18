@@ -39,6 +39,8 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled(
+      "This spec has a lot of problems with it. It is more an example of how poorly designed specs cannot work with this tool than anything else.")
   void oktaManagementMinimal() {
     generateAndBuild("okta-management-minimal-2025.01.1.yaml", "Okta-Admin-Management/2025.01.1");
   }

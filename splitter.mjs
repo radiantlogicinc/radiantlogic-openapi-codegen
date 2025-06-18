@@ -11,11 +11,12 @@ import fs from 'fs';
 const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace'];
 const REF_REGEX = /(#\/components\/([^'"]*))/g;
 
-const targetTag = process.argv[2];
-if (!targetTag) throw new Error('Missing target tag argument');
+const targetFile = process.argv[2];
+const targetTag = process.argv[3];
+if (!targetFile || !targetTag) throw new Error('Must specify target file and tag as arguments');
 console.log('Extracting tag', targetTag);
 
-const originalYaml = fs.readFileSync(path.join(process.cwd(), 'github-v3.yaml'), 'utf8');
+const originalYaml = fs.readFileSync(targetFile, 'utf8');
 const fullSpec = parse(originalYaml);
 
 const allComponentMapEntries = Object.entries(fullSpec.components)

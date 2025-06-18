@@ -673,11 +673,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   while (acc.containsKey(fileBaseName + index)) {
                     index++;
                   }
-                  final String newFileBaseName = fileBaseName + index;
-                  final String newKey = entry.getKey() + index;
-                  model.classname = model.classname + index;
-                  model.classFilename = model.classFilename + index;
-                  model.dataType = model.dataType + index;
+                  final String suffix = "V%d".formatted(index);
+                  final String newFileBaseName = fileBaseName + suffix;
+                  final String newKey = entry.getKey() + suffix;
+                  System.out.println("UPDATING KEY: " + newKey);
+                  model.classname = model.classname + suffix;
+                  model.classFilename = model.classFilename + suffix;
+                  model.dataType = model.dataType + suffix;
 
                   acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
                   return acc;

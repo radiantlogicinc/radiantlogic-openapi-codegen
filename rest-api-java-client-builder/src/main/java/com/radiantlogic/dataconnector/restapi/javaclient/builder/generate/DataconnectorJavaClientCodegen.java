@@ -238,6 +238,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     fixBadLiteralPropertyNames(prop);
     final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
     extendedProp.jsonName = "MyJsonName";
+    return extendedProp;
   }
 
   @Override

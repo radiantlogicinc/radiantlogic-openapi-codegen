@@ -1,5 +1,8 @@
 /**
  * This script will split an openapi spec using its tags. All paths and related resources for a specific tag will be extracted and written to another file.
+ * It is useful for creating test data from OpenAPI specs that are provided in a format too large to parse.
+ *
+ * NOTE: This requires the NPM 'yaml' package to run.
  */
 import { parse, stringify } from 'yaml'
 import path from 'path';

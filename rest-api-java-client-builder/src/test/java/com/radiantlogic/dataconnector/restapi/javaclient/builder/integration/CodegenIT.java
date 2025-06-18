@@ -124,7 +124,22 @@ public class CodegenIT {
 
   @Test
   void githubActions() {
-    generateAndBuild("github-actions-v3.yaml", "GitHub-v3-REST-API---actions/1.1.4");
+    generateAndBuild("github-actions-v3-1.1.4.yaml", "GitHub-v3-REST-API---actions/1.1.4");
+  }
+
+  @Test
+  void githubActivity() {
+    generateAndBuild("github-activity-v3-1.1.4.yaml", "GitHub-v3-REST-API---activity/1.1.4");
+  }
+
+  @Test
+  void githubApps() {
+    generateAndBuild("github-apps-v3-1.1.4.yaml", "GitHub-v3-REST-API---apps/1.1.4");
+  }
+
+  @Test
+  void githubBilling() {
+    generateAndBuild("github-billing-v3-1.1.4.yaml", "GitHub-v3-REST-API---billing/1.1.4");
   }
 
   @SneakyThrows

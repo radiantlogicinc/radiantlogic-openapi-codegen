@@ -12,7 +12,7 @@ console.log('Extracting tag', targetTag);
 const originalYaml = fs.readFileSync(path.join(process.cwd(), 'github-v3.yaml'), 'utf8');
 const fullSpec = parse(originalYaml);
 
-const componentMapEntries = Object.entries(fullSpec.components)
+const allComponentMapEntries = Object.entries(fullSpec.components)
     .flatMap(([componentType, componentsForType]) => {
         return Object.entries(componentsForType)
             .map(([componentName, component]) => [`#/components/${componentType}/${componentName}`, component]);
@@ -46,21 +46,37 @@ const newSpec = {
     paths: matchingPaths,
     components: {}
 };
-const newYamlV1 = stringify(newSpec);
 
-const refMatches = [...newYamlV1.matchAll(REF_REGEX)].map(match => match[0])
-componentMapEntries.filter(([ref]) => refMatches.includes(ref))
-    .forEach(([ref, component]) => {
-        const type = ref.split('/')[2];
-        const name = ref.split('/')[3];
-        if (!newSpec.components[type]) {
-            newSpec.components[type] = {};
+const recursivelyReplaceRefs = (yaml, componentMapEntries) => {
+    if (componentMapEntries.length === 0) return yaml;
+
+    const refMatches = [...yaml.matchAll(REF_REGEX)].map(match => match[0]);
+    const { matched, unmatched } = componentMapEntries.reduce((acc, [ref, component]) => {
+        if (refMatches.includes(ref)) {
+            acc.matched.push([ref, component]);
+        } else {
+            acc.unmatched.push(ref);
         }
-        newSpec.components[type][name] = component;
-    });
-const newYamlV2 = stringify(newSpec);
+        return acc;
+    }, { matched: [], unmatched: [] })
 
+    if (matched.length === 0) return yaml;
 
+    matched.filter(([ref]) => refMatches.includes(ref))
+        .forEach(([ref, component]) => {
+            const type = ref.split('/')[2];
+            const name = ref.split('/')[3];
+            if (!newSpec.components[type]) {
+                newSpec.components[type] = {};
+            }
+            newSpec.components[type][name] = component;
+        });
+    const newYaml = stringify(newSpec);
+    return recursivelyReplaceRefs(newYaml, unmatched);
+};
 
-fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), newYamlV2);
+const finalYaml = recursivelyReplaceRefs(stringify(newSpec), allComponentMapEntries);
+
+fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), finalYaml);
+console.log('Split complete');
 

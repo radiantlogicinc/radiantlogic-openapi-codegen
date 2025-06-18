@@ -11,6 +11,13 @@ console.log('Extracting tag', targetTag);
 const originalYaml = fs.readFileSync(path.join(process.cwd(), 'github-v3.yaml'), 'utf8');
 const fullSpec = parse(originalYaml);
 
+const componentMapEntries = Object.entries(fullSpec.components)
+    .flatMap(([componentType, componentsForType]) => {
+        return Object.entries(componentsForType)
+            .map(([componentName, component]) => [`#/components/${componentType}/${componentName}`, component]);
+    });
+const componentMap = Object.fromEntries(componentMapEntries);
+
 const matchingPathEntries = Object.entries(fullSpec.paths)
     .filter(([uri, pathConfig]) => {
         const isMatch = pathConfig.tags?.includes(targetTag);
@@ -38,6 +45,5 @@ const newSpec = {
     tags: matchingTags,
     paths: matchingPaths,
 };
-console.log(newSpec);
 const newYaml = stringify(newSpec);
 fs.writeFileSync(path.join(process.cwd(), `${targetTag}.yaml`), newYaml);

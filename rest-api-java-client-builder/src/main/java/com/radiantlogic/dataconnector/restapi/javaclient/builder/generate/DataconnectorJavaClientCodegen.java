@@ -651,7 +651,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .map(
             entry -> {
               final String fileName = modelFilename("model.mustache", entry.getKey());
-              final String fileBaseName = FilenameUtils.getBaseName(fileName);
+              final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
               return Map.of(fileBaseName, entry);
             })
         .reduce(
@@ -659,12 +659,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             (acc, singleEntryMap) -> {
               final String fileBaseName =
                   singleEntryMap.keySet().stream().findFirst().orElseThrow();
+              final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
               if (!acc.containsKey(fileBaseName)) {
-                acc.put(fileBaseName, singleEntryMap.get(fileBaseName));
+                acc.put(fileBaseName, entry);
                 return acc;
               }
 
-              final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
               final CodegenModel model =
                   entry.getValue().getModels().get(0).getModel(); // TODO null safety
               int index = 1;

@@ -17,13 +17,14 @@ const matchingPathEntries = Object.entries(fullSpec.paths)
         if (!isMatch) {
             return Object.entries(pathConfig)
                 .filter(([method, methodConfig]) => methodConfig.tags?.includes(targetTag))
+                .length > 0;
         }
         return false;
     })
     .map(([uri, pathConfig]) => {
-        const newPathConfig = Object.entries(pathConfig)
-            .filter(([method, methodConfig]) => !METHODS.includes(method) || methodConfig.tags?.includes(targetTag));
-        return [uri, newPathConfig];
+        const newPathConfigEntries = Object.entries(pathConfig)
+            .filter(([method, methodConfig]) => !METHODS.includes(method) || methodConfig.tags?.includes(targetTag).length > 0);
+        return [uri, Object.fromEntries(newPathConfigEntries)];
     });
 const matchingPaths = Object.fromEntries(matchingPathEntries);
 

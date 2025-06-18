@@ -1,0 +1,10 @@
+{
+  "name": "openapi-splitter",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node splitter.mjs"
+  },
+  "dependencies": {
+    "yaml": "^2.8.0"
+  }
+}

@@ -17,7 +17,5 @@ IMPORTANT
 
 TESTS THAT I NEED
 
-8. Discriminated union where the discriminator is not properly mapped. OpenAI ItemResource and its sub-types is a good check for this.
-9. ModelObject in bitbucket is another good discriminated union test case.
 10. serde of IsPrivate from snyk.
 11. Serde of all three `Updateexistingintegrationrequest` return types from snyk.

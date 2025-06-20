@@ -452,12 +452,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             });
   }
 
-  // TODO delete if not needed
-  private static ModelsMap mergeModelsMaps(
-      @NonNull final ModelsMap one, @NonNull final ModelsMap two) {
-    return two;
-  }
-
   // TODO clean this up
   private static CodegenModel mergeEnumCodegenModels(
       @NonNull final CodegenModel one, @NonNull final CodegenModel two) {

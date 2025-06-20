@@ -4,6 +4,8 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ArgsParser;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ProgramArgStatus;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGenerator;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.DataconnectorJavaClientCodegen;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.OpenapiParser;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
@@ -53,14 +55,17 @@ public class Runner {
       return;
     }
 
+    // TODO this whole thing is more than a bit of a mess here...
     final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
     final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
     // TODO if a URL, need to pull file down
     final Args validatedParsedArgs = parsedArgs.withOpenapiPath(parsedPath);
-
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
-    final CodeGenerator codeGenerator = new CodeGenerator(validatedParsedArgs);
+    final OpenapiParser openapiParser = new OpenapiParser(validatedParsedArgs);
+    final DataconnectorJavaClientCodegen codegen =
+        new DataconnectorJavaClientCodegen(null, validatedParsedArgs);
+    final CodeGenerator codeGenerator = new CodeGenerator(codegen);
     codeGenerator.generate();
     log.info("Finished code generation");
   }

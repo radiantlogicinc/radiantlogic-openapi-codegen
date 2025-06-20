@@ -38,7 +38,8 @@ import org.openapitools.codegen.utils.ModelUtils;
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
  * style we want.
  */
-public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
+public class DataconnectorJavaClientCodegen extends JavaClientCodegen
+    implements ExtendedCodegenConfig {
   private static final String ENUM_VARS_KEY = "enumVars";
   private static final String VALUES_KEY = "values";
   private static final String NAME_KEY = "name";
@@ -60,8 +61,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     init(args);
   }
 
-  public List<String> getIgnorePatterns() {
-    return List.of(
+  @Override
+  public Set<String> getIgnorePatterns() {
+    return Set.of(
         ".travis.yml",
         "gradle/**",
         "build.gradle",

@@ -15,6 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OpenapiParser {
   @NonNull private final Args args;
+  @NonNull private final OpenAPIParser parser;
+
+  public OpenapiParser(@NonNull final Args args) {
+    this.args = args;
+    this.parser = new OpenAPIParser();
+  }
 
   @NonNull
   public OpenAPI parse() {
@@ -22,8 +28,6 @@ public class OpenapiParser {
     final ParseOptions parseOptions = new ParseOptions();
     parseOptions.setResolve(true);
     parseOptions.setResolveFully(false);
-
-    final OpenAPIParser parser = new OpenAPIParser();
 
     try {
       final OpenAPI openAPI =

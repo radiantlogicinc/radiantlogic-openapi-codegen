@@ -35,7 +35,16 @@ public class CodegenMetadataSupportTest {
 
   @Test
   void itGetsMetadataWithoutInfo() {
-    throw new RuntimeException();
+    final OpenAPI openAPI = createOpenAPI();
+    openAPI.setInfo(null);
+    final var metadata = codegenMetadataSupport.getMetadata(openAPI, args);
+    final var expectedMetadata =
+        new CodegenMetadataSupport.CodegenMetadata(
+            CodegenPaths.OUTPUT_DIR.resolve("unknown-api").resolve("unknown-version"),
+            "unknown-api",
+            "unknown-version",
+            "com.something.unknownapi");
+    assertThat(metadata).isEqualTo(expectedMetadata);
   }
 
   @Test

@@ -1,0 +1,10 @@
+{
+  "type": "app_user",
+  "account_id": "accountId",
+  "account_status": null,
+  "kind": "kind",
+  "links": null,
+  "created_on": null,
+  "display_name": null,
+  "uuid": null
+}

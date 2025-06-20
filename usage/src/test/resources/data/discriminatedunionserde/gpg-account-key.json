@@ -1,0 +1,16 @@
+{
+  "type": "GPG_account_key",
+  "key": "theKey",
+  "key_id": "theKeyId",
+  "fingerprint": null,
+  "parent_fingerprint": null,
+  "comment": null,
+  "name": null,
+  "expires_on": null,
+  "created_on": null,
+  "added_on": null,
+  "last_used": null,
+  "subkeys": [],
+  "links": null,
+  "owner": null
+}

@@ -51,10 +51,17 @@ public class DiscriminatedUnionSerdeTest {
     baseCommit.setType("base_commit");
     baseCommit.setMessage("The message");
 
+    final String gpgAccountKeyJson =
+        ResourceReader.readString("data/discriminatedunionserde/gpg-account-key.json");
+    final String appUserJson =
+        ResourceReader.readString("data/discriminatedunionserde/app-user.json");
+    final String baseCommitJson =
+        ResourceReader.readString("data/discriminatedunionserde/base-commit.json");
+
     return Stream.of(
-        Arguments.arguments("gpgAccountKey", gpgAccountKey, ""),
-        Arguments.arguments("appUser", appUser, ""),
-        Arguments.arguments("baseCommit", baseCommit, ""));
+        Arguments.arguments("gpgAccountKey", gpgAccountKey, gpgAccountKeyJson),
+        Arguments.arguments("appUser", appUser, appUserJson),
+        Arguments.arguments("baseCommit", baseCommit, baseCommitJson));
   }
 
   static Stream<Arguments> radiantoneDatasources() {

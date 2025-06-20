@@ -9,7 +9,7 @@ import org.openapitools.codegen.CodegenProperty;
  * counterparts.
  */
 @Mapper
-public interface CodegenMapper {
+public interface ExtendedCodegenMapper {
   ExtendedCodegenProperty extendProperty(final CodegenProperty prop);
 
   ExtendedCodegenModel extendModel(final CodegenModel model);

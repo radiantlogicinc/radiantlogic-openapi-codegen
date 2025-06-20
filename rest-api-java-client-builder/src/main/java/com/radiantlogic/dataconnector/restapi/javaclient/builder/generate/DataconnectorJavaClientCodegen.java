@@ -52,7 +52,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
   private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
-  private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
+  private static final ExtendedCodegenMapper CODEGEN_MAPPER =
+      Mappers.getMapper(ExtendedCodegenMapper.class);
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);

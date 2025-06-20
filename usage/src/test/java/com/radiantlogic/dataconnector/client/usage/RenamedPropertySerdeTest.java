@@ -19,25 +19,19 @@ public class RenamedPropertySerdeTest {
   @Test
   @SneakyThrows
   void itSerializesAndDeserializesIsPrivate() {
-    // Create the IsPrivate object
     final IsPrivate isPrivate = new IsPrivate();
     isPrivate.setTrue(new BigDecimal(42));
     isPrivate.setFalse(new BigDecimal(24));
 
-    // Load the expected JSON from the filesystem
     final String expectedJson =
         ResourceReader.readString("data/renamedpropertyserde/is-private.json");
 
-    // Serialize the object to JSON
     final String actualJson = objectMapper.writeValueAsString(isPrivate);
 
-    // Compare the serialized JSON with the expected JSON
     assertThatJson(actualJson).isEqualTo(expectedJson);
 
-    // Deserialize the JSON back to an object
     final IsPrivate deserializedIsPrivate = objectMapper.readValue(expectedJson, IsPrivate.class);
 
-    // Compare the deserialized object with the original object
     assertThat(deserializedIsPrivate).usingRecursiveComparison().isEqualTo(isPrivate);
   }
 }

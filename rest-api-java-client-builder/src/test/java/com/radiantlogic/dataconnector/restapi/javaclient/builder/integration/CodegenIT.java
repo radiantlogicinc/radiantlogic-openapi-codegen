@@ -63,6 +63,7 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled("Swagger 2 is currently out of scope")
   void gitlabV4Swagger2() {
     generateAndBuild("gitlab-v4-swagger2.yaml", "GitLab-API---Swagger-2/v4");
   }

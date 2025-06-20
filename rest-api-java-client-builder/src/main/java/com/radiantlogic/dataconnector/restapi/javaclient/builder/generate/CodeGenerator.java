@@ -1,7 +1,5 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
-import io.swagger.parser.OpenAPIParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,29 +9,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.ClientOptInput;
+import org.openapitools.codegen.CodegenConfig;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
 
-/** The class that handles the actual code generation. */
+/** Setup the output directory and generate the call. */
 @Slf4j
 @RequiredArgsConstructor
 public class CodeGenerator {
-  @NonNull private final Args args;
+  @NonNull private final CodegenConfig codegen;
 
   public void generate() {
     log.info("Generating code");
 
-    log.debug("Parsing OpenAPI specification");
-    final OpenAPIParser parser = new OpenAPIParser();
-
-    if (openAPI == null) {
-      throw new IllegalStateException(
-          "Failed to parse OpenAPI specification, see logs for details");
-    }
-
     log.debug("Performing code generation");
-    final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(openAPI, args);
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
 
     final DefaultGenerator generator = new DefaultGenerator();

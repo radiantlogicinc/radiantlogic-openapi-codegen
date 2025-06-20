@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/** Parse the OpenAPI specification. */
 @Slf4j
 @RequiredArgsConstructor
 public class OpenapiParser {

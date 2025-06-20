@@ -265,7 +265,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
               final String withoutNonEnglish = matcher.replaceAll("");
               final String withoutNonLetter =
                   NON_LETTER_PATTERN.matcher(withoutNonEnglish).replaceAll("");
-              if (StringUtils.isNumeric(withoutNonLetter)) {
+              if (StringUtils.isNotBlank(withoutNonLetter)) {
                 operation.setOperationId(withoutNonEnglish);
               } else {
                 operation.setOperationId(null);

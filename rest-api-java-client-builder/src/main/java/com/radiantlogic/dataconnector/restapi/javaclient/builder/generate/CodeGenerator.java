@@ -21,8 +21,6 @@ public class CodeGenerator {
 
   public void generate(final OpenAPI openAPI) {
     log.info("Generating code");
-
-    log.debug("Performing code generation");
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
 
     final DefaultGenerator generator = new DefaultGenerator();
@@ -34,6 +32,7 @@ public class CodeGenerator {
   private void prepareOutputDirectory(
       @NonNull final String outputDir, @NonNull final Set<String> ignorePatterns) {
     try {
+      log.debug("Preparing output directory: {}", outputDir);
       final Path path = Path.of(outputDir);
       if (Files.exists(path)) {
         FileUtils.deleteDirectory(path.toFile());

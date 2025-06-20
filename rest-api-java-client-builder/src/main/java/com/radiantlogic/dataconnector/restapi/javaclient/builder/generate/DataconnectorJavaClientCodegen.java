@@ -740,6 +740,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public String modelFilename(@NonNull final String templateName, @NonNull final String modelName) {
     return Optional.ofNullable(seenFileNames.get(modelName))
-        .orElseGet(() -> super.modelFilename(templateName, modelName));
+        .orElseGet(
+            () -> {
+              final String name = super.modelFilename(templateName, modelName);
+              seenFileNames.put(modelName, name);
+              return name;
+            });
   }
 }

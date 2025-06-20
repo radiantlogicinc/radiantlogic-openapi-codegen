@@ -291,7 +291,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
-    final CodegenModel result = super.fromModel(name, model);
+    final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
     if (result.discriminator != null) {
       result.getVars().stream()
           .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
@@ -310,6 +310,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 })
             .toList();
     result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
+
+    if (result.classVarName != null) {
+      if (result.classVarName.equals("o")) {
+        result.equalsClassVarName = ""; // TODO what should this be?
+      } else {
+        result.equalsClassVarName = result.classVarName;
+      }
+    }
 
     return result;
   }

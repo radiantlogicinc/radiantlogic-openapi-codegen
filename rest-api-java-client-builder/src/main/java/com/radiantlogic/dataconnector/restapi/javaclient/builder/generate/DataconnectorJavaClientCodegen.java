@@ -15,13 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BinaryOperator;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
@@ -455,55 +457,34 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   // TODO clean this up
-  private static BinaryOperator<CodegenModel> mergeEnumCodegenModels(
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
-    return (one, two) -> {
-      if (!one.isEnum || !two.isEnum) {
-        throw new IllegalArgumentException("Cannot merge non-enum models");
-      }
+  private static CodegenModel mergeEnumCodegenModels(
+      @NonNull final CodegenModel one, @NonNull final CodegenModel two) {
+    if (!one.isEnum || !two.isEnum) {
+      throw new IllegalArgumentException("Cannot merge non-enum models");
+    }
+    final var oneEnumVars =
+        (Collection<Map<String, Object>>)
+            Optional.ofNullable(one.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
+    final var twoEnumVars =
+        (Collection<Map<String, Object>>)
+            Optional.ofNullable(two.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
+    final Collection<Map<String, Object>> enumVars =
+        Stream.of(oneEnumVars.stream(), twoEnumVars.stream())
+            .flatMap(Function.identity())
+            .collect(Collectors.toMap(map -> map.get(NAME_KEY), Function.identity(), (a, b) -> b))
+            .values();
+    final var oneValues =
+        (List<Object>) Optional.ofNullable(one.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
+    final var twoValues =
+        (List<Object>) Optional.ofNullable(two.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
+    final List<Object> values =
+        Stream.of(oneValues.stream(), twoValues.stream())
+            .flatMap(Function.identity())
+            .distinct()
+            .toList();
 
-      // This is a pre-existing copy of this enum, which may or may not exist (probably won't, but
-      // want to take it into account)
-      final CodegenModel three =
-          Optional.ofNullable(ModelUtils.getModelByName(one.name, allModelMaps))
-              .orElseGet(
-                  () -> {
-                    final CodegenModel emptyModel = new CodegenModel();
-                    emptyModel.allowableValues = Map.of();
-                    return emptyModel;
-                  });
-      final var oneEnumVars =
-          (Collection<Map<String, Object>>)
-              Optional.ofNullable(one.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
-      final var twoEnumVars =
-          (Collection<Map<String, Object>>)
-              Optional.ofNullable(two.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
-      final var threeEnumVars =
-          (Collection<Map<String, Object>>)
-              Optional.ofNullable(three.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
-      final Collection<Map<String, Object>> enumVars =
-          Stream.of(oneEnumVars.stream(), twoEnumVars.stream(), threeEnumVars.stream())
-              .flatMap(Function.identity())
-              .collect(Collectors.toMap(map -> map.get(NAME_KEY), Function.identity(), (a, b) -> b))
-              .values();
-      final var oneValues =
-          (List<Object>)
-              Optional.ofNullable(one.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
-      final var twoValues =
-          (List<Object>)
-              Optional.ofNullable(two.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
-      final var threeValues =
-          (List<Object>)
-              Optional.ofNullable(three.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
-      final List<Object> values =
-          Stream.of(oneValues.stream(), twoValues.stream(), threeValues.stream())
-              .flatMap(Function.identity())
-              .distinct()
-              .toList();
-
-      one.allowableValues = Map.of(ENUM_VARS_KEY, enumVars, VALUES_KEY, values);
-      return one;
-    };
+    one.allowableValues = Map.of(ENUM_VARS_KEY, enumVars, VALUES_KEY, values);
+    return one;
   }
 
   private void addNewEnumModelMaps(
@@ -520,11 +501,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 newEnumsFromDiscriminatorParentModels.stream(),
                 newEnumsFromModelsWithNonDiscriminatorChildren.stream())
             .flatMap(Function.identity())
+            .map(
+                newEnum -> {
+                  return Optional.ofNullable(allModelMaps.get(newEnum.name))
+                      .map(
+                          e ->
+                              mergeEnumCodegenModels(
+                                  ModelUtils.getModelByName(newEnum.name, allModelMaps), newEnum))
+                      .orElse(newEnum);
+                })
             .collect(
                 Collectors.toMap(
                     CodegenModel::getName,
                     Function.identity(),
-                    mergeEnumCodegenModels(allModelMaps)));
+                    DataconnectorJavaClientCodegen::mergeEnumCodegenModels));
     allNewEnums.forEach(
         (key, model) -> {
           allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));
@@ -644,9 +634,64 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
   }
 
+  private Map<String, ModelsMap> fixProblematicKeysForFilenames(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+
+    final Map<String, ModelsMap> fixedModelMaps =
+        allModelMaps.entrySet().stream()
+            .map(
+                entry -> {
+                  final String fileName = modelFilename("model.mustache", entry.getKey());
+                  final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
+
+                  return Map.of(fileBaseName, entry);
+                })
+            .reduce(
+                new HashMap<>(),
+                (acc, singleEntryMap) -> {
+                  final String fileBaseName =
+                      singleEntryMap.keySet().stream().findFirst().orElseThrow();
+                  final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
+
+                  if (!acc.containsKey(fileBaseName)) {
+                    acc.put(fileBaseName, entry);
+                    return acc;
+                  }
+
+                  final CodegenModel model =
+                      entry.getValue().getModels().get(0).getModel(); // TODO null safety
+                  int index = 1;
+                  while (acc.containsKey(fileBaseName + index)) {
+                    index++;
+                  }
+                  final String suffix = "V%d".formatted(index);
+                  final String newFileBaseName = fileBaseName + suffix;
+                  final String newKey = entry.getKey() + suffix;
+                  model.classname = model.classname + suffix;
+                  model.classFilename = model.classFilename + suffix;
+                  model.dataType = model.dataType + suffix;
+
+                  acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
+                  return acc;
+                })
+            .values()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    // The map created by DefaultGenerator is exactly like this, it must be the exact same type with
+    // this comparator to work downstream
+    final Map<String, ModelsMap> fixedModelMapsWithComparator =
+        new TreeMap<>((o1, o2) -> ObjectUtils.compare(toModelName(o1), toModelName(o2)));
+
+    fixedModelMapsWithComparator.putAll(fixedModelMaps);
+    return fixedModelMapsWithComparator;
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
+      @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
+    final Map<String, ModelsMap> allModelMaps =
+        fixProblematicKeysForFilenames(originalAllModelMaps);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     handleMissingModelInheritance(allModels);

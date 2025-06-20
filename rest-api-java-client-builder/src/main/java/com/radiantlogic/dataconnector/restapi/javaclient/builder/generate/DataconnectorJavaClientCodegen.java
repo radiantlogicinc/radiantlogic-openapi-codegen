@@ -668,6 +668,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   }
                   final String suffix = "V%d".formatted(index);
                   final String newFileBaseName = fileBaseName + suffix;
+                  final String oldKey = entry.getKey();
                   final String newKey = entry.getKey() + suffix;
                   final String oldClassName = model.classname;
                   model.classname = model.classname + suffix;
@@ -678,9 +679,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                       .values()
                       .forEach(
                           otherModel -> {
-                            if (otherModel.imports.contains(oldClassName)) {
+                            if (otherModel.imports != null
+                                && otherModel.imports.contains(oldClassName)) {
                               otherModel.imports.remove(oldClassName);
                               otherModel.imports.add(model.classname);
+                            }
+
+                            // TODO is this by classname or model name
+                            if (otherModel.interfaces != null
+                                && otherModel.interfaces.contains(oldClassName)) {
+                              otherModel.interfaces.remove(oldClassName);
+                              otherModel.interfaces.add(model.classname);
                             }
                           });
 

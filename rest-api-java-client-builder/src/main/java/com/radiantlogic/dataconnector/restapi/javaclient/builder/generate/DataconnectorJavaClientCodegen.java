@@ -257,6 +257,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return extendedProp;
   }
 
+  // TODO not the best, not the worst
+  private int nonEnglishCount = 0;
+
   // TODO document how insane this is yet it has been seen in sonarqube
   private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
     openAPI.getPaths().entrySet().stream()
@@ -266,7 +269,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             operation -> {
               final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
               final String fixedOperationId =
-                  matcher.replaceAll("a"); // TODO need better replacement
+                  matcher.replaceAll("nonEnglish%d".formatted(++nonEnglishCount));
               operation.setOperationId(fixedOperationId);
             });
   }

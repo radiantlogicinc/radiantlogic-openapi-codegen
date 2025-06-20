@@ -2,8 +2,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import io.swagger.parser.OpenAPIParser;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.core.models.ParseOptions;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,15 +22,10 @@ public class CodeGenerator {
 
   public void generate() {
     log.info("Generating code");
-    final ParseOptions parseOptions = new ParseOptions();
-    parseOptions.setResolve(true);
-    parseOptions.setResolveFully(false);
 
     log.debug("Parsing OpenAPI specification");
     final OpenAPIParser parser = new OpenAPIParser();
 
-    final OpenAPI openAPI =
-        parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
     if (openAPI == null) {
       throw new IllegalStateException(
           "Failed to parse OpenAPI specification, see logs for details");

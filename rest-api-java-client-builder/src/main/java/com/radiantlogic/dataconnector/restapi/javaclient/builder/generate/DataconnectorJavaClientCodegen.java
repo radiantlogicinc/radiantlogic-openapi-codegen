@@ -521,7 +521,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 entry ->
                     !entry.getValue().startsWith("org.joda")
                         && !entry.getValue().startsWith("com.google")
-                        && !entry.getValue().startsWith("com.radiantlogic"))
+                        && !entry.getValue().startsWith("com.radiantlogic")
+                        && !entry.getValue().startsWith("io.swagger.annotations"))
             .map(entry -> Map.of("import", entry.getValue()))
             .toList();
 

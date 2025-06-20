@@ -14,7 +14,3 @@ FactorTypeEnum
 
 IMPORTANT
 - All get endpoints should have an alternative returning a map rather than a POJO to compensate for bad union types.
-
-TESTS THAT I NEED
-
-11. Serde of all three `Updateexistingintegrationrequest` return types from snyk.

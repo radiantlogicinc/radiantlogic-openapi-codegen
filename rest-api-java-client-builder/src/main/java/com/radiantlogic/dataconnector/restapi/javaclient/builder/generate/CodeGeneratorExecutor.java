@@ -1,5 +1,6 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.ExtendedCodegenConfig;
 import io.swagger.v3.oas.models.OpenAPI;
 import java.io.IOException;
 import java.nio.file.Files;

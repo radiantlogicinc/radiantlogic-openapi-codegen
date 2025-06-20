@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import java.util.Set;

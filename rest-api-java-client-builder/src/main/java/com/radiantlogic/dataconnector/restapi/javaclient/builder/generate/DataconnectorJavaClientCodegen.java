@@ -50,6 +50,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
+  private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
   private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
 
@@ -253,9 +254,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return extendedProp;
   }
 
-  // TODO not the best, not the worst
-  private int nonEnglishCount = 0;
-
   // TODO document how insane this is yet it has been seen in sonarqube
   private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
     openAPI.getPaths().entrySet().stream()
@@ -264,9 +262,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .forEach(
             operation -> {
               final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
-              final String fixedOperationId =
-                  matcher.replaceAll("ne%d".formatted(++nonEnglishCount));
-              operation.setOperationId(fixedOperationId);
+              final String withoutNonEnglish = matcher.replaceAll("");
+              final String withoutNonLetter =
+                  NON_LETTER_PATTERN.matcher(withoutNonEnglish).replaceAll("");
+              if (StringUtils.isNumeric(withoutNonLetter)) {
+                operation.setOperationId(withoutNonEnglish);
+              } else {
+                operation.setOperationId(null);
+              }
             });
   }
 

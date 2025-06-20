@@ -39,6 +39,7 @@ public class CodegenMetadataSupport {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
+  /** Remove any characters that would make this a non-compliant java package name. */
   private static String ensureValidPackageName(@NonNull final String packageName) {
     return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
   }

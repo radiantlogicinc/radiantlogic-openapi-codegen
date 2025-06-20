@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -51,6 +52,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
+  private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
 
   private static final CodegenPropertyMapper codegenPropertyMapper =
       Mappers.getMapper(CodegenPropertyMapper.class);
@@ -255,6 +257,27 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return extendedProp;
   }
 
+  // TODO document how insane this is yet it has been seen in sonarqube
+  private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
+    openAPI.getPaths().entrySet().stream()
+        .flatMap(pathEntry -> pathEntry.getValue().readOperations().stream())
+        .filter(operation -> Objects.nonNull(operation.getOperationId()))
+        .forEach(
+            operation -> {
+              final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
+              final String fixedOperationId =
+                  matcher.replaceAll("a"); // TODO need better replacement
+              operation.setOperationId(fixedOperationId);
+            });
+  }
+
+  @Override
+  public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
+    super.preprocessOpenAPI(openAPI);
+    fixNonEnglishOperationIds(openAPI);
+  }
+
+  // TODO delete if unused
   @Override
   public CodegenOperation fromOperation(
       @NonNull final String path,

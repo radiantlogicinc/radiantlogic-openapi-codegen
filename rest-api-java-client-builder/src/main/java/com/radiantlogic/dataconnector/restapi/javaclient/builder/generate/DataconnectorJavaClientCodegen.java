@@ -313,7 +313,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {
-        result.equalsClassVarName = ""; // TODO what should this be?
+        result.equalsClassVarName = "otherO"; // TODO what should this be?
       } else {
         result.equalsClassVarName = result.classVarName;
       }

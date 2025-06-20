@@ -20,6 +20,7 @@ This is an extension to the [openapi-generator](https://github.com/OpenAPITools/
 - Discriminated unions that don't map their discriminator will fail on de-serialization.
 - Some type information will be stripped out because OpenAPI & JSON is more permissive than Java is, especially with type unions. There are some scenarios where the generator has been modified to strip out type information in order to produce compile-able code.
 - The quality of the generated code is directly correlated to the quality of the OpenAPI specification.
+- Only OpenAPI 3 is supported.
 
 ## Requirements
 

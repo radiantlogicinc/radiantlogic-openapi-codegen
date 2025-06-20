@@ -3,11 +3,9 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.servers.Server;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +28,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -53,6 +50,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
+  private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
   private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
 
@@ -256,9 +254,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return extendedProp;
   }
 
-  // TODO not the best, not the worst
-  private int nonEnglishCount = 0;
-
   // TODO document how insane this is yet it has been seen in sonarqube
   private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
     openAPI.getPaths().entrySet().stream()
@@ -267,9 +262,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         .forEach(
             operation -> {
               final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
-              final String fixedOperationId =
-                  matcher.replaceAll("ne%d".formatted(++nonEnglishCount));
-              operation.setOperationId(fixedOperationId);
+              final String withoutNonEnglish = matcher.replaceAll("");
+              final String withoutNonLetter =
+                  NON_LETTER_PATTERN.matcher(withoutNonEnglish).replaceAll("");
+              if (StringUtils.isNumeric(withoutNonLetter)) {
+                operation.setOperationId(withoutNonEnglish);
+              } else {
+                operation.setOperationId(null);
+              }
             });
   }
 
@@ -277,16 +277,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
     super.preprocessOpenAPI(openAPI);
     fixNonEnglishOperationIds(openAPI);
-  }
-
-  // TODO delete if unused
-  @Override
-  public CodegenOperation fromOperation(
-      @NonNull final String path,
-      @NonNull final String httpMethod,
-      @NonNull final Operation operation,
-      final List<Server> servers) {
-    return super.fromOperation(path, httpMethod, operation, servers);
   }
 
   @Override

@@ -1,17 +1,14 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -80,51 +77,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         "src/test/**");
   }
 
-  private static String ensureValidPackageName(@NonNull final String packageName) {
-    return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-  }
-
-  /**
-   * The package name generated here must conform to valid java package name rules. If a package
-   * element ends up with a leading number, that cannot be allowed.
-   */
-  private static String fixLeadingNumbers(@NonNull final String packageName) {
-    return Arrays.stream(packageName.split("\\."))
-        .map(
-            name -> {
-              final String beginning =
-                  switch (name.charAt(0)) {
-                    case '0' -> "zero";
-                    case '1' -> "one";
-                    case '2' -> "two";
-                    case '3' -> "three";
-                    case '4' -> "four";
-                    case '5' -> "five";
-                    case '6' -> "six";
-                    case '7' -> "seven";
-                    case '8' -> "eight";
-                    case '9' -> "nine";
-                    default -> "%s".formatted(name.charAt(0));
-                  };
-              return "%s%s".formatted(beginning, name.substring(1));
-            })
-        .collect(Collectors.joining("."));
-  }
-
   public void init(@NonNull final OpenAPI openAPI) {
-    final String title = getOpenapiTitle(openAPI);
-    final String version = getOpenapiVersion(openAPI);
-    final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    setOutputDir(outputDir.toString());
+    final var metadata = new CodegenMetadataSupport().getMetadata(openAPI, args);
+
+    setOutputDir(metadata.outputDir().toString());
     setGroupId(args.groupId());
 
-    final String basePackage =
-        fixLeadingNumbers("%s.%s".formatted(getGroupId(), ensureValidPackageName(title)));
-    setApiPackage("%s.api".formatted(basePackage));
-    setModelPackage("%s.model".formatted(basePackage));
-    setInvokerPackage("%s.invoker".formatted(basePackage));
-    setArtifactId(title);
-    setArtifactVersion(version);
+    setApiPackage("%s.api".formatted(metadata.basePackage()));
+    setModelPackage("%s.model".formatted(metadata.basePackage()));
+    setInvokerPackage("%s.invoker".formatted(metadata.basePackage()));
+    setArtifactId(metadata.artifactId());
+    setArtifactVersion(metadata.version());
     setDisallowAdditionalPropertiesIfNotPresent(false);
     setUseOneOfInterfaces(true);
     additionalProperties.put("useOneOfInterfaces", true);
@@ -147,19 +110,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     if (property.allowableValues == null) {
       property.allowableValues = new HashMap<>();
     }
-  }
-
-  // TODO need tests
-  private String getOpenapiTitle(@NonNull final OpenAPI openAPI) {
-    return Optional.ofNullable(openAPI.getInfo())
-        .map(Info::getTitle)
-        .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
-        .orElse("unknown-api");
-  }
-
-  // TODO need tests
-  private String getOpenapiVersion(@NonNull final OpenAPI openAPI) {
-    return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
   private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {

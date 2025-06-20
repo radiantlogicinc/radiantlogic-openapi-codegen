@@ -9,6 +9,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.Openap
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
+import io.swagger.v3.oas.models.OpenAPI;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +67,11 @@ public class Runner {
     final DataconnectorJavaClientCodegen codegen =
         new DataconnectorJavaClientCodegen(validatedParsedArgs);
     final CodeGeneratorExecutor codeGenerator = new CodeGeneratorExecutor(codegen);
-    codeGenerator.generate();
+
+    log.info("Parsing and generating code");
+    final OpenAPI openAPI = openapiParser.parse();
+    codegen.init(openAPI);
+    codeGenerator.generate(openAPI);
     log.info("Finished code generation");
   }
 

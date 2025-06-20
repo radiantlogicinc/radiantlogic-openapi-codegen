@@ -1,15 +1,15 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openapitools.codegen.ClientOptInput;
-import org.openapitools.codegen.CodegenConfig;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
 
@@ -17,9 +17,9 @@ import org.openapitools.codegen.DefaultGenerator;
 @Slf4j
 @RequiredArgsConstructor
 public class CodeGenerator {
-  @NonNull private final CodegenConfig codegen;
+  @NonNull private final ExtendedCodegenConfig codegen;
 
-  public void generate() {
+  public void generate(final OpenAPI openAPI) {
     log.info("Generating code");
 
     log.debug("Performing code generation");
@@ -32,7 +32,7 @@ public class CodeGenerator {
   }
 
   private void prepareOutputDirectory(
-      @NonNull final String outputDir, @NonNull final List<String> ignorePatterns) {
+      @NonNull final String outputDir, @NonNull final Set<String> ignorePatterns) {
     try {
       final Path path = Path.of(outputDir);
       if (Files.exists(path)) {
@@ -47,7 +47,7 @@ public class CodeGenerator {
   }
 
   private void writeIgnorePatterns(
-      @NonNull final Path outputDir, @NonNull final List<String> ignorePatterns) {
+      @NonNull final Path outputDir, @NonNull final Set<String> ignorePatterns) {
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {
       Files.write(ignoreFile, ignorePatterns);

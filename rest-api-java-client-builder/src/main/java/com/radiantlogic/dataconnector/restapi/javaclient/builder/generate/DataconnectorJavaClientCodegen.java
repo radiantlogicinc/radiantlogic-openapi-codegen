@@ -491,8 +491,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
       @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
-    // TODO might want to check what kind of base I'm using here... might not be the best...
-    // TODO imports are the issue
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 

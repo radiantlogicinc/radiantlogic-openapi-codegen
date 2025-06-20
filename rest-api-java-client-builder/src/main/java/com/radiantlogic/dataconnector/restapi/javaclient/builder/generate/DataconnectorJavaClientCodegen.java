@@ -634,12 +634,34 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
+    System.out.println(
+        "Before issueSeverity: " + allModelMaps.containsKey("issueSeverity")); // TODO delete this
+    System.out.println(
+        "Before IssueSeverity: " + allModelMaps.containsKey("IssueSeverity")); // TODO delete this
+
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
                 entry -> {
                   final String fileName = modelFilename("model.mustache", entry.getKey());
                   final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
+
+                  if (entry.getKey().equals("issueSeverity")) {
+                    System.out.println(
+                        "Mapping issueSeverity: "
+                            + FilenameUtils.getBaseName(fileName)
+                            + " "
+                            + fileBaseName); // TODO delete this
+                  }
+
+                  if (entry.getKey().equals("IssueSeverity")) {
+                    System.out.println(
+                        "Mapping IssueSeverity: "
+                            + FilenameUtils.getBaseName(fileName)
+                            + " "
+                            + fileBaseName); // TODO delete this
+                  }
+
                   return Map.of(fileBaseName, entry);
                 })
             .reduce(
@@ -648,6 +670,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   final String fileBaseName =
                       singleEntryMap.keySet().stream().findFirst().orElseThrow();
                   final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
+                  if (entry.getKey().equals("issueSeverity")) {
+                    System.out.println("Reducing issueSeverity"); // TODO delete this
+                  }
+
+                  if (entry.getKey().equals("IssueSeverity")) {
+                    System.out.println("Reducing IssueSeverity"); // TODO delete this
+                  }
+
                   if (!acc.containsKey(fileBaseName)) {
                     acc.put(fileBaseName, entry);
                     return acc;
@@ -673,6 +703,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+    System.out.println(
+        "After issueSeverity: " + fixedModelMaps.containsKey("issueSeverity")); // TODO delete this
+    System.out.println(
+        "After IssueSeverity: " + fixedModelMaps.containsKey("IssueSeverity")); // TODO delete this
+
     // TODO clean this up
     //    try {
     //      final Field seenModelFilenamesField =
@@ -694,6 +729,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
+    System.out.println(
+        "Original issueSeverity: "
+            + originalAllModelMaps.containsKey("issueSeverity")); // TODO delete this
+    System.out.println(
+        "Original IssueSeverity: "
+            + originalAllModelMaps.containsKey("IssueSeverity")); // TODO delete this
+
     final Map<String, ModelsMap> allModelMaps =
         fixProblematicKeysForFilenames(originalAllModelMaps);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);

@@ -690,6 +690,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                               otherModel.interfaces.remove(oldClassName);
                               otherModel.interfaces.add(model.classname);
                             }
+
+                            // TODO is this by classname or model name
+                            if (otherModel.oneOf != null
+                                && otherModel.oneOf.contains(oldClassName)) {
+                              otherModel.oneOf.remove(oldClassName);
+                              otherModel.oneOf.add(model.classname);
+                            }
                           });
 
                   acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));

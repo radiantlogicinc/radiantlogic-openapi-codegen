@@ -54,8 +54,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
 
-  private static final CodegenPropertyMapper codegenPropertyMapper =
-      Mappers.getMapper(CodegenPropertyMapper.class);
+  private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -252,7 +251,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
         super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
-    final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
+    final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
     fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;
   }

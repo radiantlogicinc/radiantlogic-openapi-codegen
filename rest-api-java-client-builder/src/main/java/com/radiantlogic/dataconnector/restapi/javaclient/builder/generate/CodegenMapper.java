@@ -4,6 +4,6 @@ import org.mapstruct.Mapper;
 import org.openapitools.codegen.CodegenProperty;
 
 @Mapper
-public interface CodegenPropertyMapper {
+public interface CodegenMapper {
   ExtendedCodegenProperty extendProperty(final CodegenProperty prop);
 }

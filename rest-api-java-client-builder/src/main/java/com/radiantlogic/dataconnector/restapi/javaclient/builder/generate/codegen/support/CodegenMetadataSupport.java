@@ -28,7 +28,6 @@ public class CodegenMetadataSupport {
     return new CodegenMetadata(outputDir, title, version, basePackage);
   }
 
-  // TODO need tests
   private static String getOpenapiTitle(@NonNull final OpenAPI openAPI) {
     return Optional.ofNullable(openAPI.getInfo())
         .map(Info::getTitle)
@@ -36,7 +35,6 @@ public class CodegenMetadataSupport {
         .orElse("unknown-api");
   }
 
-  // TODO need tests
   private String getOpenapiVersion(@NonNull final OpenAPI openAPI) {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }

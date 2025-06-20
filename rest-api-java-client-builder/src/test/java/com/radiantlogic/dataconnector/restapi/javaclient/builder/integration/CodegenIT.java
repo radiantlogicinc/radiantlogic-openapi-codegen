@@ -63,6 +63,11 @@ public class CodegenIT {
   }
 
   @Test
+  void gitlabV4Swagger2() {
+    generateAndBuild("gitlab-v4.yaml", "GitLab-API---Swagger-2/v4");
+  }
+
+  @Test
   void googleMaps() {
     generateAndBuild("google-maps-1.22.5.json", "Google-Maps-Platform/1.22.5");
   }

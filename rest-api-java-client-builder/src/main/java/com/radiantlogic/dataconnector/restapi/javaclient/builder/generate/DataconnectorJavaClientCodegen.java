@@ -333,9 +333,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private ModelsMap enumModelToModelsMap(
-      @NonNull final CodegenModel enumModel, @NonNull final ModelsMap base) {
+      @NonNull final CodegenModel enumModel,
+      @NonNull final ModelsMap base,
+      @NonNull final List<Map<String, String>> importsForEnums) {
     final ModelsMap modelsMap = new ModelsMap();
     modelsMap.putAll(base);
+    modelsMap.setImports(importsForEnums);
 
     final String importPath = toModelImport(enumModel.classname);
     final ModelMap modelMap = new ModelMap();
@@ -488,8 +491,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
       @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
-    // TODO might want to check what kind of base I'm using here... might not be the best...
-    // TODO imports are the issue
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
@@ -513,9 +514,21 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     CodegenModel::getName,
                     Function.identity(),
                     DataconnectorJavaClientCodegen::mergeEnumCodegenModels));
+
+    final List<Map<String, String>> importsForEnums =
+        importMapping().entrySet().stream()
+            .filter(
+                entry ->
+                    !entry.getValue().startsWith("org.joda")
+                        && !entry.getValue().startsWith("com.google")
+                        && !entry.getValue().startsWith("com.radiantlogic")
+                        && !entry.getValue().startsWith("io.swagger.annotations"))
+            .map(entry -> Map.of("import", entry.getValue()))
+            .toList();
+
     allNewEnums.forEach(
         (key, model) -> {
-          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));
+          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase, importsForEnums));
         });
   }
 

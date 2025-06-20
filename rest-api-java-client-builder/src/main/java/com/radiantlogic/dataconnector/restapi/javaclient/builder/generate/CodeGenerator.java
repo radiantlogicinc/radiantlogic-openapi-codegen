@@ -16,7 +16,6 @@ import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
 
-// TODO majorly refactor this, split parsing and generation
 /** The class that handles the actual code generation. */
 @Slf4j
 @RequiredArgsConstructor

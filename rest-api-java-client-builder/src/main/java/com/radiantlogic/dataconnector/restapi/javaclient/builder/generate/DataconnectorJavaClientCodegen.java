@@ -678,6 +678,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+    // The map created by DefaultGenerator is exactly like this, it must be the exact same type with
+    // this comparator to work downstream
     final Map<String, ModelsMap> fixedModelMapsWithComparator =
         new TreeMap<>((o1, o2) -> ObjectUtils.compare(toModelName(o1), toModelName(o2)));
 

@@ -42,6 +42,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final String VALUES_KEY = "values";
   private static final String NAME_KEY = "name";
   private static final String VALUE_KEY = "value";
+  private static final String IMPORTS_KEY = "imports";
+  private static final String IMPORT_KEY = "import";
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
@@ -492,6 +494,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
       @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
+    // TODO might want to check what kind of base I'm using here... might not be the best...
+    // TODO imports are the issue
     final ModelsMap enumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
@@ -637,6 +641,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
 
+    final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
+
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
@@ -659,7 +665,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   }
 
                   final CodegenModel model =
-                      entry.getValue().getModels().get(0).getModel(); // TODO null safety
+                      ModelUtils.getModelByName(entry.getKey(), allModelMaps);
                   int index = 1;
                   while (acc.containsKey(fileBaseName + index)) {
                     index++;
@@ -667,9 +673,35 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   final String suffix = "V%d".formatted(index);
                   final String newFileBaseName = fileBaseName + suffix;
                   final String newKey = entry.getKey() + suffix;
+                  final String oldClassName = model.classname;
                   model.classname = model.classname + suffix;
                   model.classFilename = model.classFilename + suffix;
                   model.dataType = model.dataType + suffix;
+
+                  allModels
+                      .values()
+                      .forEach(
+                          otherModel -> {
+                            if (otherModel.imports != null
+                                && otherModel.imports.contains(oldClassName)) {
+                              otherModel.imports.remove(oldClassName);
+                              otherModel.imports.add(model.classname);
+
+                              ((List<Map<String, String>>)
+                                      allModelMaps.get(otherModel.name).get(IMPORTS_KEY))
+                                  .forEach(
+                                      importMap -> {
+                                        final String importValue = importMap.get(IMPORT_KEY);
+                                        if (importValue.endsWith(".%s".formatted(oldClassName))) {
+                                          final String newImportValue =
+                                              importValue.replaceAll(
+                                                  "\\.%s$".formatted(oldClassName),
+                                                  ".%s".formatted(model.classname));
+                                          importMap.put("import", newImportValue);
+                                        }
+                                      });
+                            }
+                          });
 
                   acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
                   return acc;

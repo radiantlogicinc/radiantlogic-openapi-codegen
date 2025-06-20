@@ -17,5 +17,4 @@ IMPORTANT
 
 TESTS THAT I NEED
 
-10. serde of IsPrivate from snyk.
 11. Serde of all three `Updateexistingintegrationrequest` return types from snyk.

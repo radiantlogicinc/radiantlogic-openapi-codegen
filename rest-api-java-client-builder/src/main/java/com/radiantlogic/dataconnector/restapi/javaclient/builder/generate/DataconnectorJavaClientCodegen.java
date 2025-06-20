@@ -3,9 +3,11 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.servers.Server;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -250,6 +253,15 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
     fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;
+  }
+
+  @Override
+  public CodegenOperation fromOperation(
+      @NonNull final String path,
+      @NonNull final String httpMethod,
+      @NonNull final Operation operation,
+      @NonNull final List<Server> servers) {
+    return super.fromOperation(path, httpMethod, operation, servers);
   }
 
   @Override

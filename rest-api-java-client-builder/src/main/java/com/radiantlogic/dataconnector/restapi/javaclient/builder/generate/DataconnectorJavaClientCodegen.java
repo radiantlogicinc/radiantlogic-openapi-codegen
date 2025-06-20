@@ -269,7 +269,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             operation -> {
               final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
               final String fixedOperationId =
-                  matcher.replaceAll("nonEnglish%d".formatted(++nonEnglishCount));
+                  matcher.replaceAll("ne%d".formatted(++nonEnglishCount));
               operation.setOperationId(fixedOperationId);
             });
   }

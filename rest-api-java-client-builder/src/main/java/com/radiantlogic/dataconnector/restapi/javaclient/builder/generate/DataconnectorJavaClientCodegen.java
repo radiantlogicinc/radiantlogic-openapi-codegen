@@ -676,7 +676,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   final String suffix = "V%d".formatted(index);
                   final String newFileBaseName = fileBaseName + suffix;
                   final String newKey = entry.getKey() + suffix;
-                  System.out.println("UPDATING KEY: " + newKey); // TODO delete this
                   model.classname = model.classname + suffix;
                   model.classFilename = model.classFilename + suffix;
                   model.dataType = model.dataType + suffix;

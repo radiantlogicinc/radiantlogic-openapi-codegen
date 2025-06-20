@@ -4,6 +4,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.ModelObject;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DataSourceCategoryEnum;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
@@ -149,5 +150,20 @@ public class DiscriminatedUnionSerdeTest {
 
     final InputSource actualInputSource = objectMapper.readValue(actualJson, InputSource.class);
     assertThat(actualInputSource).usingRecursiveComparison().isEqualTo(inputSource);
+  }
+
+  @ParameterizedTest(name = "It handles bitbucket model objects: {0}")
+  @MethodSource("bitbucketModelObjects")
+  @SneakyThrows
+  void itHandlesBitbucketModelObjects(
+      @NonNull final String name,
+      @NonNull final ModelObject modelObject,
+      @NonNull final String json) {
+    final String actualJson = objectMapper.writeValueAsString(modelObject);
+
+    assertThatJson(actualJson).isEqualTo(json);
+
+    final ModelObject actualModelObject = objectMapper.readValue(actualJson, ModelObject.class);
+    assertThat(actualModelObject).usingRecursiveComparison().isEqualTo(modelObject);
   }
 }

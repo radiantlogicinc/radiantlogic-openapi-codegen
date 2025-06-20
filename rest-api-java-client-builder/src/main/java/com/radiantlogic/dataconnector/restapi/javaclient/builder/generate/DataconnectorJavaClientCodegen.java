@@ -42,6 +42,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final String VALUES_KEY = "values";
   private static final String NAME_KEY = "name";
   private static final String VALUE_KEY = "value";
+  private static final String IMPORTS_KEY = "imports";
+  private static final String IMPORT_KEY = "import";
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
@@ -684,20 +686,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                                 && otherModel.imports.contains(oldClassName)) {
                               otherModel.imports.remove(oldClassName);
                               otherModel.imports.add(model.classname);
-                            }
 
-                            // TODO is this by classname or model name
-                            if (otherModel.interfaces != null
-                                && otherModel.interfaces.contains(oldClassName)) {
-                              otherModel.interfaces.remove(oldClassName);
-                              otherModel.interfaces.add(model.classname);
-                            }
-
-                            // TODO is this by classname or model name
-                            if (otherModel.oneOf != null
-                                && otherModel.oneOf.contains(oldClassName)) {
-                              otherModel.oneOf.remove(oldClassName);
-                              otherModel.oneOf.add(model.classname);
+                              ((List<Map<String, String>>)
+                                      allModelMaps.get(otherModel.name).get(IMPORTS_KEY))
+                                  .forEach(
+                                      importMap -> {
+                                        final String importValue = importMap.get(IMPORT_KEY);
+                                        if (importValue.endsWith(".%s".formatted(oldClassName))) {
+                                          final String newImportValue =
+                                              importValue.replaceAll(
+                                                  "\\.%s$".formatted(oldClassName),
+                                                  ".%s".formatted(model.classname));
+                                          importMap.put("import", newImportValue);
+                                        }
+                                      });
                             }
                           });
 

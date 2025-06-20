@@ -716,19 +716,4 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
 
     return super.postProcessAllModels(allModelMaps);
   }
-
-  // TODO this exists in a parent class but is inaccessible and I need it
-  private final Map<String, String> seenFileNames = new HashMap<>();
-
-  // TODO probably don't need any of this...
-  @Override
-  public String modelFilename(@NonNull final String templateName, @NonNull final String modelName) {
-    return Optional.ofNullable(seenFileNames.get(modelName))
-        .orElseGet(
-            () -> {
-              final String name = super.modelFilename(templateName, modelName);
-              seenFileNames.put(modelName, name);
-              return name;
-            });
-  }
 }

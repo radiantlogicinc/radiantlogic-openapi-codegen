@@ -3,7 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ArgsParser;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ProgramArgStatus;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGenerator;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGeneratorExecutor;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.DataconnectorJavaClientCodegen;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.OpenapiParser;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
@@ -64,8 +64,8 @@ public class Runner {
 
     final OpenapiParser openapiParser = new OpenapiParser(validatedParsedArgs);
     final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(null, validatedParsedArgs);
-    final CodeGenerator codeGenerator = new CodeGenerator(codegen);
+        new DataconnectorJavaClientCodegen(validatedParsedArgs);
+    final CodeGeneratorExecutor codeGenerator = new CodeGeneratorExecutor(codegen);
     codeGenerator.generate();
     log.info("Finished code generation");
   }

@@ -16,7 +16,7 @@ import org.openapitools.codegen.DefaultGenerator;
 /** Setup the output directory and generate the call. */
 @Slf4j
 @RequiredArgsConstructor
-public class CodeGenerator {
+public class CodeGeneratorExecutor {
   @NonNull private final ExtendedCodegenConfig codegen;
 
   public void generate(final OpenAPI openAPI) {

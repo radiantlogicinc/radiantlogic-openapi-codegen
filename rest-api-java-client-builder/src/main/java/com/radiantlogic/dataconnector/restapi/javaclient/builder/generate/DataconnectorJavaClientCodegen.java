@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
  * style we want.
  */
+@RequiredArgsConstructor
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     implements ExtendedCodegenConfig {
   private static final String ENUM_VARS_KEY = "enumVars";
@@ -56,12 +58,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final ExtendedCodegenMapper CODEGEN_MAPPER =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
-  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
-    setOpenAPI(openAPI);
-    init(args);
-  }
+  @NonNull private final Args args;
 
   @Override
+  @NonNull
   public Set<String> getIgnorePatterns() {
     return Set.of(
         ".travis.yml",
@@ -108,9 +108,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .collect(Collectors.joining("."));
   }
 
-  private void init(@NonNull final Args args) {
-    final String title = getOpenapiTitle();
-    final String version = getOpenapiVersion();
+  public void init(@NonNull final OpenAPI openAPI) {
+    final String title = getOpenapiTitle(openAPI);
+    final String version = getOpenapiVersion(openAPI);
     final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
     setOutputDir(outputDir.toString());
     setGroupId(args.groupId());
@@ -147,7 +147,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   }
 
   // TODO need tests
-  private String getOpenapiTitle() {
+  private String getOpenapiTitle(@NonNull final OpenAPI openAPI) {
     return Optional.ofNullable(openAPI.getInfo())
         .map(Info::getTitle)
         .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
@@ -155,7 +155,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   }
 
   // TODO need tests
-  private String getOpenapiVersion() {
+  private String getOpenapiVersion(@NonNull final OpenAPI openAPI) {
     return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 

@@ -3,9 +3,11 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.servers.Server;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,6 +30,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
@@ -48,9 +52,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
+  private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
 
-  private static final CodegenPropertyMapper codegenPropertyMapper =
-      Mappers.getMapper(CodegenPropertyMapper.class);
+  private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
 
   public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
     setOpenAPI(openAPI);
@@ -247,14 +251,47 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
         super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
-    final ExtendedCodegenProperty extendedProp = codegenPropertyMapper.extendProperty(prop);
+    final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
     fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;
   }
 
+  // TODO not the best, not the worst
+  private int nonEnglishCount = 0;
+
+  // TODO document how insane this is yet it has been seen in sonarqube
+  private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
+    openAPI.getPaths().entrySet().stream()
+        .flatMap(pathEntry -> pathEntry.getValue().readOperations().stream())
+        .filter(operation -> Objects.nonNull(operation.getOperationId()))
+        .forEach(
+            operation -> {
+              final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
+              final String fixedOperationId =
+                  matcher.replaceAll("ne%d".formatted(++nonEnglishCount));
+              operation.setOperationId(fixedOperationId);
+            });
+  }
+
+  @Override
+  public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
+    super.preprocessOpenAPI(openAPI);
+    fixNonEnglishOperationIds(openAPI);
+  }
+
+  // TODO delete if unused
+  @Override
+  public CodegenOperation fromOperation(
+      @NonNull final String path,
+      @NonNull final String httpMethod,
+      @NonNull final Operation operation,
+      final List<Server> servers) {
+    return super.fromOperation(path, httpMethod, operation, servers);
+  }
+
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
-    final CodegenModel result = super.fromModel(name, model);
+    final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
     if (result.discriminator != null) {
       result.getVars().stream()
           .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
@@ -273,6 +310,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                 })
             .toList();
     result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
+
+    if (result.classVarName != null) {
+      if (result.classVarName.equals("o")) {
+        result.equalsClassVarName = "otherO";
+      } else {
+        result.equalsClassVarName = result.classVarName;
+      }
+    }
 
     return result;
   }

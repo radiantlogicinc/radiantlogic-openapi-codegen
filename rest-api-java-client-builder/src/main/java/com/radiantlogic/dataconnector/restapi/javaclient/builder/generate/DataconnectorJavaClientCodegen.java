@@ -333,9 +333,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   }
 
   private ModelsMap enumModelToModelsMap(
-      @NonNull final CodegenModel enumModel, @NonNull final ModelsMap base) {
+      @NonNull final CodegenModel enumModel,
+      @NonNull final ModelsMap base,
+      @NonNull final List<Map<String, String>> importsForEnums) {
     final ModelsMap modelsMap = new ModelsMap();
     modelsMap.putAll(base);
+    modelsMap.setImports(importsForEnums);
 
     final String importPath = toModelImport(enumModel.classname);
     final ModelMap modelMap = new ModelMap();
@@ -513,10 +516,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     CodegenModel::getName,
                     Function.identity(),
                     DataconnectorJavaClientCodegen::mergeEnumCodegenModels));
-    // TODO need to set better imports on all new enums
+
+    final List<Map<String, String>> importsForEnums =
+        importMapping().entrySet().stream()
+            .filter(
+                entry ->
+                    !entry.getValue().startsWith("org.joda")
+                        && !entry.getValue().startsWith("com.google")
+                        && !entry.getValue().startsWith("com.radiantlogic"))
+            .map(entry -> Map.of("import", entry.getValue()))
+            .toList();
+
     allNewEnums.forEach(
         (key, model) -> {
-          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));
+          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase, importsForEnums));
         });
   }
 

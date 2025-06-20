@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
@@ -643,6 +645,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         allModelMaps.entrySet().stream()
             .map(
                 entry -> {
+                  System.out.println("KEY: " + entry.getKey()); // TODO delete this
                   final String fileName = modelFilename("model.mustache", entry.getKey());
                   final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
 
@@ -723,7 +726,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     //    } catch (Exception e) {
     //      throw new RuntimeException(e);
     //    }
-    return fixedModelMaps;
+
+    final Map<String, ModelsMap> fixedModelMapsWithComparator =
+        new TreeMap<>((o1, o2) -> ObjectUtils.compare(toModelName(o1), toModelName(o2)));
+    ;
+    fixedModelMapsWithComparator.putAll(fixedModelMaps);
+    return fixedModelMapsWithComparator;
   }
 
   @Override
@@ -766,6 +774,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   // TODO this exists in a parent class but is inaccessible and I need it
   private final Map<String, String> seenFileNames = new HashMap<>();
 
+  // TODO probably don't need any of this...
   @Override
   public String modelFilename(@NonNull final String templateName, @NonNull final String modelName) {
     return Optional.ofNullable(seenFileNames.get(modelName))

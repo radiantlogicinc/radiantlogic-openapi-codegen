@@ -4,6 +4,10 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.AppUser;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.BaseCommit;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.GPGAccountKey;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.ModelObject;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DataSourceCategoryEnum;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DatabaseDataSource;
@@ -31,6 +35,34 @@ import org.springframework.lang.NonNull;
 /** Test serialization and deserialization of classes that are discriminated unions. */
 public class DiscriminatedUnionSerdeTest {
   private static final ObjectMapper objectMapper = new ObjectMapper();
+
+  static Stream<Arguments> bitbucketModelObjects() {
+    final GPGAccountKey gpgAccountKey = new GPGAccountKey();
+    gpgAccountKey.setType("GPG_account_key");
+    gpgAccountKey.setKey("theKey");
+    gpgAccountKey.setKeyId("theKeyId");
+
+    final AppUser appUser = new AppUser();
+    appUser.setType("app_user");
+    appUser.setAccountId("accountId");
+    appUser.setKind("kind");
+
+    final BaseCommit baseCommit = new BaseCommit();
+    baseCommit.setType("base_commit");
+    baseCommit.setMessage("The message");
+
+    final String gpgAccountKeyJson =
+        ResourceReader.readString("data/discriminatedunionserde/gpg-account-key.json");
+    final String appUserJson =
+        ResourceReader.readString("data/discriminatedunionserde/app-user.json");
+    final String baseCommitJson =
+        ResourceReader.readString("data/discriminatedunionserde/base-commit.json");
+
+    return Stream.of(
+        Arguments.arguments("gpgAccountKey", gpgAccountKey, gpgAccountKeyJson),
+        Arguments.arguments("appUser", appUser, appUserJson),
+        Arguments.arguments("baseCommit", baseCommit, baseCommitJson));
+  }
 
   static Stream<Arguments> radiantoneDatasources() {
     final LdapDataSource ldapDataSource = new LdapDataSource();
@@ -149,5 +181,20 @@ public class DiscriminatedUnionSerdeTest {
 
     final InputSource actualInputSource = objectMapper.readValue(actualJson, InputSource.class);
     assertThat(actualInputSource).usingRecursiveComparison().isEqualTo(inputSource);
+  }
+
+  @ParameterizedTest(name = "It handles bitbucket model objects: {0}")
+  @MethodSource("bitbucketModelObjects")
+  @SneakyThrows
+  void itHandlesBitbucketModelObjects(
+      @NonNull final String name,
+      @NonNull final ModelObject modelObject,
+      @NonNull final String json) {
+    final String actualJson = objectMapper.writeValueAsString(modelObject);
+
+    assertThatJson(actualJson).isEqualTo(json);
+
+    final ModelObject actualModelObject = objectMapper.readValue(actualJson, ModelObject.class);
+    assertThat(actualModelObject).usingRecursiveComparison().isEqualTo(modelObject);
   }
 }

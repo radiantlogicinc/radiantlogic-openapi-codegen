@@ -30,7 +30,17 @@ public class CodegenMetadataSupportTest {
 
   @Test
   void itGetsMetadataWithComplexTitle() {
-    throw new RuntimeException();
+    final OpenAPI openAPI = createOpenAPI();
+    openAPI.getInfo().setTitle("My Title - Hello");
+    openAPI.getInfo().setVersion("1.0.0");
+    final var metadata = codegenMetadataSupport.getMetadata(openAPI, args);
+    final var expectedMetadata =
+        new CodegenMetadataSupport.CodegenMetadata(
+            CodegenPaths.OUTPUT_DIR.resolve("My-Title---Hello").resolve("1.0.0"),
+            "My-Title---Hello",
+            "1.0.0",
+            "com.something.mytitlehello");
+    assertThat(metadata).isEqualTo(expectedMetadata);
   }
 
   @Test
@@ -49,7 +59,17 @@ public class CodegenMetadataSupportTest {
 
   @Test
   void itGetsMetadataWithTitleWithLeadingNumbers() {
-    throw new RuntimeException();
+    final OpenAPI openAPI = createOpenAPI();
+    openAPI.getInfo().setTitle("1MyTitle");
+    openAPI.getInfo().setVersion("1.0.0");
+    final var metadata = codegenMetadataSupport.getMetadata(openAPI, args);
+    final var expectedMetadata =
+        new CodegenMetadataSupport.CodegenMetadata(
+            CodegenPaths.OUTPUT_DIR.resolve("1MyTitle").resolve("1.0.0"),
+            "1MyTitle",
+            "1.0.0",
+            "com.something.onemytitle");
+    assertThat(metadata).isEqualTo(expectedMetadata);
   }
 
   private OpenAPI createOpenAPI() {

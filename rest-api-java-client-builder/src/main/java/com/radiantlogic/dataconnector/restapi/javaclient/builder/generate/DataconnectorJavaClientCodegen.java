@@ -637,6 +637,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
 
+    final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
+
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
@@ -667,9 +669,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   final String suffix = "V%d".formatted(index);
                   final String newFileBaseName = fileBaseName + suffix;
                   final String newKey = entry.getKey() + suffix;
+                  final String oldClassName = model.classname;
                   model.classname = model.classname + suffix;
                   model.classFilename = model.classFilename + suffix;
                   model.dataType = model.dataType + suffix;
+
+                  allModels
+                      .values()
+                      .forEach(
+                          otherModel -> {
+                            if (otherModel.imports.contains(oldClassName)) {
+                              otherModel.imports.remove(oldClassName);
+                              otherModel.imports.add(model.classname);
+                            }
+                          });
 
                   acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
                   return acc;

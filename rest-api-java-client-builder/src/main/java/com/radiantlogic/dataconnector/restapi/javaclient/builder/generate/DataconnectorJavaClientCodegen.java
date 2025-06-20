@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -688,20 +687,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     // TODO clean this up
-    try {
-      final Field seenModelFilenamesField =
-          getClass()
-              .getSuperclass()
-              .getSuperclass()
-              .getSuperclass()
-              .getDeclaredField("seenModelFilenames");
-      seenModelFilenamesField.setAccessible(true);
-      final Map<String, String> seenModelFilenames =
-          (Map<String, String>) seenModelFilenamesField.get(this);
-      seenModelFilenames.clear();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    //    try {
+    //      final Field seenModelFilenamesField =
+    //          getClass()
+    //              .getSuperclass()
+    //              .getSuperclass()
+    //              .getSuperclass()
+    //              .getDeclaredField("seenModelFilenames");
+    //      seenModelFilenamesField.setAccessible(true);
+    //      final Map<String, String> seenModelFilenames =
+    //          (Map<String, String>) seenModelFilenamesField.get(this);
+    //      seenModelFilenames.clear();
+    //    } catch (Exception e) {
+    //      throw new RuntimeException(e);
+    //    }
     return fixedModelMaps;
   }
 
@@ -735,9 +734,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     return super.postProcessAllModels(allModelMaps);
   }
 
+  // TODO this exists in a parent class but is inaccessible and I need it
+  private final Map<String, String> seenFileNames = new HashMap<>();
+
   @Override
-  public String modelFilename(String templateName, String modelName) {
-    final String name = super.modelFilename(templateName, modelName);
-    return name;
+  public String modelFilename(@NonNull final String templateName, @NonNull final String modelName) {
+    return Optional.ofNullable(seenFileNames.get(modelName))
+        .orElseGet(() -> super.modelFilename(templateName, modelName));
   }
 }

@@ -659,7 +659,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                   }
 
                   final CodegenModel model =
-                      entry.getValue().getModels().get(0).getModel(); // TODO null safety
+                      ModelUtils.getModelByName(entry.getKey(), allModelMaps);
                   int index = 1;
                   while (acc.containsKey(fileBaseName + index)) {
                     index++;

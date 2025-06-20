@@ -260,7 +260,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
       @NonNull final String path,
       @NonNull final String httpMethod,
       @NonNull final Operation operation,
-      @NonNull final List<Server> servers) {
+      final List<Server> servers) {
     return super.fromOperation(path, httpMethod, operation, servers);
   }
 

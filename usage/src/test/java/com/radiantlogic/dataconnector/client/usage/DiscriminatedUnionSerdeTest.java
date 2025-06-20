@@ -4,6 +4,9 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.AppUser;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.BaseCommit;
+import com.radiantlogic.custom.dataconnector.bitbucketapi.model.GPGAccountKey;
 import com.radiantlogic.custom.dataconnector.bitbucketapi.model.ModelObject;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.CustomDataSource;
 import com.radiantlogic.custom.dataconnector.radiantonev8api.model.DataSourceCategoryEnum;
@@ -32,6 +35,27 @@ import org.springframework.lang.NonNull;
 /** Test serialization and deserialization of classes that are discriminated unions. */
 public class DiscriminatedUnionSerdeTest {
   private static final ObjectMapper objectMapper = new ObjectMapper();
+
+  static Stream<Arguments> bitbucketModelObjects() {
+    final GPGAccountKey gpgAccountKey = new GPGAccountKey();
+    gpgAccountKey.setType("GPG_account_key");
+    gpgAccountKey.setKey("theKey");
+    gpgAccountKey.setKeyId("theKeyId");
+
+    final AppUser appUser = new AppUser();
+    appUser.setType("app_user");
+    appUser.setAccountId("accountId");
+    appUser.setKind("kind");
+
+    final BaseCommit baseCommit = new BaseCommit();
+    baseCommit.setType("base_commit");
+    baseCommit.setMessage("The message");
+
+    return Stream.of(
+        Arguments.arguments("gpgAccountKey", gpgAccountKey, ""),
+        Arguments.arguments("appUser", appUser, ""),
+        Arguments.arguments("baseCommit", baseCommit, ""));
+  }
 
   static Stream<Arguments> radiantoneDatasources() {
     final LdapDataSource ldapDataSource = new LdapDataSource();

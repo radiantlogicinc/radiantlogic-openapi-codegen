@@ -513,6 +513,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
                     CodegenModel::getName,
                     Function.identity(),
                     DataconnectorJavaClientCodegen::mergeEnumCodegenModels));
+    // TODO need to set better imports on all new enums
     allNewEnums.forEach(
         (key, model) -> {
           allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase));

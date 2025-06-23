@@ -35,10 +35,12 @@ public class CodegenUnsupportedUnionTypeSupportTest {
   private static final String SCHEMA_INVALID_ONE_OF_REF = "invalidOneOfRef";
   private static final String SCHEMA_INVALID_ANY_OF_REF = "invalidAnyOfRef";
   private static final String SCHEMA_ALL_PROPERTIES_VALID = "allPropertiesValid";
-  private static final String SCHEMA_DIRECT_INVALID_ONE_OF = "directInvalidOneOf";
-  private static final String SCHEMA_DIRECT_INVALID_ANY_OF = "directInvalidAnyOf";
-  private static final String SCHEMA_REF_INVALID_ONE_OF = "refInvalidOneOf";
-  private static final String SCHEMA_REF_INVALID_ANY_OF = "refInvalidAnyOf";
+  private static final String SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ONE_OF =
+      "hasPropertyDirectInvalidOneOf";
+  private static final String SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ANY_OF =
+      "hasPropertyDirectInvalidAnyOf";
+  private static final String SCHEMA_HAS_PROPERTY_REF_INVALID_ONE_OF = "hasPropertyRefInvalidOneOf";
+  private static final String SCHEMA_HAS_PROPERTY_REF_INVALID_ANY_OF = "hasPropertyRefInvalidAnyOf";
 
   private static final OpenAPI openAPI = new OpenAPI();
 
@@ -108,19 +110,19 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             validAnyOfRefSchema));
 
     final ObjectSchema directInvalidOneOfSchema = new ObjectSchema();
-    directInvalidOneOfSchema.setName(SCHEMA_DIRECT_INVALID_ONE_OF);
+    directInvalidOneOfSchema.setName(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ONE_OF);
     directInvalidOneOfSchema.setProperties(toSchemaMap(invalidOneOfSchema));
 
     final ObjectSchema directInvalidAnyOfSchema = new ObjectSchema();
-    directInvalidAnyOfSchema.setName(SCHEMA_DIRECT_INVALID_ANY_OF);
+    directInvalidAnyOfSchema.setName(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ANY_OF);
     directInvalidAnyOfSchema.setProperties(toSchemaMap(invalidAnyOfSchema));
 
     final ObjectSchema refInvalidOneOfSchema = new ObjectSchema();
-    refInvalidOneOfSchema.setName(SCHEMA_REF_INVALID_ONE_OF);
+    refInvalidOneOfSchema.setName(SCHEMA_HAS_PROPERTY_REF_INVALID_ONE_OF);
     refInvalidOneOfSchema.setProperties(toSchemaMap(invalidOneOfRefSchema));
 
     final ObjectSchema refInvalidAnyOfSchema = new ObjectSchema();
-    refInvalidAnyOfSchema.setName(SCHEMA_REF_INVALID_ANY_OF);
+    refInvalidAnyOfSchema.setName(SCHEMA_HAS_PROPERTY_REF_INVALID_ANY_OF);
     refInvalidAnyOfSchema.setProperties(toSchemaMap(invalidAnyOfRefSchema));
 
     final Components components = new Components();
@@ -213,10 +215,11 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     final List<CodegenProperty> expectedProps = List.of(createFixedProp(SCHEMA_INVALID_ONE_OF));
 
     final CodegenModel model = new CodegenModel();
-    model.setName(SCHEMA_DIRECT_INVALID_ONE_OF);
+    model.setName(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ONE_OF);
     model.setVars(new ArrayList<>(initialProps));
 
-    final Schema<?> schema = openAPI.getComponents().getSchemas().get(SCHEMA_DIRECT_INVALID_ONE_OF);
+    final Schema<?> schema =
+        openAPI.getComponents().getSchemas().get(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ONE_OF);
 
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(model, schema, openAPI);
     assertThat(model.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);
@@ -228,10 +231,11 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     final List<CodegenProperty> expectedProps = List.of(createFixedProp(SCHEMA_INVALID_ANY_OF));
 
     final CodegenModel model = new CodegenModel();
-    model.setName(SCHEMA_DIRECT_INVALID_ANY_OF);
+    model.setName(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ANY_OF);
     model.setVars(new ArrayList<>(initialProps));
 
-    final Schema<?> schema = openAPI.getComponents().getSchemas().get(SCHEMA_DIRECT_INVALID_ANY_OF);
+    final Schema<?> schema =
+        openAPI.getComponents().getSchemas().get(SCHEMA_HAS_PROPERTY_DIRECT_INVALID_ANY_OF);
 
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(model, schema, openAPI);
     assertThat(model.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);
@@ -243,10 +247,11 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     final List<CodegenProperty> expectedProps = List.of(createFixedProp(SCHEMA_INVALID_ONE_OF_REF));
 
     final CodegenModel model = new CodegenModel();
-    model.setName(SCHEMA_REF_INVALID_ONE_OF);
+    model.setName(SCHEMA_HAS_PROPERTY_REF_INVALID_ONE_OF);
     model.setVars(new ArrayList<>(initialProps));
 
-    final Schema<?> schema = openAPI.getComponents().getSchemas().get(SCHEMA_REF_INVALID_ONE_OF);
+    final Schema<?> schema =
+        openAPI.getComponents().getSchemas().get(SCHEMA_HAS_PROPERTY_REF_INVALID_ONE_OF);
 
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(model, schema, openAPI);
     assertThat(model.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);
@@ -258,10 +263,11 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     final List<CodegenProperty> expectedProps = List.of(createFixedProp(SCHEMA_INVALID_ANY_OF_REF));
 
     final CodegenModel model = new CodegenModel();
-    model.setName(SCHEMA_REF_INVALID_ANY_OF);
+    model.setName(SCHEMA_HAS_PROPERTY_REF_INVALID_ANY_OF);
     model.setVars(new ArrayList<>(initialProps));
 
-    final Schema<?> schema = openAPI.getComponents().getSchemas().get(SCHEMA_REF_INVALID_ANY_OF);
+    final Schema<?> schema =
+        openAPI.getComponents().getSchemas().get(SCHEMA_HAS_PROPERTY_REF_INVALID_ANY_OF);
 
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(model, schema, openAPI);
     assertThat(model.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);

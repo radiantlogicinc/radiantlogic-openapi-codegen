@@ -250,8 +250,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     /*
      * I've tried making this work in the fromProperty method. In theory that's the better place for it,
-     * applying the change to one property at a time.
-     * However, I get errors there I don't get when I run the code here. At the time of writing I've spent
+     * applying the change to one property at a time. However, I get errors there I don't get when I run the code here. At the time of writing I've spent
      * an extensive amount of time on this project and don't have the time to further investigate the discrepancy.
      */
     codegenFlattenedComplexTypeSupport.fixIncorrectlyFlattenedPropertyTypes(result, model);

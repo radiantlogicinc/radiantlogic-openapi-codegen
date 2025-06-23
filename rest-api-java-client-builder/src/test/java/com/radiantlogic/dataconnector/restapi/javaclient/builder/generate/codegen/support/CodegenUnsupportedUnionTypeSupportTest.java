@@ -77,7 +77,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
   }
 
   private static Map<String, Schema> toSchemaMap(@NonNull final Schema<?>... schemas) {
-    Arrays.stream(schemas).collect(Collectors.toMap(Schema::getName, Function.identity()));
+    return Arrays.stream(schemas).collect(Collectors.toMap(Schema::getName, Function.identity()));
   }
 
   @Test

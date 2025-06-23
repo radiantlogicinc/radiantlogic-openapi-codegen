@@ -18,7 +18,42 @@ This is an extension to the [openapi-generator](https://github.com/OpenAPITools/
 
 ### Limitations
 
-- Discriminated unions that don't map their discriminator will fail on de-serialization.
+#### Guaranteed Failure: Incomplete Discriminated Unions
+
+An OpenAPI discriminated union requires both the `oneOf` and `discriminator.mapping` properties to be fully constructed in order for the generated code to properly map de-serialization. What this looks like is as follows:
+
+```yaml
+UnionSchema:
+  oneOf:
+    - $ref: "#/components/schemas/SchemaOne"
+    - $ref: "#/components/schemas/SchemaTwo"
+    - $ref: "#/components/schemas/SchemaThree"
+  discriminator:
+    propertyName: type
+    mapping:
+      ONE: "#/components/schemas/SchemaOne"
+      TWO: "#/components/schemas/SchemaTwo"
+      THREE: "#/components/schemas/SchemaThree"
+```
+
+However, there are OpenAPI schemas from reputable companies that do not contain this level of correctness. An example of what has been seen in the wild is this:
+
+```yaml
+UnionSchema:
+  oneOf:
+    - $ref: "#/components/schemas/SchemaOne"
+    - $ref: "#/components/schemas/SchemaTwo"
+    - $ref: "#/components/schemas/SchemaThree"
+  discriminator:
+    propertyName: type
+```
+
+The primary issue is the lack of a mapping for the discriminator. This means that the code generator cannot properly map the parent type to the child types for de-serialization.
+
+At the time of writing, all generated methods that return a type with this kind of incomplete discriminated union will fail.
+
+#### Other Limitations
+
 - Some type information will be stripped out because OpenAPI & JSON is more permissive than Java is, especially with type unions. There are some scenarios where the generator has been modified to strip out type information in order to produce compile-able code.
 - The quality of the generated code is directly correlated to the quality of the OpenAPI specification.
 - Only OpenAPI 3 is supported.

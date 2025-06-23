@@ -5,11 +5,12 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -54,22 +55,29 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     invalidOneOfRefSchema.setName("invalidOneOfRef");
     invalidOneOfRefSchema.set$ref("#/components/schemas/invalidOneOf");
 
+    final ObjectSchema allPropertiesValidSchema = new ObjectSchema();
+    allPropertiesValidSchema.setName("allPropertiesValid");
+    allPropertiesValidSchema.setProperties(
+        toSchemaMap(objectPropSchema, stringPropSchema, validOneOfSchema, validOneOfRefSchema));
+
     final Components components = new Components();
     // openapi-generator using raw types forces me to use one here
-    final Map<String, Schema> schemas =
-        Stream.of(
-                objectPropSchema,
-                stringPropSchema,
-                objectChildSchema,
-                stringChildSchema,
-                objectChildSchema2,
-                validOneOfSchema,
-                invalidOneOfSchema,
-                validOneOfRefSchema,
-                invalidOneOfRefSchema)
-            .collect(Collectors.toMap(Schema::getName, Function.identity()));
-    components.setSchemas(schemas);
+    components.setSchemas(
+        toSchemaMap(
+            objectPropSchema,
+            stringPropSchema,
+            objectChildSchema,
+            stringChildSchema,
+            objectChildSchema2,
+            validOneOfSchema,
+            invalidOneOfSchema,
+            validOneOfRefSchema,
+            invalidOneOfRefSchema));
     openAPI.setComponents(components);
+  }
+
+  private static Map<String, Schema> toSchemaMap(@NonNull final Schema<?>... schemas) {
+    Arrays.stream(schemas).collect(Collectors.toMap(Schema::getName, Function.identity()));
   }
 
   @Test

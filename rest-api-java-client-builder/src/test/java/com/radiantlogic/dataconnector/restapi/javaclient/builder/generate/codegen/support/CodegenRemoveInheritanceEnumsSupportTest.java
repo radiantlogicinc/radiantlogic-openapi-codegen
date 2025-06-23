@@ -4,7 +4,17 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenRemoveInheritanceEnumsSupportTest {
   @Test
-  void test() {
+  void itDoesNothingIfNoParent() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itDoesNothingIfParentHasSameEnum() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itRemovesChildEnumIfParentNotEnum() {
     throw new RuntimeException();
   }
 }

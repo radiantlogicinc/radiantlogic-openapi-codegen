@@ -43,6 +43,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     invalidOneOfSchema.setOneOf(List.of(objectChildSchema, stringChildSchema));
 
     final Components components = new Components();
+    // openapi-generator using raw types forces me to use one here
     final Map<String, Schema> schemas =
         Stream.of(
                 objectPropSchema,

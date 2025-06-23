@@ -1,5 +1,6 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import org.openapitools.codegen.CodegenConfig;
@@ -13,6 +14,11 @@ import org.openapitools.codegen.languages.AbstractJavaCodegen;
  */
 @RequiredArgsConstructor
 public class JavaCodegenDecorator implements CodegenConfig {
+  /**
+   * This lombok delegate means that any interface method not explicitly implemented in this class
+   * will implicitly be delegated to this instance.
+   */
   @Delegate(types = CodegenConfig.class)
+  @NonNull
   private final AbstractJavaCodegen delegate;
 }

@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
@@ -60,6 +61,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
   private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
       new CodegenUnsupportedUnionTypeSupport();
+  private final CodegenDiscriminatorTypeSupport codegenDiscriminatorTypeSupport =
+      new CodegenDiscriminatorTypeSupport();
 
   @NonNull private final Args args;
 
@@ -178,12 +181,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
-    if (result.discriminator != null) {
-      result.getVars().stream()
-          .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
-          .findFirst()
-          .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
-    }
+    codegenDiscriminatorTypeSupport.fixDiscriminatorType(result);
 
     /*
      * I've tried making this work in the fromProperty method. In theory that's the better place for it,

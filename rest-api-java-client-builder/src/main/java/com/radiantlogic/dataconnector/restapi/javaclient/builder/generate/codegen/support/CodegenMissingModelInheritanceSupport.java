@@ -24,46 +24,53 @@ import org.openapitools.codegen.CodegenModel;
  * <p>As long as Team extends Group, everything will work. If Team does not extend Group, there will
  * be a compile error. This support class exists to make sure that this kind of hierarchy will
  * always work.
+ *
+ * <p>Due to the high risk of this manipulation, there are many checks performed prior to making the
+ * change.
  */
 public class CodegenMissingModelInheritanceSupport {
-  public void fixMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {
-    allModels
-        .values()
-        .forEach(
-            model -> {
-              if (model.parent != null
-                  || model.dataType == null
-                  || model.dataType.equals(model.classname)
-                  || model.isEnum) {
-                return;
-              }
+  public void fixInheritanceAllModels(@NonNull final Map<String, CodegenModel> allModels) {
+    allModels.values().forEach(this::fixInheritanceInModel);
+  }
 
-              final String modelInterface =
-                  Optional.ofNullable(model.interfaces)
-                      .filter(list -> list.size() == 1)
-                      .map(List::getFirst)
-                      .orElse(null);
-              final String modelAllOf =
-                  Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
-                      .flatMap(Set::stream)
-                      .findFirst()
-                      .orElse(null);
+  private String getInterfaceNameIfOnlyOne(final List<String> interfaces) {
+    return Optional.ofNullable(interfaces)
+        .filter(list -> list.size() == 1)
+        .map(List::getFirst)
+        .orElse(null);
+  }
 
-              if (modelInterface == null || modelAllOf == null) {
-                return;
-              }
+  private String getAllOfNameIfOnlyOne(final Set<String> allOf) {
+    return Optional.ofNullable(allOf).filter(set -> set.size() == 1).stream()
+        .flatMap(Set::stream)
+        .findFirst()
+        .orElse(null);
+  }
 
-              if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
-                return;
-              }
+  private void fixInheritanceInModel(@NonNull final CodegenModel model) {
+    if (model.parent != null
+        || model.dataType == null
+        || model.dataType.equals(model.classname)
+        || model.isEnum) {
+      return;
+    }
 
-              model.parent = modelInterface;
-              final CodegenModel parentModel = allModels.get(modelInterface);
-              if (parentModel == null) {
-                throw new ModelNotFoundException(
-                    "Parent model should exist but was not found: %s".formatted(modelInterface));
-              }
-              model.parentModel = parentModel;
-            });
+    final String modelInterface = getInterfaceNameIfOnlyOne(model.interfaces);
+    final String modelAllOf = getAllOfNameIfOnlyOne(model.allOf);
+    if (modelInterface == null || modelAllOf == null) {
+      return;
+    }
+
+    if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
+      return;
+    }
+
+    model.parent = modelInterface;
+    final CodegenModel parentModel = allModels.get(modelInterface);
+    if (parentModel == null) {
+      throw new ModelNotFoundException(
+          "Parent model should exist but was not found: %s".formatted(modelInterface));
+    }
+    model.parentModel = parentModel;
   }
 }

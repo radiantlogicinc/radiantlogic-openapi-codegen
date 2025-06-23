@@ -467,48 +467,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .toList();
   }
 
-  // TODO document that this manipulation is being done super carefully with all the checks
-  private void handleMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {
-    allModels
-        .values()
-        .forEach(
-            model -> {
-              if (model.parent != null
-                  || model.dataType == null
-                  || model.dataType.equals(model.classname)
-                  || model.isEnum) {
-                return;
-              }
-
-              final String modelInterface =
-                  Optional.ofNullable(model.interfaces)
-                      .filter(list -> list.size() == 1)
-                      .map(List::getFirst)
-                      .orElse(null);
-              final String modelAllOf =
-                  Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
-                      .flatMap(Set::stream)
-                      .findFirst()
-                      .orElse(null);
-
-              if (modelInterface == null || modelAllOf == null) {
-                return;
-              }
-
-              if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
-                return;
-              }
-
-              model.parent = modelInterface;
-              final CodegenModel parentModel = allModels.get(modelInterface);
-              if (parentModel == null) {
-                throw new IllegalStateException(
-                    "Parent model should exist but was not found: %s".formatted(modelInterface));
-              }
-              model.parentModel = parentModel;
-            });
-  }
-
   private void removeEnumIfNotEnumInParent(
       @NonNull final CodegenModel model, final CodegenModel parentModel) {
     if (parentModel == null) {

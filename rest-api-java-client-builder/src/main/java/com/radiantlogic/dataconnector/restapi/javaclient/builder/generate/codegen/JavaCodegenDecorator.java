@@ -1,9 +1,5 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
@@ -16,6 +12,7 @@ import org.openapitools.codegen.languages.AbstractJavaCodegen;
  * common changes that could apply to multiple Java codegens (server & client) can be shared easily
  * with this decorator.
  */
+// TODO if this is not used, delete it
 @RequiredArgsConstructor
 public class JavaCodegenDecorator implements CodegenConfig {
   /**
@@ -25,12 +22,4 @@ public class JavaCodegenDecorator implements CodegenConfig {
   @Delegate(types = CodegenConfig.class)
   @NonNull
   private final AbstractJavaCodegen delegate;
-
-  private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
-  private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
-      new CodegenUnsupportedUnionTypeSupport();
-  private final CodegenDiscriminatorTypeSupport codegenDiscriminatorTypeSupport =
-      new CodegenDiscriminatorTypeSupport();
-  private final CodegenNonEnglishNameSupport codegenNonEnglishNameSupport =
-      new CodegenNonEnglishNameSupport();
 }

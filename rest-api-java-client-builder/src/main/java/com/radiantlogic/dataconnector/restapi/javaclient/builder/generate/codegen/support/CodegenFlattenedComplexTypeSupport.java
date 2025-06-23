@@ -35,7 +35,7 @@ public class CodegenFlattenedComplexTypeSupport {
             .map(
                 property -> {
                   if (property.getComplexType() != null) {
-                    return fixIncorrectComplexType(property, schemaModel);
+                    return fixIncorrectComplexType(property, schemaModel, openAPI);
                   }
                   return property;
                 })

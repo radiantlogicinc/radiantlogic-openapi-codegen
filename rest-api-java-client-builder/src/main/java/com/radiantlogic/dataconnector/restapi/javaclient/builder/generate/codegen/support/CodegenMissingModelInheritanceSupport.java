@@ -30,7 +30,7 @@ import org.openapitools.codegen.CodegenModel;
  */
 public class CodegenMissingModelInheritanceSupport {
   public void fixInheritanceAllModels(@NonNull final Map<String, CodegenModel> allModels) {
-    allModels.values().forEach(this::fixInheritanceInModel);
+    allModels.values().forEach(model -> fixInheritanceInModel(model, allModels));
   }
 
   private String getInterfaceNameIfOnlyOne(final List<String> interfaces) {
@@ -47,7 +47,8 @@ public class CodegenMissingModelInheritanceSupport {
         .orElse(null);
   }
 
-  private void fixInheritanceInModel(@NonNull final CodegenModel model) {
+  private void fixInheritanceInModel(
+      @NonNull final CodegenModel model, @NonNull final Map<String, CodegenModel> allModels) {
     if (model.parent != null
         || model.dataType == null
         || model.dataType.equals(model.classname)

@@ -15,18 +15,20 @@ import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.utils.ModelUtils;
 
 /**
- * The term "flattened" comes from the source code of openapi-generator when the type is configured
- * in this way. In short, a type like this is a union type of non-object types, ie `Long | String |
- * Boolean`. Such a thing is valid in OpenAPI & JSON, but not in Java.
+ * It is possible in JSON to have a property whose type is a fairly open-ended union, such as `Long
+ * | String | Object | Array`. OpenAPI supports this with its own schema design. Java, obviously,
+ * does not support such a thing. Generated code with this type of union, depending on the details
+ * of how the schema is implemented, can produce compile errors.
  *
- * <p>This class inspects the properties, identifies incorrectly "flattened" types, and replaces
- * them with `Object` because a more precise union would be extraordinarily difficult to configure
- * the generator to support.
+ * <p>To fix the issue, this class identifies such unsupported union types and dismantles them,
+ * replacing them with a simple Object type. It does reduce precision in the generated code, but
+ * it's an acceptable tradeoff at the moment to compensate for this problem. A more sophisticated
+ * solution can be built in the future.
  */
-public class CodegenFlattenedComplexTypeSupport {
+public class CodegenUnsupportedUnionTypeSupport {
   private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
-  public void fixIncorrectlyFlattenedPropertyTypes(
+  public void fixUnsupportedUnionTypes(
       @NonNull final CodegenModel codegenModel,
       @NonNull final Schema<?> schemaModel,
       @NonNull final OpenAPI openAPI) {

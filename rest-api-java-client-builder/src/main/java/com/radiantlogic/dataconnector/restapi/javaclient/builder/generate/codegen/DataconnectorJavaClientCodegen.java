@@ -1,8 +1,8 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenFlattenedComplexTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
@@ -58,8 +58,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
-  private final CodegenFlattenedComplexTypeSupport codegenFlattenedComplexTypeSupport =
-      new CodegenFlattenedComplexTypeSupport();
+  private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
+      new CodegenUnsupportedUnionTypeSupport();
 
   @NonNull private final Args args;
 
@@ -190,7 +190,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
      * applying the change to one property at a time. However, I get errors there I don't get when I run the code here.
      * At the time of writing I've spent an extensive amount of time on this project and don't have the time to further investigate the discrepancy.
      */
-    codegenFlattenedComplexTypeSupport.fixIncorrectlyFlattenedPropertyTypes(result, model, openAPI);
+    codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(result, model, openAPI);
 
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {

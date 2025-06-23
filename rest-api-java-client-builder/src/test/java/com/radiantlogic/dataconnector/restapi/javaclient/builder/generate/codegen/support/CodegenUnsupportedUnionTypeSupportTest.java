@@ -15,6 +15,20 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class CodegenUnsupportedUnionTypeSupportTest {
+  private static final String SCHEMA_OBJECT_PROP = "objectProp";
+  private static final String SCHEMA_STRING_PROP = "stringProp";
+  private static final String SCHEMA_OBJECT_CHILD = "objectChild";
+  private static final String SCHEMA_OBJECT_CHILD2 = "objectChild2";
+  private static final String SCHEMA_STRING_CHILD = "stringChild";
+  private static final String SCHEMA_VALID_ONE_OF = "validOneOf";
+  private static final String SCHEMA_VALID_ANY_OF = "validAnyOf";
+  private static final String SCHEMA_INVALID_ONE_OF = "invalidOneOf";
+  private static final String SCHEMA_INVALID_ANY_OF = "invalidAnyOf";
+  private static final String SCHEMA_VALID_ONE_OF_REF = "validOneOfRef";
+  private static final String SCHEMA_VALID_ANY_OF_REF = "validAnyOfRef";
+  private static final String SCHEMA_INVALID_ONE_OF_REF = "invalidOneOfRef";
+  private static final String SCHEMA_ALL_PROPERTIES_VALID = "allPropertiesValid";
+
   private static final OpenAPI openAPI = new OpenAPI();
 
   /** Construct the data to use in the tests. */
@@ -25,54 +39,54 @@ public class CodegenUnsupportedUnionTypeSupportTest {
 
   private static void constructOpenAPISchemas() {
     final ObjectSchema objectPropSchema = new ObjectSchema();
-    objectPropSchema.setName("objectProp");
+    objectPropSchema.setName(SCHEMA_OBJECT_PROP);
 
     final StringSchema stringPropSchema = new StringSchema();
-    stringPropSchema.setName("stringProp");
+    stringPropSchema.setName(SCHEMA_STRING_PROP);
 
     final ObjectSchema objectChildSchema = new ObjectSchema();
-    objectChildSchema.setName("objectChild");
+    objectChildSchema.setName(SCHEMA_OBJECT_CHILD);
 
     final ObjectSchema objectChildSchema2 = new ObjectSchema();
-    objectChildSchema2.setName("objectChild2");
+    objectChildSchema2.setName(SCHEMA_OBJECT_CHILD2);
 
     final StringSchema stringChildSchema = new StringSchema();
-    stringChildSchema.setName("stringChild");
+    stringChildSchema.setName(SCHEMA_STRING_CHILD);
 
     final Schema<?> validOneOfSchema = new Schema<>();
-    validOneOfSchema.setName("validOneOf");
+    validOneOfSchema.setName(SCHEMA_VALID_ONE_OF);
     validOneOfSchema.setOneOf(List.of(objectChildSchema, objectChildSchema2));
 
     final Schema<?> validAnyOfSchema = new Schema<>();
-    validOneOfSchema.setName("validAnyOf");
+    validOneOfSchema.setName(SCHEMA_VALID_ANY_OF);
     validOneOfSchema.setAnyOf(List.of(objectChildSchema, objectChildSchema2));
 
     final Schema<?> invalidOneOfSchema = new Schema<>();
-    invalidOneOfSchema.setName("invalidOneOf");
+    invalidOneOfSchema.setName(SCHEMA_INVALID_ONE_OF);
     invalidOneOfSchema.setOneOf(List.of(objectChildSchema, stringChildSchema));
 
     final Schema<?> invalidAnyOfSchema = new Schema<>();
-    invalidOneOfSchema.setName("invalidAnyOf");
+    invalidOneOfSchema.setName(SCHEMA_INVALID_ANY_OF);
     invalidOneOfSchema.setAnyOf(List.of(objectChildSchema, stringChildSchema));
 
     final Schema<?> validOneOfRefSchema = new Schema<>();
-    validOneOfRefSchema.setName("validOneOfRef");
-    validOneOfRefSchema.set$ref("#/components/schemas/validOneOf");
+    validOneOfRefSchema.setName(SCHEMA_VALID_ONE_OF_REF);
+    validOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_VALID_ONE_OF));
 
     final Schema<?> validAnyOfRefSchema = new Schema<>();
-    validOneOfRefSchema.setName("validAnyOfRef");
-    validOneOfRefSchema.set$ref("#/components/schemas/validAnyOf");
+    validOneOfRefSchema.setName(SCHEMA_VALID_ANY_OF_REF);
+    validOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_VALID_ANY_OF));
 
     final Schema<?> invalidOneOfRefSchema = new Schema<>();
-    invalidOneOfRefSchema.setName("invalidOneOfRef");
-    invalidOneOfRefSchema.set$ref("#/components/schemas/invalidOneOf");
+    invalidOneOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
+    invalidOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ONE_OF));
 
     final Schema<?> invalidAnyOfRefSchema = new Schema<>();
-    invalidOneOfRefSchema.setName("invalidOneOfRef");
-    invalidOneOfRefSchema.set$ref("#/components/schemas/invalidAnyOf");
+    invalidOneOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
+    invalidOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ANY_OF));
 
     final ObjectSchema allPropertiesValidSchema = new ObjectSchema();
-    allPropertiesValidSchema.setName("allPropertiesValid");
+    allPropertiesValidSchema.setName(SCHEMA_ALL_PROPERTIES_VALID);
     allPropertiesValidSchema.setProperties(
         toSchemaMap(
             objectPropSchema,

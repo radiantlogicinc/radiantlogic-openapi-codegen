@@ -154,9 +154,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   }
 
   private CodegenProperty fixIncorrectComplexType(
-      @NonNull final String name,
-      @NonNull final CodegenProperty property,
-      final Schema modelSchema) {
+      @NonNull final CodegenProperty property, final Schema modelSchema) {
     final Schema propertySchema =
         Optional.ofNullable((Map<String, Schema>) modelSchema.getProperties())
             .orElseGet(Map::of)
@@ -252,7 +250,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
             .map(
                 property -> {
                   if (property.getComplexType() != null) {
-                    return fixIncorrectComplexType(name, property, model);
+                    return fixIncorrectComplexType(property, model);
                   }
                   return property;
                 })

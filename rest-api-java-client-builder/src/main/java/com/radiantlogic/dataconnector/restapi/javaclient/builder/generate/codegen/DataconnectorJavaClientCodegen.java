@@ -5,6 +5,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
@@ -68,6 +69,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenEnumValueOfSupport();
   private final CodegenLiteralPropertyNameSupport codegenLiteralPropertyNameSupport =
       new CodegenLiteralPropertyNameSupport();
+  private final CodegenMissingModelInheritanceSupport codegenMissingModelInheritanceSupport =
+      new CodegenMissingModelInheritanceSupport();
 
   @NonNull private final Args args;
 
@@ -591,7 +594,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         fixProblematicKeysForFilenames(originalAllModelMaps);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
-    handleMissingModelInheritance(allModels);
+    codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children

@@ -35,6 +35,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
   private static final String SCHEMA_INVALID_ONE_OF_REF = "invalidOneOfRef";
   private static final String SCHEMA_INVALID_ANY_OF_REF = "invalidAnyOfRef";
   private static final String SCHEMA_ALL_PROPERTIES_VALID = "allPropertiesValid";
+  private static final String SCHEMA_DIRECT_INVALID_ONE_OF = "directInvalidOneOf";
 
   private static final OpenAPI openAPI = new OpenAPI();
 
@@ -103,6 +104,10 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             validAnyOfSchema,
             validAnyOfRefSchema));
 
+    final ObjectSchema directInvalidOneOfSchema = new ObjectSchema();
+    directInvalidOneOfSchema.setName(SCHEMA_DIRECT_INVALID_ONE_OF);
+    directInvalidOneOfSchema.setProperties(toSchemaMap(invalidOneOfSchema));
+
     final Components components = new Components();
     // openapi-generator using raw types forces me to use one here
     components.setSchemas(
@@ -117,8 +122,10 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             validOneOfRefSchema,
             invalidOneOfRefSchema,
             validAnyOfSchema,
+            invalidAnyOfSchema,
             invalidAnyOfRefSchema,
-            allPropertiesValidSchema));
+            allPropertiesValidSchema,
+            directInvalidOneOfSchema));
     openAPI.setComponents(components);
   }
 
@@ -138,6 +145,16 @@ public class CodegenUnsupportedUnionTypeSupportTest {
 
   private static CodegenProperty createProp(@NonNull final String name) {
     return createProp(name, true);
+  }
+
+  private static CodegenProperty createFixedProp(@NonNull final String name) {
+    final CodegenProperty prop = createProp(name, true);
+    prop.openApiType = "Object";
+    prop.dataType = "Object";
+    prop.datatypeWithEnum = "Object";
+    prop.baseType = "Object";
+    prop.defaultValue = null;
+    return prop;
   }
 
   private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
@@ -174,7 +191,17 @@ public class CodegenUnsupportedUnionTypeSupportTest {
 
   @Test
   void itHasDirectUnsupportedUnionInOneOf() {
-    throw new RuntimeException();
+    final List<CodegenProperty> initialProps = List.of(createProp(SCHEMA_INVALID_ONE_OF));
+    final List<CodegenProperty> expectedProps = List.of(createFixedProp(SCHEMA_INVALID_ONE_OF));
+
+    final CodegenModel model = new CodegenModel();
+    model.setName(SCHEMA_DIRECT_INVALID_ONE_OF);
+    model.setVars(new ArrayList<>(initialProps));
+
+    final Schema<?> schema = openAPI.getComponents().getSchemas().get(SCHEMA_DIRECT_INVALID_ONE_OF);
+
+    codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(model, schema, openAPI);
+    assertThat(model.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);
   }
 
   @Test

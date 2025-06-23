@@ -1,5 +1,9 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import java.util.Map;
+import lombok.NonNull;
+import org.openapitools.codegen.CodegenModel;
+
 /**
  * There are some scenarios where inheritance relationships that should exist between schemas don't
  * in an OpenAPI spec. This is mainly problematic for classes with inheritance that have fields with
@@ -18,33 +22,5 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  * always work.
  */
 public class CodegenMissingModelInheritanceSupport {
-
-  public static class Group {}
-
-  public static class Team extends Group {}
-
-  public static class Parent {
-    private Group item;
-
-    public Group getItem() {
-      return item;
-    }
-
-    public void setItem(Group item) {
-      this.item = item;
-    }
-  }
-
-  public static class Child extends Parent {
-    private Team item;
-
-    @Override
-    public Team getItem() {
-      return item;
-    }
-
-    public void setItem(Team item) {
-      this.item = item;
-    }
-  }
+  public void fixMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {}
 }

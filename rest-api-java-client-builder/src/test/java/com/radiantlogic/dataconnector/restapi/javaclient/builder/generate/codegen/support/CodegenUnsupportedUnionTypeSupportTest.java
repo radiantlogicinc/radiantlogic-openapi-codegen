@@ -46,6 +46,14 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     invalidOneOfSchema.setName("invalidOneOf");
     invalidOneOfSchema.setOneOf(List.of(objectChildSchema, stringChildSchema));
 
+    final Schema<?> validOneOfRefSchema = new Schema<>();
+    validOneOfRefSchema.setName("validOneOfRef");
+    validOneOfRefSchema.set$ref("#/components/schemas/validOneOf");
+
+    final Schema<?> invalidOneOfRefSchema = new Schema<>();
+    invalidOneOfRefSchema.setName("invalidOneOfRef");
+    invalidOneOfRefSchema.set$ref("#/components/schemas/invalidOneOf");
+
     final Components components = new Components();
     // openapi-generator using raw types forces me to use one here
     final Map<String, Schema> schemas =
@@ -56,7 +64,9 @@ public class CodegenUnsupportedUnionTypeSupportTest {
                 stringChildSchema,
                 objectChildSchema2,
                 validOneOfSchema,
-                invalidOneOfSchema)
+                invalidOneOfSchema,
+                validOneOfRefSchema,
+                invalidOneOfRefSchema)
             .collect(Collectors.toMap(Schema::getName, Function.identity()));
     components.setSchemas(schemas);
     openAPI.setComponents(components);

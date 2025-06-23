@@ -200,11 +200,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   @Override
   public CodegenProperty fromProperty(
       @NonNull final String name,
-      @NonNull final Schema p,
+      @NonNull final Schema propertySchema,
       final boolean required,
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
-        super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
+        super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
     final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
     fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;

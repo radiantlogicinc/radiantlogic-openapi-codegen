@@ -58,6 +58,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final ExtendedCodegenMapper CODEGEN_MAPPER =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
+  private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
+
   @NonNull private final Args args;
 
   @Override
@@ -78,7 +80,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   }
 
   public void init(@NonNull final OpenAPI openAPI) {
-    final var metadata = new CodegenMetadataSupport().getMetadata(openAPI, args);
+    final var metadata = codegenMetadataSupport.getMetadata(openAPI, args);
 
     setOutputDir(metadata.outputDir().toString());
     setGroupId(args.groupId());

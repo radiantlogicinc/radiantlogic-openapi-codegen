@@ -2,11 +2,11 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +50,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final String IMPORT_KEY = "import";
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
-  private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
   private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
@@ -59,6 +58,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
+  private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
+      new CodegenUnsupportedUnionTypeSupport();
 
   @NonNull private final Args args;
 
@@ -114,69 +115,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     }
   }
 
-  private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {
-    if (schema.getType() != null && schema.getType().equals("object")) {
-      return false;
-    }
-
-    if (schema.get$ref() != null) {
-      final String schemaName = parseSchemaRef(schema.get$ref());
-      final Schema refSchema = ModelUtils.getSchema(openAPI, schemaName);
-      return isIncorrectlyFlattened(refSchema);
-    }
-
-    if (schema.getOneOf() == null && schema.getAnyOf() == null) {
-      return false;
-    }
-
-    // TODO clean this up
-    final long nonObjectOneOfCount =
-        Optional.ofNullable((List<Schema>) schema.getOneOf()).stream()
-            .flatMap(List::stream)
-            .filter(s -> !(s instanceof ObjectSchema))
-            .count();
-
-    final long nonObjectAnyOfCount =
-        Optional.ofNullable((List<Schema>) schema.getAnyOf()).stream()
-            .flatMap(List::stream)
-            .filter(s -> !(s instanceof ObjectSchema))
-            .count();
-
-    return nonObjectOneOfCount > 0 || nonObjectAnyOfCount > 0;
-  }
-
-  private static String parseSchemaRef(final String ref) {
-    final Matcher matcher = SCHEMA_REF_PATTERN.matcher(ref);
-    if (!matcher.matches()) {
-      throw new IllegalStateException("Invalid schema ref: %s".formatted(ref));
-    }
-    return matcher.group(1);
-  }
-
-  private CodegenProperty fixIncorrectComplexType(
-      @NonNull final String name,
-      @NonNull final CodegenProperty property,
-      final Schema modelSchema) {
-    final Schema propertySchema =
-        Optional.ofNullable((Map<String, Schema>) modelSchema.getProperties())
-            .orElseGet(Map::of)
-            .get(property.baseName);
-    if (propertySchema == null) {
-      return property;
-    }
-
-    if (!isIncorrectlyFlattened(propertySchema)) {
-      return property;
-    }
-
-    property.openApiType = "Object";
-    property.dataType = "Object";
-    property.datatypeWithEnum = "Object";
-    property.baseType = "Object";
-    property.defaultValue = null;
-    return property;
-  }
-
   @Override
   protected List<Map<String, Object>> buildEnumVars(
       @NonNull final List<Object> values, @NonNull final String dataType) {
@@ -202,11 +140,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   @Override
   public CodegenProperty fromProperty(
       @NonNull final String name,
-      @NonNull final Schema p,
+      @NonNull final Schema propertySchema,
       final boolean required,
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
-        super.fromProperty(name, p, required, schemaIsFromAdditionalProperties);
+        super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
     final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
     fixBadLiteralPropertyNames(extendedProp);
     return extendedProp;
@@ -247,17 +185,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
 
-    final List<CodegenProperty> fixedVars =
-        result.getVars().stream()
-            .map(
-                property -> {
-                  if (property.getComplexType() != null) {
-                    return fixIncorrectComplexType(name, property, model);
-                  }
-                  return property;
-                })
-            .toList();
-    result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
+    /*
+     * I've tried making this work in the fromProperty method. In theory that's the better place for it,
+     * applying the change to one property at a time. However, I get errors there I don't get when I run the code here.
+     * At the time of writing I've spent an extensive amount of time on this project and don't have the time to further investigate the discrepancy.
+     */
+    codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(result, model, openAPI);
 
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {

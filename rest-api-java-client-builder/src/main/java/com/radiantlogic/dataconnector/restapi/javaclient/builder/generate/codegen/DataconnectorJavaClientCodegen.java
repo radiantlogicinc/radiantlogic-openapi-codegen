@@ -1,7 +1,7 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
@@ -62,8 +62,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
   private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
       new CodegenUnsupportedUnionTypeSupport();
-  private final CodegenDiscriminatorTypeSupport codegenDiscriminatorTypeSupport =
-      new CodegenDiscriminatorTypeSupport();
+  private final CodegenDiscriminatorSupport codegenDiscriminatorSupport =
+      new CodegenDiscriminatorSupport();
   private final CodegenNonEnglishNameSupport codegenNonEnglishNameSupport =
       new CodegenNonEnglishNameSupport();
   private final CodegenEnumValueOfSupport codegenEnumValueOfSupport =
@@ -160,7 +160,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
-    codegenDiscriminatorTypeSupport.fixDiscriminatorType(result);
+    codegenDiscriminatorSupport.fixDiscriminatorType(result);
 
     /*
      * I've tried making this work in the fromProperty method. In theory that's the better place for it,

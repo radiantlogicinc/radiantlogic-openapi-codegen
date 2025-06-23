@@ -9,22 +9,22 @@ import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 
-public class CodegenDiscriminatorTypeSupportTest {
-  private final CodegenDiscriminatorTypeSupport codegenDiscriminatorTypeSupport =
-      new CodegenDiscriminatorTypeSupport();
+public class CodegenDiscriminatorSupportTest {
+  private final CodegenDiscriminatorSupport codegenDiscriminatorSupport =
+      new CodegenDiscriminatorSupport();
 
   @Test
-  void testItHasNoDiscriminator() {
+  void itDoesNotChangeTypeWhenNoDiscriminator() {
     final CodegenModel model = new CodegenModel();
     model.setDiscriminator(null);
 
-    codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
+    codegenDiscriminatorSupport.fixDiscriminatorType(model);
 
     assertThat(model.getDiscriminator()).isNull();
   }
 
   @Test
-  void testItHasDiscriminatorWithCorrectType() {
+  void itDoesNotChangeTypeWhenCorrectType() {
     final CodegenModel model = new CodegenModel();
     final CodegenDiscriminator discriminator = new CodegenDiscriminator();
     final String propertyName = "type";
@@ -37,13 +37,13 @@ public class CodegenDiscriminatorTypeSupportTest {
     property.setDatatypeWithEnum("MyType");
     model.setVars(new ArrayList<>(List.of(property)));
 
-    codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
+    codegenDiscriminatorSupport.fixDiscriminatorType(model);
 
     assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("MyType");
   }
 
   @Test
-  void testItHasDiscriminatorWithIncorrectType() {
+  void itChangesTypeWhenIncorrect() {
     final CodegenModel model = new CodegenModel();
     final CodegenDiscriminator discriminator = new CodegenDiscriminator();
     final String propertyName = "type";
@@ -56,7 +56,7 @@ public class CodegenDiscriminatorTypeSupportTest {
     property.setDatatypeWithEnum("MyType");
     model.setVars(new ArrayList<>(List.of(property)));
 
-    codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
+    codegenDiscriminatorSupport.fixDiscriminatorType(model);
 
     assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("MyType");
   }

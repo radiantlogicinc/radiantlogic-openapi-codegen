@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 
 /** Handles fixing discriminator property types. */
-public class CodegenDiscriminatorTypeSupport {
+public class CodegenDiscriminatorSupport {
   public void fixDiscriminatorType(@NonNull final CodegenModel codegenModel) {
     if (codegenModel.discriminator == null) {
       return;

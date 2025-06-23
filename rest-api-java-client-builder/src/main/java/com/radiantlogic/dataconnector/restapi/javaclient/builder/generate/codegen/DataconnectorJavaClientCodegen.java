@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
@@ -14,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -52,8 +52,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
-  private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
-  private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
   private static final ExtendedCodegenMapper CODEGEN_MAPPER =
       Mappers.getMapper(ExtendedCodegenMapper.class);
@@ -63,6 +61,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenUnsupportedUnionTypeSupport();
   private final CodegenDiscriminatorTypeSupport codegenDiscriminatorTypeSupport =
       new CodegenDiscriminatorTypeSupport();
+  private final CodegenNonEnglishNameSupport codegenNonEnglishNameSupport =
+      new CodegenNonEnglishNameSupport();
 
   @NonNull private final Args args;
 
@@ -153,29 +153,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return extendedProp;
   }
 
-  // TODO document how insane this is yet it has been seen in sonarqube
-  private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
-    openAPI.getPaths().entrySet().stream()
-        .flatMap(pathEntry -> pathEntry.getValue().readOperations().stream())
-        .filter(operation -> Objects.nonNull(operation.getOperationId()))
-        .forEach(
-            operation -> {
-              final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
-              final String withoutNonEnglish = matcher.replaceAll("");
-              final String withoutNonLetter =
-                  NON_LETTER_PATTERN.matcher(withoutNonEnglish).replaceAll("");
-              if (StringUtils.isNotBlank(withoutNonLetter)) {
-                operation.setOperationId(withoutNonEnglish);
-              } else {
-                operation.setOperationId(null);
-              }
-            });
-  }
-
   @Override
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
     super.preprocessOpenAPI(openAPI);
-    fixNonEnglishOperationIds(openAPI);
+    codegenNonEnglishNameSupport.fixOperationIds(openAPI);
   }
 
   @Override

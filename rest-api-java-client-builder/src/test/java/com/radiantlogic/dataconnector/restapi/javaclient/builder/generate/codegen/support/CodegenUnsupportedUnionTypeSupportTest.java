@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenProperty;
 
 public class CodegenUnsupportedUnionTypeSupportTest {
   private static final String SCHEMA_OBJECT_PROP = "objectProp";
@@ -118,8 +120,33 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     return Arrays.stream(schemas).collect(Collectors.toMap(Schema::getName, Function.identity()));
   }
 
+  private static CodegenProperty createProp(@NonNull final String name, final boolean isComplex) {
+    final CodegenProperty codegenProperty = new CodegenProperty();
+    codegenProperty.setName(name);
+    codegenProperty.setBaseName(name);
+    if (isComplex) {
+      codegenProperty.setComplexType("complexType");
+    }
+    return codegenProperty;
+  }
+
+  private static CodegenProperty createProp(@NonNull final String name) {
+    return createProp(name, true);
+  }
+
   @Test
   void itHasNoUnsupportedUnions() {
+    final CodegenModel validModel = new CodegenModel();
+    validModel.setName("validModel");
+    validModel.setVars(
+        List.of(
+            createProp(SCHEMA_STRING_PROP, false),
+            createProp(SCHEMA_OBJECT_PROP),
+            createProp(SCHEMA_VALID_ONE_OF),
+            createProp(SCHEMA_VALID_ANY_OF),
+            createProp(SCHEMA_VALID_ONE_OF_REF),
+            createProp(SCHEMA_VALID_ANY_OF_REF)));
+
     throw new RuntimeException();
   }
 

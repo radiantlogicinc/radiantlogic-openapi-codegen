@@ -36,7 +36,7 @@ public class CodegenRemoveInheritanceEnumsSupport {
   }
 
   private void removeEnumIfNotInParent(
-      @NonNull final CodegenProperty enumProperty, @NonNull final CodegenModel parentModel) {
+      @NonNull final CodegenProperty var, @NonNull final CodegenModel parentModel) {
     parentModel.vars.stream()
         .filter(v -> v.name.equals(var.name))
         .findFirst()

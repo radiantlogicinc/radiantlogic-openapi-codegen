@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -140,17 +141,25 @@ public class CodegenUnsupportedUnionTypeSupportTest {
 
   @Test
   void itHasNoUnsupportedUnions() {
-    final List<CodegenProperty> originalProps =
-        List.of(
-            createProp(SCHEMA_STRING_PROP, false),
-            createProp(SCHEMA_OBJECT_PROP),
-            createProp(SCHEMA_VALID_ONE_OF),
-            createProp(SCHEMA_VALID_ANY_OF),
-            createProp(SCHEMA_VALID_ONE_OF_REF),
-            createProp(SCHEMA_VALID_ANY_OF_REF));
+    // Creating two copies because the code under test mutates the input and this test is to
+    // validate that no changes are performed
+    final var codegenPropertyLists =
+        IntStream.range(0, 2)
+            .boxed()
+            .map(
+                i ->
+                    List.of(
+                        createProp(SCHEMA_STRING_PROP, false),
+                        createProp(SCHEMA_OBJECT_PROP),
+                        createProp(SCHEMA_VALID_ONE_OF),
+                        createProp(SCHEMA_VALID_ANY_OF),
+                        createProp(SCHEMA_VALID_ONE_OF_REF),
+                        createProp(SCHEMA_VALID_ANY_OF_REF)))
+            .toList();
+    final List<CodegenProperty> expectedProps = codegenPropertyLists.get(0);
     final CodegenModel validModel = new CodegenModel();
     validModel.setName("validModel");
-    validModel.setVars(new ArrayList<>(originalProps));
+    validModel.setVars(new ArrayList<>(codegenPropertyLists.get(1)));
 
     final Schema<?> validSchema =
         openAPI.getComponents().getSchemas().get(SCHEMA_ALL_PROPERTIES_VALID);

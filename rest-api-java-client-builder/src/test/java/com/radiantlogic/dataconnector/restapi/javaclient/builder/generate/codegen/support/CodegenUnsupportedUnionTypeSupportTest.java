@@ -4,7 +4,27 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenUnsupportedUnionTypeSupportTest {
   @Test
-  void test() {
+  void itHasNoUnsupportedUnions() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itHasDirectUnsupportedUnionInOneOf() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itHasDirectUnsupportedUnionInAnyOf() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itHasRefUnsupportedUnionInOneOf() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itHasRefUnsupportedUnionInAnyOf() {
     throw new RuntimeException();
   }
 }

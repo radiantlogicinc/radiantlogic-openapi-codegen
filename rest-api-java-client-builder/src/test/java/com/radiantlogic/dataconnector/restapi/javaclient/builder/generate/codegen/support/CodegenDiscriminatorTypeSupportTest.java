@@ -17,7 +17,9 @@ public class CodegenDiscriminatorTypeSupportTest {
   void testItHasNoDiscriminator() {
     final CodegenModel model = new CodegenModel();
     model.setDiscriminator(null);
+
     codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
+
     assertThat(model.getDiscriminator()).isNull();
   }
 
@@ -27,14 +29,17 @@ public class CodegenDiscriminatorTypeSupportTest {
     final CodegenDiscriminator discriminator = new CodegenDiscriminator();
     final String propertyName = "type";
     discriminator.setPropertyBaseName(propertyName);
-    discriminator.setPropertyType("String");
+    discriminator.setPropertyType("MyType");
     model.setDiscriminator(discriminator);
+
     final CodegenProperty property = new CodegenProperty();
     property.setBaseName(propertyName);
-    property.setDatatypeWithEnum("String");
+    property.setDatatypeWithEnum("MyType");
     model.setVars(new ArrayList<>(List.of(property)));
+
     codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
-    assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("String");
+
+    assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("MyType");
   }
 
   @Test
@@ -43,13 +48,16 @@ public class CodegenDiscriminatorTypeSupportTest {
     final CodegenDiscriminator discriminator = new CodegenDiscriminator();
     final String propertyName = "type";
     discriminator.setPropertyBaseName(propertyName);
-    discriminator.setPropertyType("Object");
+    discriminator.setPropertyType("String");
     model.setDiscriminator(discriminator);
+
     final CodegenProperty property = new CodegenProperty();
     property.setBaseName(propertyName);
-    property.setDatatypeWithEnum("String");
+    property.setDatatypeWithEnum("MyType");
     model.setVars(new ArrayList<>(List.of(property)));
+
     codegenDiscriminatorTypeSupport.fixDiscriminatorType(model);
-    assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("String");
+
+    assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("MyType");
   }
 }

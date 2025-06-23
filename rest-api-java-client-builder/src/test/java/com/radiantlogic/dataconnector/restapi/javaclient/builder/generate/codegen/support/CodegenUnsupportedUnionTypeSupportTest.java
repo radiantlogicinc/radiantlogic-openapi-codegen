@@ -1,5 +1,7 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -165,6 +167,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
         openAPI.getComponents().getSchemas().get(SCHEMA_ALL_PROPERTIES_VALID);
 
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(validModel, validSchema, openAPI);
+    assertThat(validModel.getVars()).usingRecursiveComparison().isEqualTo(expectedProps);
   }
 
   @Test

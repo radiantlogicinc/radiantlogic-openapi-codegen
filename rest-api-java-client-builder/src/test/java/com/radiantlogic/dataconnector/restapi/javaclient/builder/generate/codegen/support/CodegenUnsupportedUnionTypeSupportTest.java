@@ -19,6 +19,10 @@ public class CodegenUnsupportedUnionTypeSupportTest {
   /** Construct the data to use in the tests. */
   @BeforeAll
   static void beforeAll() {
+    constructOpenAPISchemas();
+  }
+
+  private static void constructOpenAPISchemas() {
     final ObjectSchema objectPropSchema = new ObjectSchema();
     objectPropSchema.setName("objectProp");
 

@@ -25,8 +25,9 @@ import org.openapitools.codegen.CodegenModel;
  * be a compile error. This support class exists to make sure that this kind of hierarchy will
  * always work.
  *
- * <p>Due to the high risk of this manipulation, there are many checks performed prior to making the
- * change.
+ * <p>The implementation performs an extensive number of checks prior to making this modification.
+ * That is because this type of change is extremely high-risk, so the goal is to only implement it
+ * in the narrowest of cases.
  */
 public class CodegenMissingModelInheritanceSupport {
   public void fixInheritanceAllModels(@NonNull final Map<String, CodegenModel> allModels) {

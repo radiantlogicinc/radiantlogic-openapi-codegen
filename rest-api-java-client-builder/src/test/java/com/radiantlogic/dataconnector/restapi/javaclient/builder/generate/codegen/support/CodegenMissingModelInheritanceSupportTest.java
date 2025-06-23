@@ -52,4 +52,14 @@ public class CodegenMissingModelInheritanceSupportTest {
   void itDoesNothingIfModelInterfaceDoesNotEqualDataType() {
     throw new RuntimeException();
   }
+
+  @Test
+  void itThrowsExceptionIfParentModelNotFound() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itFixesMissingInheritance() {
+    throw new RuntimeException();
+  }
 }

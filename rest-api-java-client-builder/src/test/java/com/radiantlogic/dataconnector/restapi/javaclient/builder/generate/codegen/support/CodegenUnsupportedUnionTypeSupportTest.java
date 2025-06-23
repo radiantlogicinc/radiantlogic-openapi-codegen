@@ -33,6 +33,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
   private static final String SCHEMA_VALID_ONE_OF_REF = "validOneOfRef";
   private static final String SCHEMA_VALID_ANY_OF_REF = "validAnyOfRef";
   private static final String SCHEMA_INVALID_ONE_OF_REF = "invalidOneOfRef";
+  private static final String SCHEMA_INVALID_ANY_OF_REF = "invalidAnyOfRef";
   private static final String SCHEMA_ALL_PROPERTIES_VALID = "allPropertiesValid";
 
   private static final OpenAPI openAPI = new OpenAPI();
@@ -88,7 +89,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     invalidOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ONE_OF));
 
     final Schema<?> invalidAnyOfRefSchema = new Schema<>();
-    invalidAnyOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
+    invalidAnyOfRefSchema.setName(SCHEMA_INVALID_ANY_OF_REF);
     invalidAnyOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ANY_OF));
 
     final ObjectSchema allPropertiesValidSchema = new ObjectSchema();

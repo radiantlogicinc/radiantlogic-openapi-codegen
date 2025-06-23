@@ -58,7 +58,9 @@ At the time of writing, all generated methods that return a type with this kind 
 - The quality of the generated code is directly correlated to the quality of the OpenAPI specification.
 - Only OpenAPI 3 is supported.
 
-## Requirements
+## Development
+
+### Requirements
 
 - Java 24
 - Maven 3.9.9

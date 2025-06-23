@@ -48,9 +48,7 @@ public class CodegenFlattenedComplexTypeSupport {
       @NonNull final Schema<?> schemaModel,
       @NonNull final OpenAPI openAPI) {
     final Schema<?> propertySchema =
-        Optional.ofNullable((Map<String, Schema<?>>) schemaModel.getProperties())
-            .orElseGet(Map::of)
-            .get(property.baseName);
+        Optional.ofNullable(schemaModel.getProperties()).orElseGet(Map::of).get(property.baseName);
     if (propertySchema == null) {
       return property;
     }
@@ -76,7 +74,7 @@ public class CodegenFlattenedComplexTypeSupport {
     if (schema.get$ref() != null) {
       final String schemaName = parseSchemaRef(schema.get$ref());
       final Schema<?> refSchema = ModelUtils.getSchema(openAPI, schemaName);
-      return isIncorrectlyFlattened(refSchema);
+      return isIncorrectlyFlattened(refSchema, openAPI);
     }
 
     if (schema.getOneOf() == null && schema.getAnyOf() == null) {
@@ -85,13 +83,13 @@ public class CodegenFlattenedComplexTypeSupport {
 
     // TODO clean this up
     final long nonObjectOneOfCount =
-        Optional.ofNullable((List<Schema<?>>) schema.getOneOf()).stream()
+        Optional.ofNullable(schema.getOneOf()).stream()
             .flatMap(List::stream)
             .filter(s -> !(s instanceof ObjectSchema))
             .count();
 
     final long nonObjectAnyOfCount =
-        Optional.ofNullable((List<Schema<?>>) schema.getAnyOf()).stream()
+        Optional.ofNullable(schema.getAnyOf()).stream()
             .flatMap(List::stream)
             .filter(s -> !(s instanceof ObjectSchema))
             .count();

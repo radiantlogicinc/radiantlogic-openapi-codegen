@@ -41,15 +41,16 @@ public class CodegenRemoveInheritanceEnumsSupport {
         .filter(v -> v.name.equals(var.name))
         .findFirst()
         .filter(parentVar -> !parentVar.isEnum)
-        .ifPresent(
-            parentVar -> {
-              var.isEnum = false;
-              var.dataType = parentVar.dataType;
-              var.datatypeWithEnum = parentVar.datatypeWithEnum;
-              var.openApiType = parentVar.openApiType;
-              var.allowableValues = parentVar.allowableValues;
-              var._enum = parentVar._enum;
-              var.defaultValue = parentVar.defaultValue;
-            });
+        .ifPresent(parentVar -> removeChildEnum(var, parentVar));
+  }
+
+  private void removeChildEnum(final CodegenProperty childVar, final CodegenProperty parentVar) {
+    childVar.isEnum = false;
+    childVar.dataType = parentVar.dataType;
+    childVar.datatypeWithEnum = parentVar.datatypeWithEnum;
+    childVar.openApiType = parentVar.openApiType;
+    childVar.allowableValues = parentVar.allowableValues;
+    childVar._enum = parentVar._enum;
+    childVar.defaultValue = parentVar.defaultValue;
   }
 }

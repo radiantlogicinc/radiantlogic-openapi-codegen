@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import java.util.Map;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenProperty;
 
 /**
  * One of the most painful areas of the codegen is related to enums. The default code generation
@@ -27,26 +28,28 @@ public class CodegenRemoveInheritanceEnumsSupport {
       return;
     }
 
-    model.vars.forEach(
-        var -> {
-          if (var.isEnum) {
-            parentModel.vars.stream()
-                .filter(v -> v.name.equals(var.name))
-                .findFirst()
-                .filter(parentVar -> !parentVar.isEnum)
-                .ifPresent(
-                    parentVar -> {
-                      var.isEnum = false;
-                      var.dataType = parentVar.dataType;
-                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
-                      var.openApiType = parentVar.openApiType;
-                      var.allowableValues = parentVar.allowableValues;
-                      var._enum = parentVar._enum;
-                      var.defaultValue = parentVar.defaultValue;
-                    });
-          }
-        });
+    model.vars.stream()
+        .filter(var -> var.isEnum)
+        .forEach(var -> removeEnumIfNotInParent(var, parentModel));
 
     removeEnumIfNotEnumInParent(model, parentModel.parentModel);
+  }
+
+  private void removeEnumIfNotInParent(
+      @NonNull final CodegenProperty enumProperty, @NonNull final CodegenModel parentModel) {
+    parentModel.vars.stream()
+        .filter(v -> v.name.equals(var.name))
+        .findFirst()
+        .filter(parentVar -> !parentVar.isEnum)
+        .ifPresent(
+            parentVar -> {
+              var.isEnum = false;
+              var.dataType = parentVar.dataType;
+              var.datatypeWithEnum = parentVar.datatypeWithEnum;
+              var.openApiType = parentVar.openApiType;
+              var.allowableValues = parentVar.allowableValues;
+              var._enum = parentVar._enum;
+              var.defaultValue = parentVar.defaultValue;
+            });
   }
 }

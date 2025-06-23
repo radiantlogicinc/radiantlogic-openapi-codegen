@@ -2,6 +2,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
@@ -63,6 +64,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenDiscriminatorTypeSupport();
   private final CodegenNonEnglishNameSupport codegenNonEnglishNameSupport =
       new CodegenNonEnglishNameSupport();
+  private final CodegenEnumValueOfSupport codegenEnumValueOfSupport =
+      new CodegenEnumValueOfSupport();
 
   @NonNull private final Args args;
 
@@ -122,10 +125,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   protected List<Map<String, Object>> buildEnumVars(
       @NonNull final List<Object> values, @NonNull final String dataType) {
     final var enumVars = super.buildEnumVars(values, dataType);
-    final boolean useValueOf = !dataType.equals("BigDecimal");
-
-    final var updatedEnumVars =
-        enumVars.stream().peek(map -> map.put("useValueOf", useValueOf)).toList();
+    final var updatedEnumVars = codegenEnumValueOfSupport.fixValueOfInEnumVars(enumVars, dataType);
+    // Must be mutable for downstream
     return new ArrayList<>(updatedEnumVars);
   }
 

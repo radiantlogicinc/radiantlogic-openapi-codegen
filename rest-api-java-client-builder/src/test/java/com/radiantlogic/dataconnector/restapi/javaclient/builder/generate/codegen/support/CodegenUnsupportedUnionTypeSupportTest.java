@@ -161,7 +161,7 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             .toList();
     final List<CodegenProperty> expectedProps = codegenPropertyLists.get(0);
     final CodegenModel validModel = new CodegenModel();
-    validModel.setName("validModel");
+    validModel.setName(SCHEMA_ALL_PROPERTIES_VALID);
     validModel.setVars(new ArrayList<>(codegenPropertyLists.get(1)));
 
     final Schema<?> validSchema =

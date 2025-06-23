@@ -1,6 +1,7 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenFlattenedComplexTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
@@ -59,6 +60,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
+  private final CodegenFlattenedComplexTypeSupport codegenFlattenedComplexTypeSupport =
+      new CodegenFlattenedComplexTypeSupport();
 
   @NonNull private final Args args;
 
@@ -245,17 +248,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
           .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
     }
 
-    final List<CodegenProperty> fixedVars =
-        result.getVars().stream()
-            .map(
-                property -> {
-                  if (property.getComplexType() != null) {
-                    return fixIncorrectComplexType(property, model);
-                  }
-                  return property;
-                })
-            .toList();
-    result.setVars(new ArrayList<>(fixedVars)); // Must be mutable for downstream code
+    /*
+     * I've tried making this work in the fromProperty method. In theory that's the better place for it,
+     * applying the change to one property at a time.
+     * However, I get errors there I don't get when I run the code here. At the time of writing I've spent
+     * an extensive amount of time on this project and don't have the time to further investigate the discrepancy.
+     */
+    codegenFlattenedComplexTypeSupport.fixIncorrectlyFlattenedPropertyTypes(result, model);
 
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {

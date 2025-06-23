@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
@@ -65,6 +66,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenNonEnglishNameSupport();
   private final CodegenEnumValueOfSupport codegenEnumValueOfSupport =
       new CodegenEnumValueOfSupport();
+  private final CodegenLiteralPropertyNameSupport codegenLiteralPropertyNameSupport =
+      new CodegenLiteralPropertyNameSupport();
 
   @NonNull private final Args args;
 
@@ -138,7 +141,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     final CodegenProperty prop =
         super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
     final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
-    fixBadLiteralPropertyNames(extendedProp);
+    codegenLiteralPropertyNameSupport.fixBadNames(extendedProp);
     return extendedProp;
   }
 

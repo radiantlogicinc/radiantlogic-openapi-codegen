@@ -13,6 +13,7 @@ This is an extension to the [openapi-generator](https://github.com/OpenAPITools/
 - Discriminated unions have a variety of mapping issues resolved so that the mapping and de-serialization works consistently and correctly.
 - Non-english/ascii operationIds (ie, chinese characters) are fixed to produce workable method names (yes, a major well-known company actually has this in their official spec).
 - Anonymous schemas can have names created by openapi-generator that conflict with existing named schemas. This has been corrected.
+- Union types that don't fit a natural java inheritance hierarchy (ie, they include primitives) are dismantled because they won't compile.
 - Missing inheritance links have been established so polymorphism works consistently with extended types.
 
 ### Limitations
@@ -33,7 +34,21 @@ This project fully supports `sdkman` for selecting the correct dependency versio
 
 ## Running Locally
 
-### From the CLI
+### IntelliJ Pre-Requisite
+
+Whether running the full codegen application or individual unit tests, the default IntelliJ settings will not correctly execute the program. The following adjustments will need to be made.
+
+1. The working directory should be set to `./rest-api-java-client-builder`.
+2. The maven `generate-resources` goal must be run before launch. IntelliJ by default does not run the whole maven lifecycle so this must be manually configured. This can be configured from any IntelliJ run configuration with the following steps:
+   1. Open the run configuration.
+   2. Select `Modify Options` -> `Before Launch Task`.
+   3. Add a new task for `Add Maven Goal`.
+   4. When configuring the goal, the `Command Line Options` value should be set to `generate-resources`.
+   5. Apply the changes.
+
+### Full Codegen From the CLI
+
+This executes the codegen CLI tool from source using the following command:
 
 ```bash
 mvn clean compile \
@@ -44,5 +59,7 @@ mvn clean compile \
 
 To see all possible arguments, run with `-DprogramArgs='-h'`
 
-### From IntelliJ
+### Full Codegen From IntelliJ
+
+Run the main class `com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner`. Make sure to configure the pre-requisite settings described above.
 

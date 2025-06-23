@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

@@ -1,14 +1,14 @@
-package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.io.CodegenPaths;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,9 @@ import org.openapitools.codegen.utils.ModelUtils;
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
  * style we want.
  */
-public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
+@RequiredArgsConstructor
+public class DataconnectorJavaClientCodegen extends JavaClientCodegen
+    implements ExtendedCodegenConfig {
   private static final String ENUM_VARS_KEY = "enumVars";
   private static final String VALUES_KEY = "values";
   private static final String NAME_KEY = "name";
@@ -52,15 +55,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
   private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
   private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
-  private static final CodegenMapper CODEGEN_MAPPER = Mappers.getMapper(CodegenMapper.class);
+  private static final ExtendedCodegenMapper CODEGEN_MAPPER =
+      Mappers.getMapper(ExtendedCodegenMapper.class);
 
-  public DataconnectorJavaClientCodegen(@NonNull final OpenAPI openAPI, @NonNull final Args args) {
-    setOpenAPI(openAPI);
-    init(args);
-  }
+  private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
 
-  public List<String> getIgnorePatterns() {
-    return List.of(
+  @NonNull private final Args args;
+
+  @Override
+  @NonNull
+  public Set<String> getIgnorePatterns() {
+    return Set.of(
         ".travis.yml",
         "gradle/**",
         "build.gradle",
@@ -74,51 +79,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
         "src/test/**");
   }
 
-  private static String ensureValidPackageName(@NonNull final String packageName) {
-    return packageName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-  }
+  public void init(@NonNull final OpenAPI openAPI) {
+    final var metadata = codegenMetadataSupport.getMetadata(openAPI, args);
 
-  /**
-   * The package name generated here must conform to valid java package name rules. If a package
-   * element ends up with a leading number, that cannot be allowed.
-   */
-  private static String fixLeadingNumbers(@NonNull final String packageName) {
-    return Arrays.stream(packageName.split("\\."))
-        .map(
-            name -> {
-              final String beginning =
-                  switch (name.charAt(0)) {
-                    case '0' -> "zero";
-                    case '1' -> "one";
-                    case '2' -> "two";
-                    case '3' -> "three";
-                    case '4' -> "four";
-                    case '5' -> "five";
-                    case '6' -> "six";
-                    case '7' -> "seven";
-                    case '8' -> "eight";
-                    case '9' -> "nine";
-                    default -> "%s".formatted(name.charAt(0));
-                  };
-              return "%s%s".formatted(beginning, name.substring(1));
-            })
-        .collect(Collectors.joining("."));
-  }
-
-  private void init(@NonNull final Args args) {
-    final String title = getOpenapiTitle();
-    final String version = getOpenapiVersion();
-    final Path outputDir = CodegenPaths.OUTPUT_DIR.resolve(title).resolve(version);
-    setOutputDir(outputDir.toString());
+    setOutputDir(metadata.outputDir().toString());
     setGroupId(args.groupId());
 
-    final String basePackage =
-        fixLeadingNumbers("%s.%s".formatted(getGroupId(), ensureValidPackageName(title)));
-    setApiPackage("%s.api".formatted(basePackage));
-    setModelPackage("%s.model".formatted(basePackage));
-    setInvokerPackage("%s.invoker".formatted(basePackage));
-    setArtifactId(title);
-    setArtifactVersion(version);
+    setApiPackage("%s.api".formatted(metadata.basePackage()));
+    setModelPackage("%s.model".formatted(metadata.basePackage()));
+    setInvokerPackage("%s.invoker".formatted(metadata.basePackage()));
+    setArtifactId(metadata.artifactId());
+    setArtifactVersion(metadata.version());
     setDisallowAdditionalPropertiesIfNotPresent(false);
     setUseOneOfInterfaces(true);
     additionalProperties.put("useOneOfInterfaces", true);
@@ -141,19 +112,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen {
     if (property.allowableValues == null) {
       property.allowableValues = new HashMap<>();
     }
-  }
-
-  // TODO need tests
-  private String getOpenapiTitle() {
-    return Optional.ofNullable(openAPI.getInfo())
-        .map(Info::getTitle)
-        .map(title -> title.replaceAll("\\s+", "-").replace("&", ""))
-        .orElse("unknown-api");
-  }
-
-  // TODO need tests
-  private String getOpenapiVersion() {
-    return Optional.ofNullable(openAPI.getInfo()).map(Info::getVersion).orElse("unknown-version");
   }
 
   private boolean isIncorrectlyFlattened(@NonNull final Schema schema) {

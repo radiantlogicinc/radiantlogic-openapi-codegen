@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models;
 
 import org.mapstruct.Mapper;
 import org.openapitools.codegen.CodegenModel;
@@ -9,7 +9,7 @@ import org.openapitools.codegen.CodegenProperty;
  * counterparts.
  */
 @Mapper
-public interface CodegenMapper {
+public interface ExtendedCodegenMapper {
   ExtendedCodegenProperty extendProperty(final CodegenProperty prop);
 
   ExtendedCodegenModel extendModel(final CodegenModel model);

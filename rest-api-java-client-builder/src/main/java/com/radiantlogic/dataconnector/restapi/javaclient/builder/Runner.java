@@ -3,10 +3,13 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ArgsParser;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.ProgramArgStatus;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGenerator;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.CodeGeneratorExecutor;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.OpenapiParser;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.DataconnectorJavaClientCodegen;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.openapi.OpenapiPathValidator;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.Props;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.properties.PropsReader;
+import io.swagger.v3.oas.models.OpenAPI;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,15 +56,22 @@ public class Runner {
       return;
     }
 
+    // TODO this whole thing is more than a bit of a mess here...
     final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
     final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
     // TODO if a URL, need to pull file down
     final Args validatedParsedArgs = parsedArgs.withOpenapiPath(parsedPath);
-
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
-    final CodeGenerator codeGenerator = new CodeGenerator(validatedParsedArgs);
-    codeGenerator.generate();
+    final OpenapiParser openapiParser = new OpenapiParser(validatedParsedArgs);
+    final DataconnectorJavaClientCodegen codegen =
+        new DataconnectorJavaClientCodegen(validatedParsedArgs);
+    final CodeGeneratorExecutor codeGenerator = new CodeGeneratorExecutor(codegen);
+
+    log.info("Parsing and generating code");
+    final OpenAPI openAPI = openapiParser.parse();
+    codegen.init(openAPI);
+    codeGenerator.generate(openAPI);
     log.info("Finished code generation");
   }
 

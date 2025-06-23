@@ -1,13 +1,11 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate;
 
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
-import io.swagger.parser.OpenAPIParser;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.ExtendedCodegenConfig;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.core.models.ParseOptions;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,32 +14,14 @@ import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
 
-// TODO majorly refactor this, split parsing and generation
-/** The class that handles the actual code generation. */
+/** Setup the output directory and generate the call. */
 @Slf4j
 @RequiredArgsConstructor
-public class CodeGenerator {
-  @NonNull private final Args args;
+public class CodeGeneratorExecutor {
+  @NonNull private final ExtendedCodegenConfig codegen;
 
-  public void generate() {
+  public void generate(final OpenAPI openAPI) {
     log.info("Generating code");
-    final ParseOptions parseOptions = new ParseOptions();
-    parseOptions.setResolve(true);
-    parseOptions.setResolveFully(false);
-
-    log.debug("Parsing OpenAPI specification");
-    final OpenAPIParser parser = new OpenAPIParser();
-
-    final OpenAPI openAPI =
-        parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
-    if (openAPI == null) {
-      throw new IllegalStateException(
-          "Failed to parse OpenAPI specification, see logs for details");
-    }
-
-    log.debug("Performing code generation");
-    final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(openAPI, args);
     prepareOutputDirectory(codegen.getOutputDir(), codegen.getIgnorePatterns());
 
     final DefaultGenerator generator = new DefaultGenerator();
@@ -51,8 +31,9 @@ public class CodeGenerator {
   }
 
   private void prepareOutputDirectory(
-      @NonNull final String outputDir, @NonNull final List<String> ignorePatterns) {
+      @NonNull final String outputDir, @NonNull final Set<String> ignorePatterns) {
     try {
+      log.debug("Preparing output directory: {}", outputDir);
       final Path path = Path.of(outputDir);
       if (Files.exists(path)) {
         FileUtils.deleteDirectory(path.toFile());
@@ -66,7 +47,7 @@ public class CodeGenerator {
   }
 
   private void writeIgnorePatterns(
-      @NonNull final Path outputDir, @NonNull final List<String> ignorePatterns) {
+      @NonNull final Path outputDir, @NonNull final Set<String> ignorePatterns) {
     final Path ignoreFile = outputDir.resolve(".openapi-generator-ignore");
     try {
       Files.write(ignoreFile, ignorePatterns);

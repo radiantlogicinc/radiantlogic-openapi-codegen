@@ -1,5 +1,9 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import java.util.Map;
+import lombok.NonNull;
+import org.openapitools.codegen.CodegenModel;
+
 /**
  * One of the most painful areas of the codegen is related to enums. The default code generation
  * settings would produce constant compile errors due to inline enums in a class clashing with
@@ -13,5 +17,36 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  * need for this class.
  */
 public class CodegenRemoveInheritanceEnumsSupport {
-  public void removeInheritedEnums() {}
+  public void removeInheritedEnums(@NonNull final Map<String, CodegenModel> allModels) {
+    allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
+  }
+
+  private void removeEnumIfNotEnumInParent(
+      @NonNull final CodegenModel model, final CodegenModel parentModel) {
+    if (parentModel == null) {
+      return;
+    }
+
+    model.vars.forEach(
+        var -> {
+          if (var.isEnum) {
+            parentModel.vars.stream()
+                .filter(v -> v.name.equals(var.name))
+                .findFirst()
+                .filter(parentVar -> !parentVar.isEnum)
+                .ifPresent(
+                    parentVar -> {
+                      var.isEnum = false;
+                      var.dataType = parentVar.dataType;
+                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
+                      var.openApiType = parentVar.openApiType;
+                      var.allowableValues = parentVar.allowableValues;
+                      var._enum = parentVar._enum;
+                      var.defaultValue = parentVar.defaultValue;
+                    });
+          }
+        });
+
+    removeEnumIfNotEnumInParent(model, parentModel.parentModel);
+  }
 }

@@ -7,6 +7,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
@@ -71,6 +72,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenLiteralPropertyNameSupport();
   private final CodegenMissingModelInheritanceSupport codegenMissingModelInheritanceSupport =
       new CodegenMissingModelInheritanceSupport();
+  private final CodegenRemoveInheritanceEnumsSupport codegenRemoveInheritanceEnumsSupport =
+      new CodegenRemoveInheritanceEnumsSupport();
 
   @NonNull private final Args args;
 
@@ -470,42 +473,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .toList();
   }
 
-  private void removeEnumIfNotEnumInParent(
-      @NonNull final CodegenModel model, final CodegenModel parentModel) {
-    if (parentModel == null) {
-      return;
-    }
-
-    model.vars.forEach(
-        var -> {
-          if (var.isEnum) {
-            parentModel.vars.stream()
-                .filter(v -> v.name.equals(var.name))
-                .findFirst()
-                .filter(parentVar -> !parentVar.isEnum)
-                .ifPresent(
-                    parentVar -> {
-                      var.isEnum = false;
-                      var.dataType = parentVar.dataType;
-                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
-                      var.openApiType = parentVar.openApiType;
-                      var.allowableValues = parentVar.allowableValues;
-                      var._enum = parentVar._enum;
-                      var.defaultValue = parentVar.defaultValue;
-                    });
-          }
-        });
-
-    removeEnumIfNotEnumInParent(model, parentModel.parentModel);
-  }
-
-  // TODO explain that enums and inheritance are a PITA and any that couldn't be easily corrected
-  // are just removed here
-  private void handleRemovingUnresolvableInheritanceEnums(
-      @NonNull final Map<String, CodegenModel> allModels) {
-    allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
-  }
-
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
 
@@ -612,7 +579,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     handleDiscriminatorChildMappingValues(allModels);
 
-    handleRemovingUnresolvableInheritanceEnums(allModels);
+    codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

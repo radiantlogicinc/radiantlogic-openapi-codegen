@@ -81,20 +81,18 @@ public class CodegenFlattenedComplexTypeSupport {
       return false;
     }
 
-    // TODO clean this up
-    final long nonObjectOneOfCount =
-        Optional.ofNullable(schema.getOneOf()).stream()
-            .flatMap(List::stream)
-            .filter(s -> !(s instanceof ObjectSchema))
-            .count();
-
-    final long nonObjectAnyOfCount =
-        Optional.ofNullable(schema.getAnyOf()).stream()
-            .flatMap(List::stream)
-            .filter(s -> !(s instanceof ObjectSchema))
-            .count();
-
+    final long nonObjectOneOfCount = getNonObjectCount(schema.getOneOf());
+    final long nonObjectAnyOfCount = getNonObjectCount(schema.getAnyOf());
     return nonObjectOneOfCount > 0 || nonObjectAnyOfCount > 0;
+  }
+
+  // I dislike using raw types but openapi-generator uses them liberally which gives me no choice
+  // due to compiler restrictions in some cases
+  private long getNonObjectCount(final List<Schema> schemas) {
+    return Optional.ofNullable(schemas).stream()
+        .flatMap(List::stream)
+        .filter(s -> !(s instanceof ObjectSchema))
+        .count();
   }
 
   private static String parseSchemaRef(final String ref) {

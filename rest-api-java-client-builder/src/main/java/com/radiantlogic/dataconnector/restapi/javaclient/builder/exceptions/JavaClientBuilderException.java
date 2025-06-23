@@ -1,6 +1,5 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions;
 
-// TODO refactor all exceptions to be a sub-type of this
 public class JavaClientBuilderException extends RuntimeException {
   public JavaClientBuilderException() {}
 

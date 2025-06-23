@@ -1,6 +1,10 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.ModelNotFoundException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 
@@ -22,5 +26,44 @@ import org.openapitools.codegen.CodegenModel;
  * always work.
  */
 public class CodegenMissingModelInheritanceSupport {
-  public void fixMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {}
+  public void fixMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {
+    allModels
+        .values()
+        .forEach(
+            model -> {
+              if (model.parent != null
+                  || model.dataType == null
+                  || model.dataType.equals(model.classname)
+                  || model.isEnum) {
+                return;
+              }
+
+              final String modelInterface =
+                  Optional.ofNullable(model.interfaces)
+                      .filter(list -> list.size() == 1)
+                      .map(List::getFirst)
+                      .orElse(null);
+              final String modelAllOf =
+                  Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
+                      .flatMap(Set::stream)
+                      .findFirst()
+                      .orElse(null);
+
+              if (modelInterface == null || modelAllOf == null) {
+                return;
+              }
+
+              if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
+                return;
+              }
+
+              model.parent = modelInterface;
+              final CodegenModel parentModel = allModels.get(modelInterface);
+              if (parentModel == null) {
+                throw new ModelNotFoundException(
+                    "Parent model should exist but was not found: %s".formatted(modelInterface));
+              }
+              model.parentModel = parentModel;
+            });
+  }
 }

@@ -43,22 +43,44 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     validOneOfSchema.setName("validOneOf");
     validOneOfSchema.setOneOf(List.of(objectChildSchema, objectChildSchema2));
 
+    final Schema<?> validAnyOfSchema = new Schema<>();
+    validOneOfSchema.setName("validAnyOf");
+    validOneOfSchema.setAnyOf(List.of(objectChildSchema, objectChildSchema2));
+
     final Schema<?> invalidOneOfSchema = new Schema<>();
     invalidOneOfSchema.setName("invalidOneOf");
     invalidOneOfSchema.setOneOf(List.of(objectChildSchema, stringChildSchema));
+
+    final Schema<?> invalidAnyOfSchema = new Schema<>();
+    invalidOneOfSchema.setName("invalidAnyOf");
+    invalidOneOfSchema.setAnyOf(List.of(objectChildSchema, stringChildSchema));
 
     final Schema<?> validOneOfRefSchema = new Schema<>();
     validOneOfRefSchema.setName("validOneOfRef");
     validOneOfRefSchema.set$ref("#/components/schemas/validOneOf");
 
+    final Schema<?> validAnyOfRefSchema = new Schema<>();
+    validOneOfRefSchema.setName("validAnyOfRef");
+    validOneOfRefSchema.set$ref("#/components/schemas/validAnyOf");
+
     final Schema<?> invalidOneOfRefSchema = new Schema<>();
     invalidOneOfRefSchema.setName("invalidOneOfRef");
     invalidOneOfRefSchema.set$ref("#/components/schemas/invalidOneOf");
 
+    final Schema<?> invalidAnyOfRefSchema = new Schema<>();
+    invalidOneOfRefSchema.setName("invalidOneOfRef");
+    invalidOneOfRefSchema.set$ref("#/components/schemas/invalidAnyOf");
+
     final ObjectSchema allPropertiesValidSchema = new ObjectSchema();
     allPropertiesValidSchema.setName("allPropertiesValid");
     allPropertiesValidSchema.setProperties(
-        toSchemaMap(objectPropSchema, stringPropSchema, validOneOfSchema, validOneOfRefSchema));
+        toSchemaMap(
+            objectPropSchema,
+            stringPropSchema,
+            validOneOfSchema,
+            validOneOfRefSchema,
+            validAnyOfSchema,
+            validAnyOfRefSchema));
 
     final Components components = new Components();
     // openapi-generator using raw types forces me to use one here
@@ -72,7 +94,9 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             validOneOfSchema,
             invalidOneOfSchema,
             validOneOfRefSchema,
-            invalidOneOfRefSchema));
+            invalidOneOfRefSchema,
+            validAnyOfSchema,
+            invalidAnyOfRefSchema));
     openAPI.setComponents(components);
   }
 

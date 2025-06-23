@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -134,20 +135,27 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     return createProp(name, true);
   }
 
+  private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
+      new CodegenUnsupportedUnionTypeSupport();
+
   @Test
   void itHasNoUnsupportedUnions() {
-    final CodegenModel validModel = new CodegenModel();
-    validModel.setName("validModel");
-    validModel.setVars(
+    final List<CodegenProperty> originalProps =
         List.of(
             createProp(SCHEMA_STRING_PROP, false),
             createProp(SCHEMA_OBJECT_PROP),
             createProp(SCHEMA_VALID_ONE_OF),
             createProp(SCHEMA_VALID_ANY_OF),
             createProp(SCHEMA_VALID_ONE_OF_REF),
-            createProp(SCHEMA_VALID_ANY_OF_REF)));
+            createProp(SCHEMA_VALID_ANY_OF_REF));
+    final CodegenModel validModel = new CodegenModel();
+    validModel.setName("validModel");
+    validModel.setVars(new ArrayList<>(originalProps));
 
-    throw new RuntimeException();
+    final Schema<?> validSchema =
+        openAPI.getComponents().getSchemas().get(SCHEMA_ALL_PROPERTIES_VALID);
+
+    codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(validModel, validSchema, openAPI);
   }
 
   @Test

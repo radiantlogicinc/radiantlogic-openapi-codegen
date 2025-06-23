@@ -117,7 +117,8 @@ public class CodegenUnsupportedUnionTypeSupportTest {
             validOneOfRefSchema,
             invalidOneOfRefSchema,
             validAnyOfSchema,
-            invalidAnyOfRefSchema));
+            invalidAnyOfRefSchema,
+            allPropertiesValidSchema));
     openAPI.setComponents(components);
   }
 

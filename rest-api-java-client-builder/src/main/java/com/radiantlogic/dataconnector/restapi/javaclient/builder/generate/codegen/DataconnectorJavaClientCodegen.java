@@ -28,7 +28,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -128,17 +127,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     final var updatedEnumVars = codegenEnumValueOfSupport.fixValueOfInEnumVars(enumVars, dataType);
     // Must be mutable for downstream
     return new ArrayList<>(updatedEnumVars);
-  }
-
-  private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
-    if (prop.name != null && StringUtils.isNumeric(prop.name)
-        || "true".equals(prop.name)
-        || "false".equals(prop.name)) {
-      prop.jsonName = prop.name;
-      prop.name =
-          "value%s%s"
-              .formatted(String.valueOf(prop.name.charAt(0)).toUpperCase(), prop.name.substring(1));
-    }
   }
 
   @Override

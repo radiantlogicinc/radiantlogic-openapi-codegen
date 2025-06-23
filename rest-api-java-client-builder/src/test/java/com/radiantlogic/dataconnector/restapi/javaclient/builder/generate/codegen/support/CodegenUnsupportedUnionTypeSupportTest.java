@@ -64,32 +64,32 @@ public class CodegenUnsupportedUnionTypeSupportTest {
     validOneOfSchema.setOneOf(List.of(objectChildSchema, objectChildSchema2));
 
     final Schema<?> validAnyOfSchema = new Schema<>();
-    validOneOfSchema.setName(SCHEMA_VALID_ANY_OF);
-    validOneOfSchema.setAnyOf(List.of(objectChildSchema, objectChildSchema2));
+    validAnyOfSchema.setName(SCHEMA_VALID_ANY_OF);
+    validAnyOfSchema.setAnyOf(List.of(objectChildSchema, objectChildSchema2));
 
     final Schema<?> invalidOneOfSchema = new Schema<>();
     invalidOneOfSchema.setName(SCHEMA_INVALID_ONE_OF);
     invalidOneOfSchema.setOneOf(List.of(objectChildSchema, stringChildSchema));
 
     final Schema<?> invalidAnyOfSchema = new Schema<>();
-    invalidOneOfSchema.setName(SCHEMA_INVALID_ANY_OF);
-    invalidOneOfSchema.setAnyOf(List.of(objectChildSchema, stringChildSchema));
+    invalidAnyOfSchema.setName(SCHEMA_INVALID_ANY_OF);
+    invalidAnyOfSchema.setAnyOf(List.of(objectChildSchema, stringChildSchema));
 
     final Schema<?> validOneOfRefSchema = new Schema<>();
     validOneOfRefSchema.setName(SCHEMA_VALID_ONE_OF_REF);
     validOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_VALID_ONE_OF));
 
     final Schema<?> validAnyOfRefSchema = new Schema<>();
-    validOneOfRefSchema.setName(SCHEMA_VALID_ANY_OF_REF);
-    validOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_VALID_ANY_OF));
+    validAnyOfRefSchema.setName(SCHEMA_VALID_ANY_OF_REF);
+    validAnyOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_VALID_ANY_OF));
 
     final Schema<?> invalidOneOfRefSchema = new Schema<>();
     invalidOneOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
     invalidOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ONE_OF));
 
     final Schema<?> invalidAnyOfRefSchema = new Schema<>();
-    invalidOneOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
-    invalidOneOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ANY_OF));
+    invalidAnyOfRefSchema.setName(SCHEMA_INVALID_ONE_OF_REF);
+    invalidAnyOfRefSchema.set$ref("#/components/schemas/%s".formatted(SCHEMA_INVALID_ANY_OF));
 
     final ObjectSchema allPropertiesValidSchema = new ObjectSchema();
     allPropertiesValidSchema.setName(SCHEMA_ALL_PROPERTIES_VALID);

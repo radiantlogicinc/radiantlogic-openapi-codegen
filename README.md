@@ -13,6 +13,7 @@ This is an extension to the [openapi-generator](https://github.com/OpenAPITools/
 - Discriminated unions have a variety of mapping issues resolved so that the mapping and de-serialization works consistently and correctly.
 - Non-english/ascii operationIds (ie, chinese characters) are fixed to produce workable method names (yes, a major well-known company actually has this in their official spec).
 - Anonymous schemas can have names created by openapi-generator that conflict with existing named schemas. This has been corrected.
+- Union types that don't fit a natural java inheritance hierarchy (ie, they include primitives) are dismantled because they won't compile.
 - Missing inheritance links have been established so polymorphism works consistently with extended types.
 
 ### Limitations

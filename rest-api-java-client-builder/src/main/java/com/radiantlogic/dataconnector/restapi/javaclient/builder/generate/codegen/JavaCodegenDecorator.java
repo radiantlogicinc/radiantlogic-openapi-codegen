@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
+package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

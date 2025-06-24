@@ -33,63 +33,8 @@ public class CodegenFilenameSupport {
             .map(entry -> createFilenameModelsMap(entry, modelFilename))
             .reduce(
                 new HashMap<>(),
-                (acc, singleEntryMap) -> {
-                  final String fileBaseName =
-                      singleEntryMap.keySet().stream().findFirst().orElseThrow();
-                  final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
-
-                  if (!acc.containsKey(fileBaseName)) {
-                    acc.put(fileBaseName, entry);
-                    return acc;
-                  }
-
-                  final CodegenModel model =
-                      ModelUtils.getModelByName(entry.getKey(), allModelMaps);
-                  int index = 1;
-                  while (acc.containsKey(fileBaseName + index)) {
-                    index++;
-                  }
-                  final String suffix = "V%d".formatted(index);
-                  final String newFileBaseName = fileBaseName + suffix;
-                  final String newKey = entry.getKey() + suffix;
-                  final String oldClassName = model.classname;
-                  model.classname = model.classname + suffix;
-                  model.classFilename = model.classFilename + suffix;
-                  model.dataType = model.dataType + suffix;
-
-                  allModelMaps
-                      .values()
-                      .forEach(
-                          otherModelMap -> {
-                            final CodegenModel otherModel =
-                                CodegenModelUtils.extractModel(otherModelMap);
-                            if (otherModel.imports != null
-                                && otherModel.imports.contains(oldClassName)) {
-                              otherModel.imports.remove(oldClassName);
-                              otherModel.imports.add(model.classname);
-
-                              ((List<Map<String, String>>)
-                                      allModelMaps
-                                          .get(otherModel.name)
-                                          .get(CodegenConstants.IMPORTS_KEY))
-                                  .forEach(
-                                      importMap -> {
-                                        final String importValue =
-                                            importMap.get(CodegenConstants.IMPORT_KEY);
-                                        if (importValue.endsWith(".%s".formatted(oldClassName))) {
-                                          final String newImportValue =
-                                              importValue.replaceAll(
-                                                  "\\.%s$".formatted(oldClassName),
-                                                  ".%s".formatted(model.classname));
-                                          importMap.put("import", newImportValue);
-                                        }
-                                      });
-                            }
-                          });
-
-                  acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
-                  return acc;
-                })
+                (acc, singleEntryMap) ->
+                    reduceFilenameModelsMaps(acc, singleEntryMap, allModelMaps))
             .values()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -98,6 +43,61 @@ public class CodegenFilenameSupport {
     // return a new one, it'll be less brittle and more reliable
     allModelMaps.clear();
     allModelMaps.putAll(fixedModelMaps);
+  }
+
+  @NonNull
+  private static Map<String, Map.Entry<String, ModelsMap>> reduceFilenameModelsMaps(
+      @NonNull Map<String, Map.Entry<String, ModelsMap>> acc,
+      @NonNull Map<String, Map.Entry<String, ModelsMap>> singleEntryMap,
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    final String fileBaseName = singleEntryMap.keySet().stream().findFirst().orElseThrow();
+    final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
+
+    if (!acc.containsKey(fileBaseName)) {
+      acc.put(fileBaseName, entry);
+      return acc;
+    }
+
+    final CodegenModel model = ModelUtils.getModelByName(entry.getKey(), allModelMaps);
+    int index = 1;
+    while (acc.containsKey(fileBaseName + index)) {
+      index++;
+    }
+    final String suffix = "V%d".formatted(index);
+    final String newFileBaseName = fileBaseName + suffix;
+    final String newKey = entry.getKey() + suffix;
+    final String oldClassName = model.classname;
+    model.classname = model.classname + suffix;
+    model.classFilename = model.classFilename + suffix;
+    model.dataType = model.dataType + suffix;
+
+    allModelMaps
+        .values()
+        .forEach(
+            otherModelMap -> {
+              final CodegenModel otherModel = CodegenModelUtils.extractModel(otherModelMap);
+              if (otherModel.imports != null && otherModel.imports.contains(oldClassName)) {
+                otherModel.imports.remove(oldClassName);
+                otherModel.imports.add(model.classname);
+
+                ((List<Map<String, String>>)
+                        allModelMaps.get(otherModel.name).get(CodegenConstants.IMPORTS_KEY))
+                    .forEach(
+                        importMap -> {
+                          final String importValue = importMap.get(CodegenConstants.IMPORT_KEY);
+                          if (importValue.endsWith(".%s".formatted(oldClassName))) {
+                            final String newImportValue =
+                                importValue.replaceAll(
+                                    "\\.%s$".formatted(oldClassName),
+                                    ".%s".formatted(model.classname));
+                            importMap.put("import", newImportValue);
+                          }
+                        });
+              }
+            });
+
+    acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
+    return acc;
   }
 
   @NonNull

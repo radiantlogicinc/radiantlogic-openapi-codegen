@@ -53,17 +53,20 @@ public class CodegenFilenameSupport {
     final String fileBaseName = singleEntryMap.keySet().stream().findFirst().orElseThrow();
     final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
 
+    // If this name is unique in the map, we don't need to do anything
     if (!acc.containsKey(fileBaseName)) {
       acc.put(fileBaseName, entry);
       return acc;
     }
 
+    // If the name is not unique, we need to make it unique with a suffix
     final CodegenModel model = ModelUtils.getModelByName(entry.getKey(), allModelMaps);
     int index = 1;
+    String suffix = "";
     while (acc.containsKey(fileBaseName + index)) {
+      suffix = "V%d".formatted(index);
       index++;
     }
-    final String suffix = "V%d".formatted(index);
     final String newFileBaseName = fileBaseName + suffix;
     final String newKey = entry.getKey() + suffix;
     final String oldClassName = model.classname;

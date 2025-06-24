@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
@@ -80,7 +81,11 @@ public class CodegenDiscriminatorSupportTest {
     childModel2.classname = "ChildModel2";
     childModel2.name = childModel2.classname;
 
-    // Create map of all models
+    discriminator.setMappedModels(
+        Set.of(
+            new CodegenDiscriminator.MappedModel("one", childModel1.name, true),
+            new CodegenDiscriminator.MappedModel("two", childModel2.name, true)));
+
     final Map<String, CodegenModel> allModels =
         Map.of(
             parentModel.classname, parentModel,
@@ -91,9 +96,7 @@ public class CodegenDiscriminatorSupportTest {
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
 
     // Assert
-    assertThat(childModel1.vendorExtensions)
-        .containsEntry("x-discriminator-mapping-value", "child1");
-    assertThat(childModel2.vendorExtensions)
-        .containsEntry("x-discriminator-mapping-value", "child2");
+    assertThat(childModel1.vendorExtensions).containsEntry("x-discriminator-mapping-value", "one");
+    assertThat(childModel2.vendorExtensions).containsEntry("x-discriminator-mapping-value", "two");
   }
 }

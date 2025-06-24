@@ -78,28 +78,32 @@ public class CodegenFilenameSupport {
         .map(CodegenModelUtils::extractModel)
         .filter(
             otherModel -> otherModel.imports != null && otherModel.imports.contains(oldClassName))
-        .forEach(
-            otherModel -> {
-              otherModel.imports.remove(oldClassName);
-              otherModel.imports.add(model.classname);
-
-              ((List<Map<String, String>>)
-                      allModelMaps.get(otherModel.name).get(CodegenConstants.IMPORTS_KEY))
-                  .forEach(
-                      importMap -> {
-                        final String importValue = importMap.get(CodegenConstants.IMPORT_KEY);
-                        if (importValue.endsWith(".%s".formatted(oldClassName))) {
-                          final String newImportValue =
-                              importValue.replaceAll(
-                                  "\\.%s$".formatted(oldClassName),
-                                  ".%s".formatted(model.classname));
-                          importMap.put("import", newImportValue);
-                        }
-                      });
-            });
+        .forEach(otherModel -> fixImports(model, otherModel, oldClassName, allModelMaps));
 
     acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
     return acc;
+  }
+
+  private static void fixImports(
+      @NonNull final CodegenModel model,
+      @NonNull final CodegenModel otherModel,
+      @NonNull final String oldClassName,
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    otherModel.imports.remove(oldClassName);
+    otherModel.imports.add(model.classname);
+
+    ((List<Map<String, String>>)
+            allModelMaps.get(otherModel.name).get(CodegenConstants.IMPORTS_KEY))
+        .forEach(
+            importMap -> {
+              final String importValue = importMap.get(CodegenConstants.IMPORT_KEY);
+              if (importValue.endsWith(".%s".formatted(oldClassName))) {
+                final String newImportValue =
+                    importValue.replaceAll(
+                        "\\.%s$".formatted(oldClassName), ".%s".formatted(model.classname));
+                importMap.put("import", newImportValue);
+              }
+            });
   }
 
   @NonNull

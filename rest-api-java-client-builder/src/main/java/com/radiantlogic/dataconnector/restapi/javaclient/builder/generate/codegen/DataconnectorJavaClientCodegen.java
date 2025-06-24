@@ -554,7 +554,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         newEnumsFromDiscriminatorParentModels,
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
-    codegenDiscriminatorSupport.fixDiscriminatorMapping(allModels);
+    codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
 
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 

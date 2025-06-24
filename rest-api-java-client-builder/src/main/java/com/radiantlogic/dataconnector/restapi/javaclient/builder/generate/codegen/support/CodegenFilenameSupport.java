@@ -28,6 +28,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  */
 public class CodegenFilenameSupport {
 
+  // TODO I only want one naming function here
   @NonNull
   public Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps,

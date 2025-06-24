@@ -7,6 +7,12 @@ import org.openapitools.codegen.CodegenModel;
 
 /** Handles fixing issues with discriminator configuration. */
 public class CodegenDiscriminatorSupport {
+
+  /**
+   * The discriminator property type is usually just "String" but in many cases it is a more
+   * specific (ie, enum) type. This fixes the discriminator type so it is accurate and the generated
+   * code therefore will reflect that.
+   */
   public void fixDiscriminatorType(@NonNull final CodegenModel codegenModel) {
     if (codegenModel.discriminator == null) {
       return;
@@ -18,6 +24,11 @@ public class CodegenDiscriminatorSupport {
         .ifPresent(prop -> codegenModel.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
   }
 
+  /**
+   * Some of the jackson annotations in the mustache templates are configured with incorrect values
+   * discriminated mappings. This adds a vendor extension property to all mapped models which is
+   * then used by the customized template to correct this issue.
+   */
   public void fixAllDiscriminatorMappings(@NonNull final Map<String, CodegenModel> allModels) {
     allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)

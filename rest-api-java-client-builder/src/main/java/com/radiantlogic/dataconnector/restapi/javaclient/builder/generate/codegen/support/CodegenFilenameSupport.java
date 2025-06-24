@@ -30,13 +30,7 @@ public class CodegenFilenameSupport {
       @NonNull final BiFunction<String, String, String> modelFilename) {
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
-            .map(
-                entry -> {
-                  final String fileName = modelFilename.apply("model.mustache", entry.getKey());
-                  final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
-
-                  return Map.of(fileBaseName, entry);
-                })
+            .map(entry -> createFilenameModelsMap(entry, modelFilename))
             .reduce(
                 new HashMap<>(),
                 (acc, singleEntryMap) -> {
@@ -104,5 +98,15 @@ public class CodegenFilenameSupport {
     // return a new one, it'll be less brittle and more reliable
     allModelMaps.clear();
     allModelMaps.putAll(fixedModelMaps);
+  }
+
+  @NonNull
+  private static Map<String, Map.Entry<String, ModelsMap>> createFilenameModelsMap(
+      @NonNull final Map.Entry<String, ModelsMap> entry,
+      @NonNull final BiFunction<String, String, String> modelFilename) {
+    final String fileName = modelFilename.apply(CodegenConstants.MODEL_TEMPLATE, entry.getKey());
+    final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
+
+    return Map.of(fileBaseName, entry);
   }
 }

@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 public class CodegenConstants {
   public static final String IMPORTS_KEY = "imports";
   public static final String IMPORT_KEY = "import";
+  public static final String MODEL_TEMPLATE = "model.mustache";
 }

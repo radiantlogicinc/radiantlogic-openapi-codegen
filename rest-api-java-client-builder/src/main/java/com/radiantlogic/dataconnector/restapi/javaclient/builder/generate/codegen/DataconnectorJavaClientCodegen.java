@@ -453,8 +453,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
 
-    final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
-
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
@@ -490,10 +488,12 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
                   model.classFilename = model.classFilename + suffix;
                   model.dataType = model.dataType + suffix;
 
-                  allModels
+                  allModelMaps
                       .values()
                       .forEach(
-                          otherModel -> {
+                          otherModelMap -> {
+                            final CodegenModel otherModel =
+                                CodegenModelUtils.extractModel(otherModelMap);
                             if (otherModel.imports != null
                                 && otherModel.imports.contains(oldClassName)) {
                               otherModel.imports.remove(oldClassName);

@@ -1,7 +1,13 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
@@ -13,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -26,7 +31,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -51,8 +55,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
-  private static final Pattern NON_ENGLISH_PATTERN = Pattern.compile("[^\\p{ASCII}]");
-  private static final Pattern NON_LETTER_PATTERN = Pattern.compile("[\\W0-9]+");
 
   private static final ExtendedCodegenMapper CODEGEN_MAPPER =
       Mappers.getMapper(ExtendedCodegenMapper.class);
@@ -60,6 +62,18 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
   private final CodegenUnsupportedUnionTypeSupport codegenUnsupportedUnionTypeSupport =
       new CodegenUnsupportedUnionTypeSupport();
+  private final CodegenDiscriminatorSupport codegenDiscriminatorSupport =
+      new CodegenDiscriminatorSupport();
+  private final CodegenNonEnglishNameSupport codegenNonEnglishNameSupport =
+      new CodegenNonEnglishNameSupport();
+  private final CodegenEnumValueOfSupport codegenEnumValueOfSupport =
+      new CodegenEnumValueOfSupport();
+  private final CodegenLiteralPropertyNameSupport codegenLiteralPropertyNameSupport =
+      new CodegenLiteralPropertyNameSupport();
+  private final CodegenMissingModelInheritanceSupport codegenMissingModelInheritanceSupport =
+      new CodegenMissingModelInheritanceSupport();
+  private final CodegenRemoveInheritanceEnumsSupport codegenRemoveInheritanceEnumsSupport =
+      new CodegenRemoveInheritanceEnumsSupport();
 
   @NonNull private final Args args;
 
@@ -119,22 +133,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   protected List<Map<String, Object>> buildEnumVars(
       @NonNull final List<Object> values, @NonNull final String dataType) {
     final var enumVars = super.buildEnumVars(values, dataType);
-    final boolean useValueOf = !dataType.equals("BigDecimal");
-
-    final var updatedEnumVars =
-        enumVars.stream().peek(map -> map.put("useValueOf", useValueOf)).toList();
+    final var updatedEnumVars = codegenEnumValueOfSupport.fixValueOfInEnumVars(enumVars, dataType);
+    // Must be mutable for downstream
     return new ArrayList<>(updatedEnumVars);
-  }
-
-  private void fixBadLiteralPropertyNames(@NonNull final ExtendedCodegenProperty prop) {
-    if (prop.name != null && StringUtils.isNumeric(prop.name)
-        || "true".equals(prop.name)
-        || "false".equals(prop.name)) {
-      prop.jsonName = prop.name;
-      prop.name =
-          "value%s%s"
-              .formatted(String.valueOf(prop.name.charAt(0)).toUpperCase(), prop.name.substring(1));
-    }
   }
 
   @Override
@@ -146,44 +147,20 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     final CodegenProperty prop =
         super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
     final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
-    fixBadLiteralPropertyNames(extendedProp);
+    codegenLiteralPropertyNameSupport.fixBadNames(extendedProp);
     return extendedProp;
-  }
-
-  // TODO document how insane this is yet it has been seen in sonarqube
-  private void fixNonEnglishOperationIds(@NonNull final OpenAPI openAPI) {
-    openAPI.getPaths().entrySet().stream()
-        .flatMap(pathEntry -> pathEntry.getValue().readOperations().stream())
-        .filter(operation -> Objects.nonNull(operation.getOperationId()))
-        .forEach(
-            operation -> {
-              final Matcher matcher = NON_ENGLISH_PATTERN.matcher(operation.getOperationId());
-              final String withoutNonEnglish = matcher.replaceAll("");
-              final String withoutNonLetter =
-                  NON_LETTER_PATTERN.matcher(withoutNonEnglish).replaceAll("");
-              if (StringUtils.isNotBlank(withoutNonLetter)) {
-                operation.setOperationId(withoutNonEnglish);
-              } else {
-                operation.setOperationId(null);
-              }
-            });
   }
 
   @Override
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
     super.preprocessOpenAPI(openAPI);
-    fixNonEnglishOperationIds(openAPI);
+    codegenNonEnglishNameSupport.fixOperationIds(openAPI);
   }
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
-    if (result.discriminator != null) {
-      result.getVars().stream()
-          .filter(prop -> prop.getBaseName().equals(result.discriminator.getPropertyBaseName()))
-          .findFirst()
-          .ifPresent(prop -> result.discriminator.setPropertyType(prop.getDatatypeWithEnum()));
-    }
+    codegenDiscriminatorSupport.fixDiscriminatorType(result);
 
     /*
      * I've tried making this work in the fromProperty method. In theory that's the better place for it,
@@ -192,6 +169,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
      */
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(result, model, openAPI);
 
+    // The equals method from the codegen labels the "other" object with the variable name 'o'.
+    // It is possible for an OpenAPI schema to have a variable named 'o', in which case we get a
+    // compiler error
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {
         result.equalsClassVarName = "otherO";
@@ -493,84 +473,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .toList();
   }
 
-  // TODO document that this manipulation is being done super carefully with all the checks
-  private void handleMissingModelInheritance(@NonNull final Map<String, CodegenModel> allModels) {
-    allModels
-        .values()
-        .forEach(
-            model -> {
-              if (model.parent != null
-                  || model.dataType == null
-                  || model.dataType.equals(model.classname)
-                  || model.isEnum) {
-                return;
-              }
-
-              final String modelInterface =
-                  Optional.ofNullable(model.interfaces)
-                      .filter(list -> list.size() == 1)
-                      .map(List::getFirst)
-                      .orElse(null);
-              final String modelAllOf =
-                  Optional.ofNullable(model.allOf).filter(set -> set.size() == 1).stream()
-                      .flatMap(Set::stream)
-                      .findFirst()
-                      .orElse(null);
-
-              if (modelInterface == null || modelAllOf == null) {
-                return;
-              }
-
-              if (!modelInterface.equals(modelAllOf) || !modelInterface.equals(model.dataType)) {
-                return;
-              }
-
-              model.parent = modelInterface;
-              final CodegenModel parentModel = allModels.get(modelInterface);
-              if (parentModel == null) {
-                throw new IllegalStateException(
-                    "Parent model should exist but was not found: %s".formatted(modelInterface));
-              }
-              model.parentModel = parentModel;
-            });
-  }
-
-  private void removeEnumIfNotEnumInParent(
-      @NonNull final CodegenModel model, final CodegenModel parentModel) {
-    if (parentModel == null) {
-      return;
-    }
-
-    model.vars.forEach(
-        var -> {
-          if (var.isEnum) {
-            parentModel.vars.stream()
-                .filter(v -> v.name.equals(var.name))
-                .findFirst()
-                .filter(parentVar -> !parentVar.isEnum)
-                .ifPresent(
-                    parentVar -> {
-                      var.isEnum = false;
-                      var.dataType = parentVar.dataType;
-                      var.datatypeWithEnum = parentVar.datatypeWithEnum;
-                      var.openApiType = parentVar.openApiType;
-                      var.allowableValues = parentVar.allowableValues;
-                      var._enum = parentVar._enum;
-                      var.defaultValue = parentVar.defaultValue;
-                    });
-          }
-        });
-
-    removeEnumIfNotEnumInParent(model, parentModel.parentModel);
-  }
-
-  // TODO explain that enums and inheritance are a PITA and any that couldn't be easily corrected
-  // are just removed here
-  private void handleRemovingUnresolvableInheritanceEnums(
-      @NonNull final Map<String, CodegenModel> allModels) {
-    allModels.values().forEach(model -> removeEnumIfNotEnumInParent(model, model.parentModel));
-  }
-
   private Map<String, ModelsMap> fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
 
@@ -659,7 +561,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         fixProblematicKeysForFilenames(originalAllModelMaps);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
-    handleMissingModelInheritance(allModels);
+    codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
 
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
@@ -677,7 +579,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     handleDiscriminatorChildMappingValues(allModels);
 
-    handleRemovingUnresolvableInheritanceEnums(allModels);
+    codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);
   }

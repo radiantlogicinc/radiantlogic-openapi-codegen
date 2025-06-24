@@ -14,20 +14,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration tests that validate this codegen against various openapi specifications. If run via
- * IntelliJ, this will not work unless you do the following:
- *
- * <p>1. Open the run configuration for the test.
- *
- * <p>2. Select Modify Options -> Before Launch Task
- *
- * <p>3. Add a new task, "Add Maven Goal"
- *
- * <p>4. The "command line options" should be "generate-resources"
- *
- * <p>This is because IntelliJ by default doesn't run the maven lifecycle, it runs its own system.
- * This test depends on a properties file generated at compile time with the maven-resources-plugin,
- * which is necessary.
+ * Integration tests that validate this codegen against various openapi specifications. All of these
+ * specifications are real and were acquired off the internet from the companies they are associated
+ * with. None have been modified in any way, except in the case of GitHub to split an absurdly huge
+ * (to the point of being unparsable) into smaller pieces.
  */
 public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");

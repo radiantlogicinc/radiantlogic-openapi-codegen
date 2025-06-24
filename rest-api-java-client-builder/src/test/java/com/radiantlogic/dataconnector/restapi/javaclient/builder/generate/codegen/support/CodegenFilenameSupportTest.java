@@ -70,6 +70,7 @@ public class CodegenFilenameSupportTest {
     assertThat(allModelMaps).hasSize(2);
 
     final boolean modelRenamed = allModelMaps.containsKey("MODELV1");
+    assertThat(modelRenamed).isTrue();
 
     final CodegenModel resultModel1 = ModelUtils.getModelByName("model", allModelMaps);
     final CodegenModel resultModel2 = ModelUtils.getModelByName("MODELV1", allModelMaps);

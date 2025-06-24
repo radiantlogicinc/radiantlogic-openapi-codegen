@@ -449,10 +449,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
-      @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
-    final Map<String, ModelsMap> allModelMaps =
-        codegenFilenameSupport.fixProblematicKeysForFilenames(
-            originalAllModelMaps, this::modelFilename, this::toModelName);
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    codegenFilenameSupport.fixProblematicKeysForFilenames(allModelMaps, this::modelFilename);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);

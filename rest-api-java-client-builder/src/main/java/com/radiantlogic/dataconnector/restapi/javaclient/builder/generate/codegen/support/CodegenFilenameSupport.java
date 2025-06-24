@@ -5,13 +5,10 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.utils.ModelUtils;
@@ -28,12 +25,9 @@ import org.openapitools.codegen.utils.ModelUtils;
  */
 public class CodegenFilenameSupport {
 
-  // TODO I only want one naming function here
-  @NonNull
-  public Map<String, ModelsMap> fixProblematicKeysForFilenames(
+  public void fixProblematicKeysForFilenames(
       @NonNull final Map<String, ModelsMap> allModelMaps,
-      @NonNull final BiFunction<String, String, String> modelFilename,
-      @NonNull final Function<String, String> toModelName) {
+      @NonNull final BiFunction<String, String, String> modelFilename) {
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
@@ -106,13 +100,9 @@ public class CodegenFilenameSupport {
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-    // The map created by DefaultGenerator is exactly like this, it must be the exact same type with
-    // this comparator to work downstream
-    final Map<String, ModelsMap> fixedModelMapsWithComparator =
-        new TreeMap<>(
-            (o1, o2) -> ObjectUtils.compare(toModelName.apply(o1), toModelName.apply(o2)));
-
-    fixedModelMapsWithComparator.putAll(fixedModelMaps);
-    return fixedModelMapsWithComparator;
+    // This is a tree map with a special comparator. Much better to do this modification than to
+    // return a new one, it'll be less brittle and more reliable
+    allModelMaps.clear();
+    allModelMaps.putAll(fixedModelMaps);
   }
 }

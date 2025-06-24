@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
+import org.openapitools.codegen.utils.ModelUtils;
 
 public class CodegenFilenameSupportTest {
   @Test
@@ -33,8 +34,8 @@ public class CodegenFilenameSupportTest {
 
     assertThat(allModelMaps).isEqualTo(expectedModelMaps);
 
-    final CodegenModel resultModel1 = extractModelFromMap(allModelMaps, "Model1");
-    final CodegenModel resultModel2 = extractModelFromMap(allModelMaps, "Model2");
+    final CodegenModel resultModel1 = ModelUtils.getModelByName("Model1", allModelMaps);
+    final CodegenModel resultModel2 = ModelUtils.getModelByName("Model2", allModelMaps);
 
     assertThat(resultModel1.name).isEqualTo("Model1");
     assertThat(resultModel1.classname).isEqualTo("Model1");
@@ -70,8 +71,8 @@ public class CodegenFilenameSupportTest {
 
     final boolean modelRenamed = allModelMaps.containsKey("MODELV1");
 
-    final CodegenModel resultModel1 = extractModelFromMap(allModelMaps, "model");
-    final CodegenModel resultModel2 = extractModelFromMap(allModelMaps, "MODELV1");
+    final CodegenModel resultModel1 = ModelUtils.getModelByName("model", allModelMaps);
+    final CodegenModel resultModel2 = ModelUtils.getModelByName("MODELV1", allModelMaps);
 
     assertThat(resultModel1.name).isEqualTo("model");
     assertThat(resultModel1.classname).isEqualTo("Model");
@@ -114,12 +115,5 @@ public class CodegenFilenameSupportTest {
     final ModelsMap modelsMap = new ModelsMap();
     modelsMap.setModels(List.of(modelMap));
     return modelsMap;
-  }
-
-  @NonNull
-  private CodegenModel extractModelFromMap(
-      @NonNull final Map<String, ModelsMap> allModelMaps, @NonNull final String key) {
-    final ModelsMap modelsMap = allModelMaps.get(key);
-    return modelsMap.getModels().get(0).getModel();
   }
 }

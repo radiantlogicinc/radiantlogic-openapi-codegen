@@ -3,7 +3,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -75,15 +74,18 @@ public class CodegenDiscriminatorSupportTest {
 
     final CodegenModel childModel1 = new CodegenModel();
     childModel1.classname = "ChildModel1";
+    childModel1.name = childModel1.classname;
 
     final CodegenModel childModel2 = new CodegenModel();
     childModel2.classname = "ChildModel2";
+    childModel2.name = childModel2.classname;
 
     // Create map of all models
-    final Map<String, CodegenModel> allModels = new HashMap<>();
-    allModels.put("ParentModel", parentModel);
-    allModels.put("ChildModel1", childModel1);
-    allModels.put("ChildModel2", childModel2);
+    final Map<String, CodegenModel> allModels =
+        Map.of(
+            parentModel.classname, parentModel,
+            childModel1.classname, childModel1,
+            childModel2.classname, childModel2);
 
     // Act
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);

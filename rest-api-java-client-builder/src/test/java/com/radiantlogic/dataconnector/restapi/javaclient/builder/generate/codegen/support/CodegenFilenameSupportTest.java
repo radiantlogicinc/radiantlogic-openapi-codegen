@@ -92,7 +92,7 @@ public class CodegenFilenameSupportTest {
   @NonNull
   private String modelFilename(
       @NonNull final String templateName, @NonNull final String modelName) {
-    return modelName;
+    return "/foo/bar/%s.java".formatted(modelName);
   }
 
   @NonNull
@@ -120,6 +120,6 @@ public class CodegenFilenameSupportTest {
   private CodegenModel extractModelFromMap(
       @NonNull final Map<String, ModelsMap> allModelMaps, @NonNull final String key) {
     final ModelsMap modelsMap = allModelMaps.get(key);
-    return "/foo/bar/%s.java".formatted(modelsMap.getModels().get(0).getModel());
+    return modelsMap.getModels().get(0).getModel();
   }
 }

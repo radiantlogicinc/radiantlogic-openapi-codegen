@@ -14,5 +14,5 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  * to ensure that the files are all created correctly.
  */
 public class CodegenInheritedEnumSupport {
-  // TOOD finish this
+  // TODO finish this
 }

@@ -120,6 +120,6 @@ public class CodegenFilenameSupportTest {
   private CodegenModel extractModelFromMap(
       @NonNull final Map<String, ModelsMap> allModelMaps, @NonNull final String key) {
     final ModelsMap modelsMap = allModelMaps.get(key);
-    return modelsMap.getModels().get(0).getModel();
+    return "/foo/bar/%s.java".formatted(modelsMap.getModels().get(0).getModel());
   }
 }

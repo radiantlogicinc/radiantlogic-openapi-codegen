@@ -61,11 +61,11 @@ public class CodegenFilenameSupport {
 
     // If the name is not unique, we need to make it unique with a suffix
     final CodegenModel model = ModelUtils.getModelByName(entry.getKey(), allModelMaps);
-    int index = 1;
+    int index = 0;
     String suffix = "";
-    while (acc.containsKey(fileBaseName + index)) {
-      suffix = "V%d".formatted(index);
+    while (acc.containsKey(fileBaseName + suffix)) {
       index++;
+      suffix = "V%d".formatted(index);
     }
     final String newFileBaseName = fileBaseName + suffix;
     final String newKey = entry.getKey() + suffix;

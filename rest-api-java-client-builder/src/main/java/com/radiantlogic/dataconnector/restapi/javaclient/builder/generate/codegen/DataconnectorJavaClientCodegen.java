@@ -9,6 +9,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
@@ -295,10 +296,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
 
-  private static boolean hasDiscriminatorChildren(@NonNull final CodegenModel model) {
-    return model.discriminator != null && model.discriminator.getMappedModels() != null;
-  }
-
   private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
@@ -319,7 +316,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
-        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+        .filter(CodegenModelUtils::hasDiscriminatorChildren)
         .flatMap(
             model ->
                 model.vars.stream()
@@ -339,26 +336,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
                           return createEnumModel(var);
                         }))
         .toList();
-  }
-
-  private void handleDiscriminatorChildMappingValues(
-      @NonNull final Map<String, CodegenModel> allModels) {
-    allModels.values().stream()
-        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
-        .forEach(
-            model -> {
-              model
-                  .discriminator
-                  .getMappedModels()
-                  .forEach(
-                      mappedModel -> {
-                        final CodegenModel childModel = allModels.get(mappedModel.getModelName());
-                        // This is a special extension used in the template to ensure the correct
-                        // mapping value in the JsonTypeName annotation
-                        childModel.vendorExtensions.put(
-                            "x-discriminator-mapping-value", mappedModel.getMappingName());
-                      });
-            });
   }
 
   // TODO clean this up
@@ -577,7 +554,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         newEnumsFromDiscriminatorParentModels,
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
-    handleDiscriminatorChildMappingValues(allModels);
+    codegenDiscriminatorSupport.fixDiscriminatorMapping(allModels);
 
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 

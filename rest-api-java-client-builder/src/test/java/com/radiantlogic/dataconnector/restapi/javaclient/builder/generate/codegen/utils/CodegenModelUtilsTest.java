@@ -1,13 +1,19 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.ModelNotFoundException;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.ModelsMap;
 
 public class CodegenModelUtilsTest {
 
@@ -40,17 +46,32 @@ public class CodegenModelUtilsTest {
   class ExtractModel {
     @Test
     void itHasNoModelsToExtract() {
-      throw new RuntimeException();
+      final ModelsMap modelsMap = new ModelsMap();
+      modelsMap.setModels(List.of());
+      assertThatThrownBy(() -> CodegenModelUtils.extractModel(modelsMap))
+          .isInstanceOf(ModelNotFoundException.class);
     }
 
     @Test
     void itHasTooManyModelsToExtract() {
-      throw new RuntimeException();
+      final ModelsMap modelsMap = new ModelsMap();
+      modelsMap.setModels(List.of(new ModelMap(), new ModelMap()));
+      assertThatThrownBy(() -> CodegenModelUtils.extractModel(modelsMap))
+          .isInstanceOf(ModelNotFoundException.class);
     }
 
     @Test
     void itExtractsModel() {
-      throw new RuntimeException();
+      final CodegenModel model = new CodegenModel();
+      model.name = "MyModel";
+      final ModelMap modelMap = new ModelMap();
+      modelMap.setModel(model);
+
+      final ModelsMap modelsMap = new ModelsMap();
+      modelsMap.setModels(List.of(modelMap));
+
+      final CodegenModel actualModel = CodegenModelUtils.extractModel(modelsMap);
+      assertThat(actualModel).isEqualTo(model);
     }
   }
 }

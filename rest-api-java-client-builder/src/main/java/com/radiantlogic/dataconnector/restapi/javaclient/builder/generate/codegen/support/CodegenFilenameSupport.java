@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -28,12 +30,14 @@ public class CodegenFilenameSupport {
 
   @NonNull
   public Map<String, ModelsMap> fixProblematicKeysForFilenames(
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
+      @NonNull final Map<String, ModelsMap> allModelMaps,
+      @NonNull final BiFunction<String, String, String> modelFilename,
+      @NonNull final Function<String, String> toModelName) {
     final Map<String, ModelsMap> fixedModelMaps =
         allModelMaps.entrySet().stream()
             .map(
                 entry -> {
-                  final String fileName = modelFilename("model.mustache", entry.getKey());
+                  final String fileName = modelFilename.apply("model.mustache", entry.getKey());
                   final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
 
                   return Map.of(fileBaseName, entry);
@@ -104,7 +108,8 @@ public class CodegenFilenameSupport {
     // The map created by DefaultGenerator is exactly like this, it must be the exact same type with
     // this comparator to work downstream
     final Map<String, ModelsMap> fixedModelMapsWithComparator =
-        new TreeMap<>((o1, o2) -> ObjectUtils.compare(toModelName(o1), toModelName(o2)));
+        new TreeMap<>(
+            (o1, o2) -> ObjectUtils.compare(toModelName.apply(o1), toModelName.apply(o2)));
 
     fixedModelMapsWithComparator.putAll(fixedModelMaps);
     return fixedModelMapsWithComparator;

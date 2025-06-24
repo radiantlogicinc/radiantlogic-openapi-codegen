@@ -101,7 +101,7 @@ public class CodegenFilenameSupport {
                 final String newImportValue =
                     importValue.replaceAll(
                         "\\.%s$".formatted(oldClassName), ".%s".formatted(model.classname));
-                importMap.put("import", newImportValue);
+                importMap.put(CodegenConstants.IMPORT_KEY, newImportValue);
               }
             });
   }

@@ -3,7 +3,9 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenDiscriminator;
 import org.openapitools.codegen.CodegenModel;
@@ -63,6 +65,33 @@ public class CodegenDiscriminatorSupportTest {
 
   @Test
   void itAssignsVendorExtensionToDiscriminatorMappings() {
-    throw new RuntimeException();
+    // Arrange
+    final CodegenModel parentModel = new CodegenModel();
+    parentModel.classname = "ParentModel";
+
+    final CodegenDiscriminator discriminator = new CodegenDiscriminator();
+    discriminator.setPropertyBaseName("type");
+    parentModel.setDiscriminator(discriminator);
+
+    final CodegenModel childModel1 = new CodegenModel();
+    childModel1.classname = "ChildModel1";
+
+    final CodegenModel childModel2 = new CodegenModel();
+    childModel2.classname = "ChildModel2";
+
+    // Create map of all models
+    final Map<String, CodegenModel> allModels = new HashMap<>();
+    allModels.put("ParentModel", parentModel);
+    allModels.put("ChildModel1", childModel1);
+    allModels.put("ChildModel2", childModel2);
+
+    // Act
+    codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
+
+    // Assert
+    assertThat(childModel1.vendorExtensions)
+        .containsEntry("x-discriminator-mapping-value", "child1");
+    assertThat(childModel2.vendorExtensions)
+        .containsEntry("x-discriminator-mapping-value", "child2");
   }
 }

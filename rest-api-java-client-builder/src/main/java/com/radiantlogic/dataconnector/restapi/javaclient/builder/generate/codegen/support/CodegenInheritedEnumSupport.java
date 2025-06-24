@@ -13,4 +13,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  * <p>Lastly, it will return a collection of all the enums that need to be added to the models map
  * to ensure that the files are all created correctly.
  */
-public class CodegenInheritedEnumSupport {}
+public class CodegenInheritedEnumSupport {
+  // TOOD finish this
+}

@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenFilenameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
@@ -70,6 +71,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenMissingModelInheritanceSupport();
   private final CodegenRemoveInheritanceEnumsSupport codegenRemoveInheritanceEnumsSupport =
       new CodegenRemoveInheritanceEnumsSupport();
+  private final CodegenFilenameSupport codegenFilenameSupport = new CodegenFilenameSupport();
 
   @NonNull private final Args args;
 
@@ -449,7 +451,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
     final Map<String, ModelsMap> allModelMaps =
-        fixProblematicKeysForFilenames(originalAllModelMaps);
+        codegenFilenameSupport.fixProblematicKeysForFilenames(
+            originalAllModelMaps, this::modelFilename, this::toModelName);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);

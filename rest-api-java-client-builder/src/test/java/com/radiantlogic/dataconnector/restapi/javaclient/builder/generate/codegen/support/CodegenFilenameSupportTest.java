@@ -4,7 +4,12 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenFilenameSupportTest {
   @Test
-  void test() {
+  void itDoesNothingIfNoFilenamesClash() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itAddsSuffixToNameAndFixesImportsIfClash() {
     throw new RuntimeException();
   }
 }

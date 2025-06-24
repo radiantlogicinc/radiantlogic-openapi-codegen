@@ -60,4 +60,9 @@ public class CodegenDiscriminatorSupportTest {
 
     assertThat(model.getDiscriminator().getPropertyType()).isEqualTo("MyType");
   }
+
+  @Test
+  void itAssignsVendorExtensionToDiscriminatorMappings() {
+    throw new RuntimeException();
+  }
 }

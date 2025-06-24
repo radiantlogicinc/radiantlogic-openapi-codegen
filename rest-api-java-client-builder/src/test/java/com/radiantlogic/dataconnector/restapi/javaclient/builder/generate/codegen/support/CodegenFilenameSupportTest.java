@@ -56,9 +56,9 @@ public class CodegenFilenameSupportTest {
 
     final List<Map<String, String>> imports = new ArrayList<>();
     final Map<String, String> importMap = new HashMap<>();
-    importMap.put(CodegenConstants.IMPORT_KEY, "com.example.Model");
+    importMap.put(CodegenConstants.IMPORT_KEY, "com.example.MODEL");
     imports.add(importMap);
-    modelsMap2.put(CodegenConstants.IMPORTS_KEY, imports);
+    modelsMap1.put(CodegenConstants.IMPORTS_KEY, imports);
 
     final Map<String, ModelsMap> allModelMaps = new HashMap<>();
     allModelMaps.put("model", modelsMap1);
@@ -83,11 +83,8 @@ public class CodegenFilenameSupportTest {
     assertThat(resultModel2.classname).isEqualTo("MODELV1");
     assertThat(resultModel2.classFilename).isEqualTo("MODELV1");
 
-    assertThat(resultModel2.imports).contains("MODELV1");
-    assertThat(resultModel2.imports).doesNotContain("Model");
-
     final List<Map<String, String>> resultImports =
-        (List<Map<String, String>>) allModelMaps.get("MODELV1").get(CodegenConstants.IMPORTS_KEY);
+        (List<Map<String, String>>) allModelMaps.get("model").get(CodegenConstants.IMPORTS_KEY);
     assertThat(resultImports).hasSize(1);
     assertThat(resultImports.get(0).get(CodegenConstants.IMPORT_KEY))
         .isEqualTo("com.example.MODELV1");

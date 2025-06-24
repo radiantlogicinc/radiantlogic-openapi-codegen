@@ -77,9 +77,11 @@ public class CodegenFilenameSupportTest {
 
     assertThat(resultModel1.name).isEqualTo("model");
     assertThat(resultModel1.classname).isEqualTo("Model");
+    assertThat(resultModel1.classFilename).isEqualTo("Model");
 
-    assertThat(resultModel2.name).isEqualTo("MODELV1");
+    assertThat(resultModel2.name).isEqualTo("MODEL");
     assertThat(resultModel2.classname).isEqualTo("MODELV1");
+    assertThat(resultModel2.classFilename).isEqualTo("MODELV1");
 
     assertThat(resultModel2.imports).contains("MODELV1");
     assertThat(resultModel2.imports).doesNotContain("Model");

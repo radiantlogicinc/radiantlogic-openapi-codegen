@@ -1,5 +1,9 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import java.util.Map;
+import lombok.NonNull;
+import org.openapitools.codegen.model.ModelsMap;
+
 /**
  * There is an issue where anonymous schemas will be automatically assigned names by
  * openapi-generator. Those names may clash with names of schemas that were explicitly declared in
@@ -12,4 +16,9 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  */
 public class CodegenFilenameSupport {
   // TODO finish this
+  @NonNull
+  public Map<String, ModelsMap> fixProblematicKeysForFilenames(
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    return null;
+  }
 }

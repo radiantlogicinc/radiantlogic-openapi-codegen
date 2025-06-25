@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenModel;
@@ -47,6 +48,7 @@ public class CodegenFilenameSupportTest {
   void itAddsSuffixToNameAndFixesImportsIfClash() {
     final CodegenModel model1 = createCodegenModel("model", "Model");
     final CodegenModel model2 = createCodegenModel("MODEL", "MODEL");
+    model1.imports.add(model2.classname);
 
     model2.imports = new java.util.HashSet<>();
     model2.imports.add("Model");
@@ -104,10 +106,15 @@ public class CodegenFilenameSupportTest {
     model.classname = classname;
     model.classFilename = classname;
     model.dataType = classname;
+    model.imports = Set.of();
     return model;
   }
 
   private ModelsMap createModelsMap(@NonNull final CodegenModel codegenModel) {
-    return CodegenModelUtils.wrapInModelsMap(new ModelsMap(), "com.radiantlogic", codegenModel);
+    final ModelsMap baseModelsMap = new ModelsMap();
+    baseModelsMap.put(
+        CodegenConstants.IMPORTS_KEY,
+        codegenModel.imports.stream().map("com.radiantlogic.%s"::formatted).toList());
+    return CodegenModelUtils.wrapInModelsMap(baseModelsMap, "com.radiantlogic", codegenModel);
   }
 }

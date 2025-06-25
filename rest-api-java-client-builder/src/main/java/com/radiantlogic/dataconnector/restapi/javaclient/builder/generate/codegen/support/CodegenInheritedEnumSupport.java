@@ -86,26 +86,27 @@ public class CodegenInheritedEnumSupport {
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)
-        .flatMap(
-            model ->
-                // TODO cleanup
-                model.vars.stream()
-                    .filter(CodegenPropertyUtils::isEnumProperty)
-                    .map(
-                        var -> {
-                          setEnumRefProps(var);
-                          model
-                              .discriminator
-                              .getMappedModels()
-                              .forEach(
-                                  mappedModel -> {
-                                    final CodegenModel childModel =
-                                        allModels.get(mappedModel.getModelName());
-                                    ensureChildModelHasNoInlineEnums(var, childModel);
-                                  });
-                          return createEnumModel(var);
-                        }))
+        .flatMap(model -> fixAndExtractEnumsFromDiscriminatorParentModel(model, allModels))
         .toList();
+  }
+
+  private static Stream<CodegenModel> fixAndExtractEnumsFromDiscriminatorParentModel(
+      @NonNull final CodegenModel model, @NonNull final Map<String, CodegenModel> allModels) {
+    return model.vars.stream()
+        .filter(CodegenPropertyUtils::isEnumProperty)
+        .map(
+            var -> {
+              setEnumRefProps(var);
+              model
+                  .discriminator
+                  .getMappedModels()
+                  .forEach(
+                      mappedModel -> {
+                        final CodegenModel childModel = allModels.get(mappedModel.getModelName());
+                        ensureChildModelHasNoInlineEnums(var, childModel);
+                      });
+              return createEnumModel(var);
+            });
   }
 
   private static List<CodegenModel> fixAndExtractEnumsFromAllModelsWithParents(

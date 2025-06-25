@@ -4,6 +4,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenFilenameSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenInheritedEnumSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
@@ -72,6 +73,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private final CodegenRemoveInheritanceEnumsSupport codegenRemoveInheritanceEnumsSupport =
       new CodegenRemoveInheritanceEnumsSupport();
   private final CodegenFilenameSupport codegenFilenameSupport = new CodegenFilenameSupport();
+  private final CodegenInheritedEnumSupport codegenInheritedEnumSupport =
+      new CodegenInheritedEnumSupport();
 
   @NonNull private final Args args;
 

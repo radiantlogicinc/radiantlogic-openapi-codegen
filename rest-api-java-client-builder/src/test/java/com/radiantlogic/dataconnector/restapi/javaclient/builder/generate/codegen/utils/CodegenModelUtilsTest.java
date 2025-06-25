@@ -2,7 +2,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.ModelNotFoundException;
 import java.util.List;
@@ -120,7 +119,7 @@ public class CodegenModelUtilsTest {
       model.discriminator.setMappedModels(
           Set.of(new CodegenDiscriminator.MappedModel("Child1", "Child1Model", true)));
 
-      assertFalse(CodegenModelUtils.hasNonDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
     }
 
     @Test

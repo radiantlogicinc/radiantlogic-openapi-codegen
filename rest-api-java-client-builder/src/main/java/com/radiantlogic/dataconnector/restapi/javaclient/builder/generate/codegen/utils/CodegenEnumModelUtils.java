@@ -17,21 +17,14 @@ public class CodegenEnumModelUtils {
   @NonNull
   public static CodegenModel createEnumModelFromEnumProp(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
-    final String typeName = getTypeName(enumProp);
 
-    // TODO cleanup
-    final List<Object> propAllowableValuesValues =
-        Optional.ofNullable(enumProp.allowableValues)
-            .map(map -> (List<Object>) map.get(CodegenConstants.VALUES_KEY))
-            .orElseGet(List::of);
-    final List<Map<String, Object>> propAllowableValuesEnumVars =
-        Optional.ofNullable(enumProp.allowableValues)
-            .map(map -> (List<Map<String, Object>>) map.get(CodegenConstants.ENUM_VARS_KEY))
-            .orElseGet(List::of);
+    final String typeName = getTypeName(enumProp);
+    final List<Object> propAllowableValues = getAllowableValues(enumProp);
+    final List<Map<String, Object>> propAllowableEnumVars = getAllowableEnumVars(enumProp);
 
     // TODO cleanup
     final List<Map<String, Object>> enumVars =
-        propAllowableValuesEnumVars.stream()
+        propAllowableEnumVars.stream()
             .map(
                 map -> {
                   final Object value = map.get(CodegenConstants.VALUE_KEY);
@@ -52,7 +45,7 @@ public class CodegenEnumModelUtils {
     final Map<String, Object> allowableValues =
         Map.of(
             CodegenConstants.VALUES_KEY,
-            propAllowableValuesValues,
+            propAllowableValues,
             CodegenConstants.ENUM_VARS_KEY,
             enumVars);
 
@@ -78,5 +71,19 @@ public class CodegenEnumModelUtils {
               .formatted(enumProp.datatypeWithEnum));
     }
     return matcher.group(1);
+  }
+
+  @NonNull
+  private static List<Object> getAllowableValues(@NonNull final CodegenProperty enumProp) {
+    return Optional.ofNullable(enumProp.allowableValues)
+        .map(map -> (List<Object>) map.get(CodegenConstants.VALUES_KEY))
+        .orElseGet(List::of);
+  }
+
+  private static List<Map<String, Object>> getAllowableEnumVars(
+      @NonNull final CodegenProperty enumProp) {
+    return Optional.ofNullable(enumProp.allowableValues)
+        .map(map -> (List<Map<String, Object>>) map.get(CodegenConstants.ENUM_VARS_KEY))
+        .orElseGet(List::of);
   }
 }

@@ -22,26 +22,9 @@ public class CodegenEnumModelUtils {
     final List<Object> propAllowableValues = getAllowableValues(enumProp);
     final List<Map<String, Object>> propAllowableEnumVars = getAllowableEnumVars(enumProp);
 
-    // TODO cleanup
     final List<Map<String, Object>> enumVars =
-        propAllowableEnumVars.stream()
-            .map(
-                map -> {
-                  final Object value = map.get(CodegenConstants.VALUE_KEY);
-                  final Map<String, Object> newMap = new HashMap<>();
-                  newMap.put(CodegenConstants.NAME_KEY, map.get(CodegenConstants.NAME_KEY));
-                  if (value instanceof String stringValue
-                      && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
-                    newMap.put(CodegenConstants.VALUE_KEY, "\"%s\"".formatted(stringValue));
-                  } else {
-                    newMap.put(CodegenConstants.VALUE_KEY, value);
-                  }
-                  newMap.put(CodegenConstants.IS_STRING_KEY, value instanceof String);
-                  return newMap;
-                })
-            .toList();
+        propAllowableEnumVars.stream().map(CodegenEnumModelUtils::createActualEnumVar).toList();
 
-    // TODO cleanup
     final Map<String, Object> allowableValues =
         Map.of(
             CodegenConstants.VALUES_KEY,
@@ -85,5 +68,21 @@ public class CodegenEnumModelUtils {
     return Optional.ofNullable(enumProp.allowableValues)
         .map(map -> (List<Map<String, Object>>) map.get(CodegenConstants.ENUM_VARS_KEY))
         .orElseGet(List::of);
+  }
+
+  @NonNull
+  private static Map<String, Object> createActualEnumVar(
+      @NonNull final Map<String, Object> enumVar) {
+    final Object value = enumVar.get(CodegenConstants.VALUE_KEY);
+    final Map<String, Object> newMap = new HashMap<>();
+    newMap.put(CodegenConstants.NAME_KEY, enumVar.get(CodegenConstants.NAME_KEY));
+    if (value instanceof String stringValue
+        && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
+      newMap.put(CodegenConstants.VALUE_KEY, "\"%s\"".formatted(stringValue));
+    } else {
+      newMap.put(CodegenConstants.VALUE_KEY, value);
+    }
+    newMap.put(CodegenConstants.IS_STRING_KEY, value instanceof String);
+    return newMap;
   }
 }

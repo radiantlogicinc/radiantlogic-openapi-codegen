@@ -31,8 +31,14 @@ public class CodegenInheritedEnumSupport {
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
 
+  public record ExtractedEnumModels(
+      @NonNull List<CodegenModel> newEnumsFromModelsWithParents,
+      @NonNull List<CodegenModel> newEnumsFromDiscriminatorParentModels,
+      @NonNull List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {}
+
   // TODO probably need to return the enums
-  public void fixEnumsInInheritanceHierarchy(@NonNull final Map<String, CodegenModel> allModels) {
+  public ExtractedEnumModels fixEnumsInInheritanceHierarchy(
+      @NonNull final Map<String, CodegenModel> allModels) {
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
     final List<CodegenModel> newEnumsFromModelsWithParents =
@@ -41,6 +47,10 @@ public class CodegenInheritedEnumSupport {
         handleInheritedEnumsFromDiscriminatorParentModels(allModels);
     final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
         handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
+    return new ExtractedEnumModels(
+        newEnumsFromModelsWithParents,
+        newEnumsFromDiscriminatorParentModels,
+        newEnumsFromModelsWithNonDiscriminatorChildren);
   }
 
   private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(

@@ -1,6 +1,5 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.DataconnectorJavaClientCodegen;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenPropertyUtils;
@@ -47,7 +46,7 @@ public class CodegenInheritedEnumSupport {
   private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
-        .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
+        .filter(CodegenModelUtils::hasNonDiscriminatorChildren)
         .flatMap(
             model -> {
               // TODO cleanup

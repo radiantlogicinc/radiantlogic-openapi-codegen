@@ -40,29 +40,31 @@ public class CodegenInheritedEnumSupport {
   // TODO consider merging the enums here
   public ExtractedEnumModels fixAndExtractInheritedEnums(
       @NonNull final Map<String, CodegenModel> allModels) {
-    // Parent/child should come before discriminator parent/child due to certain edge cases
-    // The one that runs first is the one that will modify the children
+
+    // The ordering here is important as subsequent passes through the models assume any enums that
+    // meet
+    // the prior criteria have been removed
     final List<CodegenModel> enumsFromModelsWithParents =
         fixAndExtractEnumsFromModelsWithParents(allModels.values());
     final List<CodegenModel> enumsFromDiscriminatorParentModels =
         fixAndExtractEnumsFromDiscriminatorParentModels(allModels);
     final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
-        fixAndExtractEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
+        fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(allModels.values());
     return new ExtractedEnumModels(
         enumsFromModelsWithParents,
         enumsFromDiscriminatorParentModels,
         enumsFromModelsWithNonDiscriminatorChildren);
   }
 
-  private static List<CodegenModel> fixAndExtractEnumsFromModelsWithNonDiscriminatorChildren(
+  private static List<CodegenModel> fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(CodegenModelUtils::hasNonDiscriminatorChildren)
-        .flatMap(model -> fixAndExtractEnumsFromModel(model, allModels))
+        .flatMap(model -> fixAndExtractEnumsFromModelWithNonDiscriminatorChildren(model, allModels))
         .toList();
   }
 
-  private static Stream<CodegenModel> fixAndExtractEnumsFromModel(
+  private static Stream<CodegenModel> fixAndExtractEnumsFromModelWithNonDiscriminatorChildren(
       @NonNull final CodegenModel model, @NonNull final Collection<CodegenModel> allModels) {
     return model.vars.stream()
         .filter(CodegenPropertyUtils::isEnumProperty)

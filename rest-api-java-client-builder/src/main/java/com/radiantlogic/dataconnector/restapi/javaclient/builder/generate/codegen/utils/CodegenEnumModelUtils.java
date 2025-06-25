@@ -26,11 +26,9 @@ public class CodegenEnumModelUtils {
         propAllowableEnumVars.stream().map(CodegenEnumModelUtils::createActualEnumVar).toList();
 
     final Map<String, Object> allowableValues =
-        Map.of(
-            CodegenConstants.VALUES_KEY,
-            propAllowableValues,
-            CodegenConstants.ENUM_VARS_KEY,
-            enumVars);
+        Map.ofEntries(
+            Map.entry(CodegenConstants.VALUES_KEY, propAllowableValues),
+            Map.entry(CodegenConstants.ENUM_VARS_KEY, enumVars));
 
     enumModel.name = typeName;
     enumModel.classname = typeName;
@@ -82,10 +80,12 @@ public class CodegenEnumModelUtils {
       newValue = value;
     }
 
-    final Map<String, Object> newMap = new HashMap<>();
-    newMap.put(CodegenConstants.NAME_KEY, enumVar.get(CodegenConstants.NAME_KEY));
-    newMap.put(CodegenConstants.VALUE_KEY, newValue);
-    newMap.put(CodegenConstants.IS_STRING_KEY, value instanceof String);
-    return newMap;
+    final Map<String, Object> newMap =
+        Map.ofEntries(
+            Map.entry(CodegenConstants.NAME_KEY, enumVar.get(CodegenConstants.NAME_KEY)),
+            Map.entry(CodegenConstants.VALUE_KEY, newValue),
+            Map.entry(CodegenConstants.IS_STRING_KEY, value instanceof String));
+    // Needs to be mutable for downstream
+    return new HashMap<>(newMap);
   }
 }

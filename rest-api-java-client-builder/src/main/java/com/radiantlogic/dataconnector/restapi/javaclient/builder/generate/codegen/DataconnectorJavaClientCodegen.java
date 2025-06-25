@@ -11,6 +11,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
@@ -200,26 +201,35 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     }
     final var oneEnumVars =
         (Collection<Map<String, Object>>)
-            Optional.ofNullable(one.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
+            Optional.ofNullable(one.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
+                .orElseGet(List::of);
     final var twoEnumVars =
         (Collection<Map<String, Object>>)
-            Optional.ofNullable(two.allowableValues.get(ENUM_VARS_KEY)).orElseGet(List::of);
+            Optional.ofNullable(two.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
+                .orElseGet(List::of);
     final Collection<Map<String, Object>> enumVars =
         Stream.of(oneEnumVars.stream(), twoEnumVars.stream())
             .flatMap(Function.identity())
-            .collect(Collectors.toMap(map -> map.get(NAME_KEY), Function.identity(), (a, b) -> b))
+            .collect(
+                Collectors.toMap(
+                    map -> map.get(CodegenConstants.NAME_KEY), Function.identity(), (a, b) -> b))
             .values();
     final var oneValues =
-        (List<Object>) Optional.ofNullable(one.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
+        (List<Object>)
+            Optional.ofNullable(one.allowableValues.get(CodegenConstants.VALUES_KEY))
+                .orElseGet(List::of);
     final var twoValues =
-        (List<Object>) Optional.ofNullable(two.allowableValues.get(VALUES_KEY)).orElseGet(List::of);
+        (List<Object>)
+            Optional.ofNullable(two.allowableValues.get(CodegenConstants.VALUES_KEY))
+                .orElseGet(List::of);
     final List<Object> values =
         Stream.of(oneValues.stream(), twoValues.stream())
             .flatMap(Function.identity())
             .distinct()
             .toList();
 
-    one.allowableValues = Map.of(ENUM_VARS_KEY, enumVars, VALUES_KEY, values);
+    one.allowableValues =
+        Map.of(CodegenConstants.ENUM_VARS_KEY, enumVars, CodegenConstants.VALUES_KEY, values);
     return one;
   }
 

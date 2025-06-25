@@ -16,7 +16,7 @@ public class CodegenPropertyUtils {
     return childProperty.baseName.equals(parentProperty.baseName);
   }
 
-  public static boolean hasEnumRefProps(@NonNull final CodegenProperty property) {
+  public static boolean isEnumRefProp(@NonNull final CodegenProperty property) {
     return !property.isEnum && !property.isInnerEnum && property.isEnumRef;
   }
 }

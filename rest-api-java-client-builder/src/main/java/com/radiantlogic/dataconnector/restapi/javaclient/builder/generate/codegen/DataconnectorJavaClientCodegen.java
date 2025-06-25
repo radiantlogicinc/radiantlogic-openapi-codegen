@@ -267,7 +267,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       @NonNull final CodegenProperty parentEnumProperty,
       @NonNull final CodegenProperty matchingChildProperty) {
     // If the property is already an enum ref, don't re-assign it
-    if (CodegenPropertyUtils.hasEnumRefProps(matchingChildProperty)) {
+    if (CodegenPropertyUtils.isEnumRefProp(matchingChildProperty)) {
       return;
     }
 

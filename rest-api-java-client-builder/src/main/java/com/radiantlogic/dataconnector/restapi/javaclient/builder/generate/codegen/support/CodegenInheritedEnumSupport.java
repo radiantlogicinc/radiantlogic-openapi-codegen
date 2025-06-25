@@ -113,18 +113,20 @@ public class CodegenInheritedEnumSupport {
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(model -> model.parentModel != null)
-        .flatMap(
-            model ->
-                // TODO cleanup
-                model.parentModel.vars.stream()
-                    .filter(CodegenPropertyUtils::isEnumProperty)
-                    .peek(
-                        var -> {
-                          setEnumRefProps(var);
-                          ensureChildModelHasNoInlineEnums(var, model);
-                        })
-                    .map(CodegenInheritedEnumSupport::createEnumModel))
+        .flatMap(CodegenInheritedEnumSupport::fixAndExtractEnumsFromModelWithParent)
         .toList();
+  }
+
+  private static Stream<CodegenModel> fixAndExtractEnumsFromModelWithParent(
+      @NonNull final CodegenModel model) {
+    return model.parentModel.vars.stream()
+        .filter(CodegenPropertyUtils::isEnumProperty)
+        .peek(
+            var -> {
+              setEnumRefProps(var);
+              ensureChildModelHasNoInlineEnums(var, model);
+            })
+        .map(CodegenInheritedEnumSupport::createEnumModel);
   }
 
   private static void setEnumRefProps(@NonNull final CodegenProperty property) {

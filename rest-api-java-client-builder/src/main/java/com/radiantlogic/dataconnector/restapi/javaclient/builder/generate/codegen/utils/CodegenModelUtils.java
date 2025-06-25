@@ -27,4 +27,20 @@ public class CodegenModelUtils {
                 new ModelNotFoundException(
                     "ModelsMap had either no models or more than one model, cannot extract CodegenModel"));
   }
+
+  @NonNull
+  public static ModelsMap wrapInModelsMap(
+      @NonNull final ModelsMap baseModelsMap,
+      @NonNull final String modelPackage,
+      @NonNull final CodegenModel model) {
+    final ModelsMap modelsMap = new ModelsMap();
+    modelsMap.putAll(baseModelsMap);
+
+    final ModelMap modelMap = new ModelMap();
+    modelMap.setModel(model);
+    final String importPath = "%s.%s".formatted(modelPackage, model.classname);
+    modelMap.put("importPath", importPath);
+    modelsMap.setModels(List.of(modelMap));
+    return modelsMap;
+  }
 }

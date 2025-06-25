@@ -105,17 +105,31 @@ public class CodegenModelUtilsTest {
   class HasNonDiscriminatorChildren {
     @Test
     void itHasOneOfChildrenWithUnmappedDiscriminator() {
-      throw new RuntimeException();
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = Set.of("Child1", "Child2");
+      model.discriminator = new CodegenDiscriminator();
+      model.discriminator.setMappedModels(null);
+
+      assertTrue(CodegenModelUtils.hasNonDiscriminatorChildren(model));
     }
 
     @Test
     void itHasOneOfChildrenWithMappedDiscriminator() {
-      throw new RuntimeException();
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = Set.of("Child1", "Child2");
+      model.discriminator = new CodegenDiscriminator();
+      model.discriminator.setMappedModels(
+          Set.of(new CodegenDiscriminator.MappedModel("Child1", "Child1Model", true)));
+
+      assertFalse(CodegenModelUtils.hasNonDiscriminatorChildren(model));
     }
 
     @Test
     void itHasNoOneOfChildren() {
-      throw new RuntimeException();
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = null;
+
+      assertFalse(CodegenModelUtils.hasNonDiscriminatorChildren(model));
     }
   }
 }

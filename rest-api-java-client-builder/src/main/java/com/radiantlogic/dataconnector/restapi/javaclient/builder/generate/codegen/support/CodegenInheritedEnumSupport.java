@@ -33,28 +33,28 @@ public class CodegenInheritedEnumSupport {
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
 
   public record ExtractedEnumModels(
-      @NonNull List<CodegenModel> newEnumsFromModelsWithParents,
-      @NonNull List<CodegenModel> newEnumsFromDiscriminatorParentModels,
-      @NonNull List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {}
+      @NonNull List<CodegenModel> enumsFromModelsWithParents,
+      @NonNull List<CodegenModel> enumsFromDiscriminatorParentModels,
+      @NonNull List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren) {}
 
   // TODO consider merging the enums here
   public ExtractedEnumModels fixAndExtractInheritedEnums(
       @NonNull final Map<String, CodegenModel> allModels) {
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
-    final List<CodegenModel> newEnumsFromModelsWithParents =
-        handleInheritedEnumsFromModelsWithParents(allModels.values());
-    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
-        handleInheritedEnumsFromDiscriminatorParentModels(allModels);
-    final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
-        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
+    final List<CodegenModel> enumsFromModelsWithParents =
+        fixAndExtractEnumsFromModelsWithParents(allModels.values());
+    final List<CodegenModel> enumsFromDiscriminatorParentModels =
+        fixAndExtractEnumsFromDiscriminatorParentModels(allModels);
+    final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
+        fixAndExtractEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
     return new ExtractedEnumModels(
-        newEnumsFromModelsWithParents,
-        newEnumsFromDiscriminatorParentModels,
-        newEnumsFromModelsWithNonDiscriminatorChildren);
+        enumsFromModelsWithParents,
+        enumsFromDiscriminatorParentModels,
+        enumsFromModelsWithNonDiscriminatorChildren);
   }
 
-  private static List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
+  private static List<CodegenModel> fixAndExtractEnumsFromModelsWithNonDiscriminatorChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(CodegenModelUtils::hasNonDiscriminatorChildren)
@@ -80,7 +80,7 @@ public class CodegenInheritedEnumSupport {
             });
   }
 
-  private static List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
+  private static List<CodegenModel> fixAndExtractEnumsFromDiscriminatorParentModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)
@@ -106,7 +106,7 @@ public class CodegenInheritedEnumSupport {
         .toList();
   }
 
-  private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
+  private static List<CodegenModel> fixAndExtractEnumsFromModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(model -> model.parentModel != null)

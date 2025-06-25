@@ -297,9 +297,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     addNewEnumModelMaps(
         allModelMaps,
-        extractedEnumModels.newEnumsFromModelsWithParents(),
-        extractedEnumModels.newEnumsFromDiscriminatorParentModels(),
-        extractedEnumModels.newEnumsFromModelsWithNonDiscriminatorChildren());
+        extractedEnumModels.enumsFromModelsWithParents(),
+        extractedEnumModels.enumsFromDiscriminatorParentModels(),
+        extractedEnumModels.enumsFromModelsWithNonDiscriminatorChildren());
 
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
 

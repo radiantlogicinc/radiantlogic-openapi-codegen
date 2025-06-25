@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -36,8 +37,8 @@ public class CodegenInheritedEnumSupport {
       @NonNull List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {}
 
-  // TODO probably need to return the enums
-  public ExtractedEnumModels fixEnumsInInheritanceHierarchy(
+  // TODO consider merging the enums here
+  public ExtractedEnumModels fixAndExtractInheritedEnums(
       @NonNull final Map<String, CodegenModel> allModels) {
     // Parent/child should come before discriminator parent/child due to certain edge cases
     // The one that runs first is the one that will modify the children
@@ -53,34 +54,33 @@ public class CodegenInheritedEnumSupport {
         newEnumsFromModelsWithNonDiscriminatorChildren);
   }
 
-  private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
+  private static List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(CodegenModelUtils::hasNonDiscriminatorChildren)
-        .flatMap(
-            model -> {
-              // TODO cleanup
-              return model.vars.stream()
-                  .filter(CodegenPropertyUtils::isEnumProperty)
-                  .map(
-                      var -> {
-                        setEnumRefProps(var);
-                        model.oneOf.forEach(
-                            childModelName -> {
-                              allModels.stream()
-                                  .filter(m -> m.name.equals(childModelName))
-                                  .findFirst()
-                                  .ifPresent(
-                                      childModel ->
-                                          ensureChildModelHasNoInlineEnums(var, childModel));
-                            });
-                        return createEnumModel(var);
-                      });
-            })
+        .flatMap(model -> fixAndExtractEnumsFromModel(model, allModels))
         .toList();
   }
 
-  private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
+  private static Stream<CodegenModel> fixAndExtractEnumsFromModel(
+      @NonNull final CodegenModel model, @NonNull final Collection<CodegenModel> allModels) {
+    return model.vars.stream()
+        .filter(CodegenPropertyUtils::isEnumProperty)
+        .map(
+            var -> {
+              setEnumRefProps(var);
+              model.oneOf.forEach(
+                  childModelName -> {
+                    allModels.stream()
+                        .filter(m -> m.name.equals(childModelName))
+                        .findFirst()
+                        .ifPresent(childModel -> ensureChildModelHasNoInlineEnums(var, childModel));
+                  });
+              return createEnumModel(var);
+            });
+  }
+
+  private static List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)

@@ -293,7 +293,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
 
     final CodegenInheritedEnumSupport.ExtractedEnumModels extractedEnumModels =
-        codegenInheritedEnumSupport.fixEnumsInInheritanceHierarchy(allModels);
+        codegenInheritedEnumSupport.fixAndExtractInheritedEnums(allModels);
 
     addNewEnumModelMaps(
         allModelMaps,

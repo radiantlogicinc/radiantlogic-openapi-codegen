@@ -3,7 +3,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.ModelNotFoundException;
 import java.util.List;
@@ -22,7 +21,7 @@ public class CodegenModelUtilsTest {
     @Test
     void itHasNoDiscriminator() {
       final CodegenModel model = new CodegenModel();
-      assertFalse(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isFalse();
     }
 
     @Test
@@ -30,7 +29,7 @@ public class CodegenModelUtilsTest {
       final CodegenModel model = new CodegenModel();
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(null);
-      assertFalse(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isFalse();
     }
 
     @Test
@@ -38,7 +37,7 @@ public class CodegenModelUtilsTest {
       final CodegenModel model = new CodegenModel();
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(Set.of());
-      assertTrue(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isTrue();
     }
   }
 
@@ -110,7 +109,7 @@ public class CodegenModelUtilsTest {
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(null);
 
-      assertTrue(CodegenModelUtils.hasNonDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isTrue();
     }
 
     @Test
@@ -129,7 +128,7 @@ public class CodegenModelUtilsTest {
       final CodegenModel model = new CodegenModel();
       model.oneOf = null;
 
-      assertFalse(CodegenModelUtils.hasNonDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
     }
   }
 }

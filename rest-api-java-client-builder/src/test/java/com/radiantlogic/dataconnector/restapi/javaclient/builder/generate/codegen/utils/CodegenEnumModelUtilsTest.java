@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenEnumModelUtilsTest {
   @Test
-  void test() {
+  void itCreatesEnumModelFromEnumProp() {
     throw new RuntimeException();
   }
 }

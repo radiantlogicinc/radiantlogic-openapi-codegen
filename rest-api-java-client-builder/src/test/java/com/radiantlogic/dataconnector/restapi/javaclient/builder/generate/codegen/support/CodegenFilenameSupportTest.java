@@ -89,7 +89,8 @@ public class CodegenFilenameSupportTest {
         (List<Map<String, String>>) allModelMaps.get("model").get(CodegenConstants.IMPORTS_KEY);
     assertThat(resultImports).hasSize(1);
     assertThat(resultImports.get(0).get(CodegenConstants.IMPORT_KEY))
-        .isEqualTo("com.example.MODELV1");
+        .isEqualTo("com.radiantlogic.MODELV1");
+    assertThat(resultModel1.imports).hasSize(1).contains("MODELV1");
   }
 
   @NonNull

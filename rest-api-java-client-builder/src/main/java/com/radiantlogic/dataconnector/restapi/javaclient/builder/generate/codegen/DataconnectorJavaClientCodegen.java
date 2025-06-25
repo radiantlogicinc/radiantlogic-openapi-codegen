@@ -408,6 +408,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
             .toList();
 
     final ModelsMap enumModelBase = new ModelsMap();
+    enumModelBase.putAll(rawEnumModelBase);
     enumModelBase.setImports(importsForEnums);
 
     allNewEnums.forEach(

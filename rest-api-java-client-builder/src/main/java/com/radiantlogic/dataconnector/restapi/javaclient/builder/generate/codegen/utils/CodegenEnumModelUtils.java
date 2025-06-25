@@ -17,20 +17,7 @@ public class CodegenEnumModelUtils {
   @NonNull
   public static CodegenModel createEnumModelFromEnumProp(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
-
-    // TODO cleanup
-    final String typeName;
-    if (enumProp.openApiType.equals("array")) {
-      final Matcher matcher = LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
-      if (!matcher.matches()) {
-        throw new IllegalStateException(
-            "Array enum property has a name that doesn't match pattern: %s"
-                .formatted(enumProp.datatypeWithEnum));
-      }
-      typeName = matcher.group(1);
-    } else {
-      typeName = enumProp.datatypeWithEnum;
-    }
+    final String typeName = getTypeName(enumProp);
 
     // TODO cleanup
     final List<Object> propAllowableValuesValues =
@@ -76,5 +63,20 @@ public class CodegenEnumModelUtils {
     enumModel.classFilename = typeName;
     enumModel.dataType = "String";
     return enumModel;
+  }
+
+  @NonNull
+  private static String getTypeName(@NonNull final CodegenProperty enumProp) {
+    if (!enumProp.openApiType.equals("array")) {
+      return enumProp.datatypeWithEnum;
+    }
+
+    final Matcher matcher = LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
+    if (!matcher.matches()) {
+      throw new IllegalStateException(
+          "Array enum property has a name that doesn't match pattern: %s"
+              .formatted(enumProp.datatypeWithEnum));
+    }
+    return matcher.group(1);
   }
 }

@@ -12,6 +12,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenPropertyUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
@@ -256,30 +257,17 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return modelsMap;
   }
 
-  private static boolean isEnumProperty(@NonNull final CodegenProperty codegenProperty) {
-    return codegenProperty.isEnum || codegenProperty.isEnumRef || codegenProperty.isInnerEnum;
-  }
-
-  private static boolean isSamePropertyInChild(
-      @NonNull final CodegenProperty parentProperty, @NonNull final CodegenProperty childProperty) {
-    return childProperty.baseName.equals(parentProperty.baseName);
-  }
-
   private static void setEnumRefProps(@NonNull final CodegenProperty property) {
     property.isEnum = false;
     property.isInnerEnum = false;
     property.isEnumRef = true;
   }
 
-  private static boolean hasEnumRefProps(@NonNull final CodegenProperty property) {
-    return !property.isEnum && !property.isInnerEnum && property.isEnumRef;
-  }
-
   private static void ensureChildModelPropertyNotInnerEnum(
       @NonNull final CodegenProperty parentEnumProperty,
       @NonNull final CodegenProperty matchingChildProperty) {
     // If the property is already an enum ref, don't re-assign it
-    if (hasEnumRefProps(matchingChildProperty)) {
+    if (CodegenPropertyUtils.hasEnumRefProps(matchingChildProperty)) {
       return;
     }
 
@@ -292,7 +280,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static void ensureChildModelHasNoInlineEnums(
       @NonNull final CodegenProperty parentEnumProperty, @NonNull final CodegenModel childModel) {
     childModel.vars.stream()
-        .filter(childVar -> isSamePropertyInChild(parentEnumProperty, childVar))
+        .filter(
+            childVar -> CodegenPropertyUtils.isSamePropertyInChild(parentEnumProperty, childVar))
         .findFirst()
         .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
@@ -304,7 +293,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .flatMap(
             model ->
                 model.parentModel.vars.stream()
-                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .filter(CodegenPropertyUtils::isEnumProperty)
                     .peek(
                         var -> {
                           setEnumRefProps(var);
@@ -321,7 +310,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .flatMap(
             model ->
                 model.vars.stream()
-                    .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                    .filter(CodegenPropertyUtils::isEnumProperty)
                     .map(
                         var -> {
                           setEnumRefProps(var);
@@ -437,7 +426,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .flatMap(
             model -> {
               return model.vars.stream()
-                  .filter(DataconnectorJavaClientCodegen::isEnumProperty)
+                  .filter(CodegenPropertyUtils::isEnumProperty)
                   .map(
                       var -> {
                         setEnumRefProps(var);

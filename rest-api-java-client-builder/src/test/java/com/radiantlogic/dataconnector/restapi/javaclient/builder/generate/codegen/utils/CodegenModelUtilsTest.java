@@ -104,7 +104,17 @@ public class CodegenModelUtilsTest {
   @Nested
   class HasNonDiscriminatorChildren {
     @Test
-    void test() {
+    void itHasOneOfChildrenWithUnmappedDiscriminator() {
+      throw new RuntimeException();
+    }
+
+    @Test
+    void itHasOneOfChildrenWithMappedDiscriminator() {
+      throw new RuntimeException();
+    }
+
+    @Test
+    void itHasNoOneOfChildren() {
       throw new RuntimeException();
     }
   }

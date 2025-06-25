@@ -100,4 +100,12 @@ public class CodegenModelUtilsTest {
       assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
   }
+
+  @Nested
+  class HasNonDiscriminatorChildren {
+    @Test
+    void test() {
+      throw new RuntimeException();
+    }
+  }
 }

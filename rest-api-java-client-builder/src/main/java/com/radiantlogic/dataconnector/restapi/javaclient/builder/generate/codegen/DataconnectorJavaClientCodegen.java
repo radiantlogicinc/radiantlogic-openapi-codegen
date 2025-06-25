@@ -274,15 +274,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         });
   }
 
-  private static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
-    final boolean hasOneOfChildren = model.oneOf != null && !model.oneOf.isEmpty();
-    final boolean hasNoDiscriminatorChildren =
-        model.discriminator == null
-            || (model.discriminator.getMappedModels() == null
-                || model.discriminator.getMappedModels().isEmpty());
-    return hasOneOfChildren && hasNoDiscriminatorChildren;
-  }
-
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {

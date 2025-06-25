@@ -45,9 +45,9 @@ public class CodegenInheritedEnumSupport {
     // meet
     // the prior criteria have been removed
     final List<CodegenModel> enumsFromModelsWithParents =
-        fixAndExtractEnumsFromModelsWithParents(allModels.values());
+        fixAndExtractEnumsFromAllModelsWithParents(allModels.values());
     final List<CodegenModel> enumsFromDiscriminatorParentModels =
-        fixAndExtractEnumsFromDiscriminatorParentModels(allModels);
+        fixAndExtractEnumsFromAllDiscriminatorParentModels(allModels);
     final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
         fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(allModels.values());
     return new ExtractedEnumModels(
@@ -82,7 +82,7 @@ public class CodegenInheritedEnumSupport {
             });
   }
 
-  private static List<CodegenModel> fixAndExtractEnumsFromDiscriminatorParentModels(
+  private static List<CodegenModel> fixAndExtractEnumsFromAllDiscriminatorParentModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)
@@ -108,7 +108,7 @@ public class CodegenInheritedEnumSupport {
         .toList();
   }
 
-  private static List<CodegenModel> fixAndExtractEnumsFromModelsWithParents(
+  private static List<CodegenModel> fixAndExtractEnumsFromAllModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(model -> model.parentModel != null)

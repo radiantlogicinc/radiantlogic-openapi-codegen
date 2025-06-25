@@ -36,10 +36,11 @@ public class CodegenModelUtils {
     final ModelsMap modelsMap = new ModelsMap();
     modelsMap.putAll(baseModelsMap);
 
+    final String importPath = "%s.%s".formatted(modelPackage, model.classname);
+
     final ModelMap modelMap = new ModelMap();
     modelMap.setModel(model);
-    final String importPath = "%s.%s".formatted(modelPackage, model.classname);
-    modelMap.put("importPath", importPath);
+    modelMap.put(CodegenConstants.IMPORT_PATH_KEY, importPath);
     modelsMap.setModels(List.of(modelMap));
     return modelsMap;
   }

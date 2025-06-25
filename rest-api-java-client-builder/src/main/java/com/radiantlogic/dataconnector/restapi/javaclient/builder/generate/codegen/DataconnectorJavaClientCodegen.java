@@ -236,6 +236,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return enumModel;
   }
 
+  // TODO delete this
   private ModelsMap enumModelToModelsMap(
       @NonNull final CodegenModel enumModel,
       @NonNull final ModelsMap base,

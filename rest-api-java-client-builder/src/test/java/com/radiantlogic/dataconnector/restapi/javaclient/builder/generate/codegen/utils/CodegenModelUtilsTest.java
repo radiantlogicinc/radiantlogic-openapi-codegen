@@ -74,4 +74,12 @@ public class CodegenModelUtilsTest {
       assertThat(actualModel).isEqualTo(model);
     }
   }
+
+  @Nested
+  class WrapInModelsMap {
+    @Test
+    void test() {
+      throw new RuntimeException();
+    }
+  }
 }

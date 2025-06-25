@@ -1,6 +1,8 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.DataconnectorJavaClientCodegen;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenPropertyUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,8 +34,67 @@ public class CodegenInheritedEnumSupport {
 
   // TODO probably need to return the enums
   public void fixEnumsInInheritanceHierarchy(@NonNull final Map<String, CodegenModel> allModels) {
+    // Parent/child should come before discriminator parent/child due to certain edge cases
+    // The one that runs first is the one that will modify the children
     final List<CodegenModel> newEnumsFromModelsWithParents =
         handleInheritedEnumsFromModelsWithParents(allModels.values());
+    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
+        handleInheritedEnumsFromDiscriminatorParentModels(allModels);
+    final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
+        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
+  }
+
+  private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
+      @NonNull final Collection<CodegenModel> allModels) {
+    return allModels.stream()
+        .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
+        .flatMap(
+            model -> {
+              // TODO cleanup
+              return model.vars.stream()
+                  .filter(CodegenPropertyUtils::isEnumProperty)
+                  .map(
+                      var -> {
+                        setEnumRefProps(var);
+                        model.oneOf.forEach(
+                            childModelName -> {
+                              allModels.stream()
+                                  .filter(m -> m.name.equals(childModelName))
+                                  .findFirst()
+                                  .ifPresent(
+                                      childModel ->
+                                          ensureChildModelHasNoInlineEnums(var, childModel));
+                            });
+                        return createEnumModel(var);
+                      });
+            })
+        .toList();
+  }
+
+  private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
+      @NonNull final Map<String, CodegenModel> allModels) {
+    return allModels.values().stream()
+        .filter(CodegenModelUtils::hasDiscriminatorChildren)
+        .flatMap(
+            model ->
+                // TODO cleanup
+                model.vars.stream()
+                    .filter(CodegenPropertyUtils::isEnumProperty)
+                    .map(
+                        var -> {
+                          setEnumRefProps(var);
+                          model
+                              .discriminator
+                              .getMappedModels()
+                              .forEach(
+                                  mappedModel -> {
+                                    final CodegenModel childModel =
+                                        allModels.get(mappedModel.getModelName());
+                                    ensureChildModelHasNoInlineEnums(var, childModel);
+                                  });
+                          return createEnumModel(var);
+                        }))
+        .toList();
   }
 
   private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
@@ -42,6 +103,7 @@ public class CodegenInheritedEnumSupport {
         .filter(model -> model.parentModel != null)
         .flatMap(
             model ->
+                // TODO cleanup
                 model.parentModel.vars.stream()
                     .filter(CodegenPropertyUtils::isEnumProperty)
                     .peek(
@@ -68,10 +130,10 @@ public class CodegenInheritedEnumSupport {
         .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
 
-  // TODO cleanup
   private static CodegenModel createEnumModel(@NonNull final CodegenProperty enumProp) {
     final CodegenModel enumModel = new CodegenModel();
 
+    // TODO cleanup
     final String typeName;
     if (enumProp.openApiType.equals("array")) {
       final Matcher matcher = LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
@@ -85,6 +147,7 @@ public class CodegenInheritedEnumSupport {
       typeName = enumProp.datatypeWithEnum;
     }
 
+    // TODO cleanup
     final List<Object> propAllowableValuesValues =
         Optional.ofNullable(enumProp.allowableValues)
             .map(map -> (List<Object>) map.get(CodegenConstants.VALUES_KEY))
@@ -94,6 +157,7 @@ public class CodegenInheritedEnumSupport {
             .map(map -> (List<Map<String, Object>>) map.get(CodegenConstants.ENUM_VARS_KEY))
             .orElseGet(List::of);
 
+    // TODO cleanup
     final List<Map<String, Object>> enumVars =
         propAllowableValuesEnumVars.stream()
             .map(
@@ -112,6 +176,7 @@ public class CodegenInheritedEnumSupport {
                 })
             .toList();
 
+    // TODO cleanup
     final Map<String, Object> allowableValues =
         Map.of(
             CodegenConstants.VALUES_KEY,

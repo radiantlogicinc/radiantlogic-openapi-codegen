@@ -12,7 +12,6 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenPropertyUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
@@ -193,31 +192,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return modelsMap;
   }
 
-  private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
-      @NonNull final Map<String, CodegenModel> allModels) {
-    return allModels.values().stream()
-        .filter(CodegenModelUtils::hasDiscriminatorChildren)
-        .flatMap(
-            model ->
-                model.vars.stream()
-                    .filter(CodegenPropertyUtils::isEnumProperty)
-                    .map(
-                        var -> {
-                          setEnumRefProps(var);
-                          model
-                              .discriminator
-                              .getMappedModels()
-                              .forEach(
-                                  mappedModel -> {
-                                    final CodegenModel childModel =
-                                        allModels.get(mappedModel.getModelName());
-                                    ensureChildModelHasNoInlineEnums(var, childModel);
-                                  });
-                          return createEnumModel(var);
-                        }))
-        .toList();
-  }
-
   // TODO clean this up
   private static CodegenModel mergeEnumCodegenModels(
       @NonNull final CodegenModel one, @NonNull final CodegenModel two) {
@@ -309,32 +283,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return hasOneOfChildren && hasNoDiscriminatorChildren;
   }
 
-  private List<CodegenModel> handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(
-      @NonNull final Collection<CodegenModel> allModels) {
-    return allModels.stream()
-        .filter(DataconnectorJavaClientCodegen::hasNonDiscriminatorChildren)
-        .flatMap(
-            model -> {
-              return model.vars.stream()
-                  .filter(CodegenPropertyUtils::isEnumProperty)
-                  .map(
-                      var -> {
-                        setEnumRefProps(var);
-                        model.oneOf.forEach(
-                            childModelName -> {
-                              allModels.stream()
-                                  .filter(m -> m.name.equals(childModelName))
-                                  .findFirst()
-                                  .ifPresent(
-                                      childModel ->
-                                          ensureChildModelHasNoInlineEnums(var, childModel));
-                            });
-                        return createEnumModel(var);
-                      });
-            })
-        .toList();
-  }
-
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {
@@ -343,14 +291,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
 
-    // Parent/child should come before discriminator parent/child due to certain edge cases
-    // The one that runs first is the one that will modify the children
-    final List<CodegenModel> newEnumsFromModelsWithParents =
-        handleInheritedEnumsFromModelsWithParents(allModels.values());
-    final List<CodegenModel> newEnumsFromDiscriminatorParentModels =
-        handleInheritedEnumsFromDiscriminatorParentModels(allModels);
-    final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren =
-        handleInheritedEnumsFromModelsWithNonDiscriminatorChildren(allModels.values());
+    codegenInheritedEnumSupport.fixEnumsInInheritanceHierarchy(allModels);
+
     addNewEnumModelMaps(
         allModelMaps,
         newEnumsFromModelsWithParents,

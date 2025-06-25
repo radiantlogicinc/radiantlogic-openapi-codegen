@@ -6,9 +6,9 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenModel;
@@ -107,15 +107,15 @@ public class CodegenFilenameSupportTest {
     model.classname = classname;
     model.classFilename = classname;
     model.dataType = classname;
-    model.imports = Set.of();
+    model.imports = new HashSet<>();
     return model;
   }
 
   private ModelsMap createModelsMap(@NonNull final CodegenModel codegenModel) {
     final ModelsMap baseModelsMap = new ModelsMap();
-    baseModelsMap.put(
-        CodegenConstants.IMPORTS_KEY,
-        codegenModel.imports.stream().map("com.radiantlogic.%s"::formatted).toList());
+    final List<String> importList =
+        codegenModel.imports.stream().map("com.radiantlogic.%s"::formatted).toList();
+    baseModelsMap.put(CodegenConstants.IMPORTS_KEY, new ArrayList<>(importList));
     return CodegenModelUtils.wrapInModelsMap(baseModelsMap, "com.radiantlogic", codegenModel);
   }
 }

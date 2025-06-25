@@ -3,6 +3,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Map;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.CodegenModel;
-import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.utils.ModelUtils;
 
@@ -107,13 +107,7 @@ public class CodegenFilenameSupportTest {
     return model;
   }
 
-  @NonNull
-  private ModelsMap createModelsMap(@NonNull final CodegenModel model) {
-    final ModelMap modelMap = new ModelMap();
-    modelMap.setModel(model);
-
-    final ModelsMap modelsMap = new ModelsMap();
-    modelsMap.setModels(List.of(modelMap));
-    return modelsMap;
+  private ModelsMap createModelsMap(@NonNull final CodegenModel codegenModel) {
+    return CodegenModelUtils.wrapInModelsMap(new ModelsMap(), "com.radiantlogic", codegenModel);
   }
 }

@@ -371,7 +371,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
       @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
-    final ModelsMap enumModelBase =
+    final ModelsMap rawEnumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
     final Map<String, CodegenModel> allNewEnums =
@@ -406,9 +406,13 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
             .map(entry -> Map.of("import", entry.getValue()))
             .toList();
 
+    final ModelsMap enumModelBase = new ModelsMap();
+    enumModelBase.setImports(importsForEnums);
+
     allNewEnums.forEach(
         (key, model) -> {
-          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase, importsForEnums));
+          allModelMaps.put(
+              key, CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage(), model));
         });
   }
 

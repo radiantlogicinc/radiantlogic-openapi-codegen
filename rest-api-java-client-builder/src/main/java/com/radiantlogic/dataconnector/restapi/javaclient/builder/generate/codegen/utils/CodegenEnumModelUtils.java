@@ -74,14 +74,17 @@ public class CodegenEnumModelUtils {
   private static Map<String, Object> createActualEnumVar(
       @NonNull final Map<String, Object> enumVar) {
     final Object value = enumVar.get(CodegenConstants.VALUE_KEY);
-    final Map<String, Object> newMap = new HashMap<>();
-    newMap.put(CodegenConstants.NAME_KEY, enumVar.get(CodegenConstants.NAME_KEY));
+    Object newValue;
     if (value instanceof String stringValue
         && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
-      newMap.put(CodegenConstants.VALUE_KEY, "\"%s\"".formatted(stringValue));
+      newValue = "\"%s\"".formatted(stringValue);
     } else {
-      newMap.put(CodegenConstants.VALUE_KEY, value);
+      newValue = value;
     }
+
+    final Map<String, Object> newMap = new HashMap<>();
+    newMap.put(CodegenConstants.NAME_KEY, enumVar.get(CodegenConstants.NAME_KEY));
+    newMap.put(CodegenConstants.VALUE_KEY, newValue);
     newMap.put(CodegenConstants.IS_STRING_KEY, value instanceof String);
     return newMap;
   }

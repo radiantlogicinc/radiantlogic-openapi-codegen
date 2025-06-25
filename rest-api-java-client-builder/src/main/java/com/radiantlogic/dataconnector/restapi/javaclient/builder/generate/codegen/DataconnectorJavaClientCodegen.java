@@ -3,12 +3,14 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.args.Args;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenDiscriminatorSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenEnumValueOfSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenFilenameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,8 +30,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -50,8 +49,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private static final String VALUES_KEY = "values";
   private static final String NAME_KEY = "name";
   private static final String VALUE_KEY = "value";
-  private static final String IMPORTS_KEY = "imports";
-  private static final String IMPORT_KEY = "import";
   private static final String IS_STRING_KEY = "isString";
   private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
   private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
@@ -74,6 +71,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenMissingModelInheritanceSupport();
   private final CodegenRemoveInheritanceEnumsSupport codegenRemoveInheritanceEnumsSupport =
       new CodegenRemoveInheritanceEnumsSupport();
+  private final CodegenFilenameSupport codegenFilenameSupport = new CodegenFilenameSupport();
 
   @NonNull private final Args args;
 
@@ -238,6 +236,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     return enumModel;
   }
 
+  // TODO delete this
   private ModelsMap enumModelToModelsMap(
       @NonNull final CodegenModel enumModel,
       @NonNull final ModelsMap base,
@@ -295,10 +294,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .ifPresent(childVar -> ensureChildModelPropertyNotInnerEnum(parentEnumProperty, childVar));
   }
 
-  private static boolean hasDiscriminatorChildren(@NonNull final CodegenModel model) {
-    return model.discriminator != null && model.discriminator.getMappedModels() != null;
-  }
-
   private static List<CodegenModel> handleInheritedEnumsFromModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
@@ -319,7 +314,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private List<CodegenModel> handleInheritedEnumsFromDiscriminatorParentModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
-        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
+        .filter(CodegenModelUtils::hasDiscriminatorChildren)
         .flatMap(
             model ->
                 model.vars.stream()
@@ -339,26 +334,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
                           return createEnumModel(var);
                         }))
         .toList();
-  }
-
-  private void handleDiscriminatorChildMappingValues(
-      @NonNull final Map<String, CodegenModel> allModels) {
-    allModels.values().stream()
-        .filter(DataconnectorJavaClientCodegen::hasDiscriminatorChildren)
-        .forEach(
-            model -> {
-              model
-                  .discriminator
-                  .getMappedModels()
-                  .forEach(
-                      mappedModel -> {
-                        final CodegenModel childModel = allModels.get(mappedModel.getModelName());
-                        // This is a special extension used in the template to ensure the correct
-                        // mapping value in the JsonTypeName annotation
-                        childModel.vendorExtensions.put(
-                            "x-discriminator-mapping-value", mappedModel.getMappingName());
-                      });
-            });
   }
 
   // TODO clean this up
@@ -397,7 +372,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       @NonNull final List<CodegenModel> newEnumsFromParentModels,
       @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
       @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
-    final ModelsMap enumModelBase =
+    final ModelsMap rawEnumModelBase =
         allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
 
     final Map<String, CodegenModel> allNewEnums =
@@ -432,9 +407,14 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
             .map(entry -> Map.of("import", entry.getValue()))
             .toList();
 
+    final ModelsMap enumModelBase = new ModelsMap();
+    enumModelBase.putAll(rawEnumModelBase);
+    enumModelBase.setImports(importsForEnums);
+
     allNewEnums.forEach(
         (key, model) -> {
-          allModelMaps.put(key, enumModelToModelsMap(model, enumModelBase, importsForEnums));
+          allModelMaps.put(
+              key, CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage(), model));
         });
   }
 
@@ -473,92 +453,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         .toList();
   }
 
-  private Map<String, ModelsMap> fixProblematicKeysForFilenames(
-      @NonNull final Map<String, ModelsMap> allModelMaps) {
-
-    final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
-
-    final Map<String, ModelsMap> fixedModelMaps =
-        allModelMaps.entrySet().stream()
-            .map(
-                entry -> {
-                  final String fileName = modelFilename("model.mustache", entry.getKey());
-                  final String fileBaseName = FilenameUtils.getBaseName(fileName).toLowerCase();
-
-                  return Map.of(fileBaseName, entry);
-                })
-            .reduce(
-                new HashMap<>(),
-                (acc, singleEntryMap) -> {
-                  final String fileBaseName =
-                      singleEntryMap.keySet().stream().findFirst().orElseThrow();
-                  final Map.Entry<String, ModelsMap> entry = singleEntryMap.get(fileBaseName);
-
-                  if (!acc.containsKey(fileBaseName)) {
-                    acc.put(fileBaseName, entry);
-                    return acc;
-                  }
-
-                  final CodegenModel model =
-                      ModelUtils.getModelByName(entry.getKey(), allModelMaps);
-                  int index = 1;
-                  while (acc.containsKey(fileBaseName + index)) {
-                    index++;
-                  }
-                  final String suffix = "V%d".formatted(index);
-                  final String newFileBaseName = fileBaseName + suffix;
-                  final String newKey = entry.getKey() + suffix;
-                  final String oldClassName = model.classname;
-                  model.classname = model.classname + suffix;
-                  model.classFilename = model.classFilename + suffix;
-                  model.dataType = model.dataType + suffix;
-
-                  allModels
-                      .values()
-                      .forEach(
-                          otherModel -> {
-                            if (otherModel.imports != null
-                                && otherModel.imports.contains(oldClassName)) {
-                              otherModel.imports.remove(oldClassName);
-                              otherModel.imports.add(model.classname);
-
-                              ((List<Map<String, String>>)
-                                      allModelMaps.get(otherModel.name).get(IMPORTS_KEY))
-                                  .forEach(
-                                      importMap -> {
-                                        final String importValue = importMap.get(IMPORT_KEY);
-                                        if (importValue.endsWith(".%s".formatted(oldClassName))) {
-                                          final String newImportValue =
-                                              importValue.replaceAll(
-                                                  "\\.%s$".formatted(oldClassName),
-                                                  ".%s".formatted(model.classname));
-                                          importMap.put("import", newImportValue);
-                                        }
-                                      });
-                            }
-                          });
-
-                  acc.put(newFileBaseName, Map.entry(newKey, entry.getValue()));
-                  return acc;
-                })
-            .values()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-    // The map created by DefaultGenerator is exactly like this, it must be the exact same type with
-    // this comparator to work downstream
-    final Map<String, ModelsMap> fixedModelMapsWithComparator =
-        new TreeMap<>((o1, o2) -> ObjectUtils.compare(toModelName(o1), toModelName(o2)));
-
-    fixedModelMapsWithComparator.putAll(fixedModelMaps);
-    return fixedModelMapsWithComparator;
-  }
-
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
-      @NonNull final Map<String, ModelsMap> originalAllModelMaps) {
-    final Map<String, ModelsMap> allModelMaps =
-        fixProblematicKeysForFilenames(originalAllModelMaps);
+      @NonNull final Map<String, ModelsMap> allModelMaps) {
+    codegenFilenameSupport.fixProblematicKeysForFilenames(allModelMaps, this::modelFilename);
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
@@ -577,7 +475,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         newEnumsFromDiscriminatorParentModels,
         newEnumsFromModelsWithNonDiscriminatorChildren);
 
-    handleDiscriminatorChildMappingValues(allModels);
+    codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
 
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 

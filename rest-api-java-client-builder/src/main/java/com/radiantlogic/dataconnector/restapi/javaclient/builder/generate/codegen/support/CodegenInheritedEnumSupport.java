@@ -1,5 +1,9 @@
 package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support;
 
+import java.util.Map;
+import lombok.NonNull;
+import org.openapitools.codegen.model.ModelsMap;
+
 /**
  * Inherited enums are one of the most challenging parts of how the openapi-generator works,
  * especially inline inherited enums which tend to be duplicated at each level of the class
@@ -15,4 +19,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
  */
 public class CodegenInheritedEnumSupport {
   // TODO finish this
+
+  public void fixEnumsInInheritanceHierarchy(@NonNull final Map<String, ModelsMap> allModelMaps) {}
 }

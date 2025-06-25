@@ -58,7 +58,7 @@ public class CodegenFilenameSupportTest {
 
     final List<Map<String, String>> imports = new ArrayList<>();
     final Map<String, String> importMap = new HashMap<>();
-    importMap.put(CodegenConstants.IMPORT_KEY, "com.example.MODEL");
+    importMap.put(CodegenConstants.IMPORT_KEY, "com.radiantlogic.MODEL");
     imports.add(importMap);
     modelsMap1.put(CodegenConstants.IMPORTS_KEY, imports);
 

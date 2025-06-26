@@ -54,11 +54,13 @@ public class CodegenNewEnumProcessorSupport {
     enumModelBase.putAll(rawEnumModelBase);
     enumModelBase.setImports(importsForEnums);
 
-    allNewEnums.forEach(
-        (key, model) -> {
-          allModelMaps.put(
-              key, CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage, model));
-        });
+    allNewEnums.entrySet().stream()
+        .map(
+            entry ->
+                Map.entry(
+                    entry.getKey(),
+                    CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage, model)))
+        .forEach(entry -> allModelMaps.put(entry.getKey(), entry.getValue()));
   }
 
   @NonNull

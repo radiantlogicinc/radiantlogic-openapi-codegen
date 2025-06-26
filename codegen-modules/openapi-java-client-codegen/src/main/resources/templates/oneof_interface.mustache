@@ -48,7 +48,12 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      */
     class Raw extends HashMap<String, Object> {
         public {{propertyType}} {{propertyGetter}}() {
+            {{#isEnum}}
+            return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
+            {{/isEnum}}
+            {{^isEnum}}
             return ({{propertyType}}) get("{{propertyName}}");
+            {{/isEnum}}
         }
 
         public <T extends {{classname}}> T toImplementation(final Class<T> type) {

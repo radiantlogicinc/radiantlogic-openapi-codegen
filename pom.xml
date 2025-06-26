@@ -16,20 +16,20 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>./rest-api-java-client-builder</module>
+                <module>./source-modules/openapi-java-client-builder</module>
             </modules>
         </profile>
         <profile>
             <id>usage</id>
             <modules>
-                <module>./usage</module>
+                <module>./test-modules/openapi-java-client-usage</module>
             </modules>
         </profile>
         <profile>
             <id>all</id>
             <modules>
-                <module>./rest-api-java-client-builder</module>
-                <module>./usage</module>
+                <module>./source-modules/openapi-java-client-builder</module>
+                <module>./test-modules/openapi-java-client-usage</module>
             </modules>
         </profile>
     </profiles>

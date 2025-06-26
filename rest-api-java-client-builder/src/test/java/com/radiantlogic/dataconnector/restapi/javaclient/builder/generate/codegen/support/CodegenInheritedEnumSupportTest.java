@@ -22,10 +22,10 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromModelsWithParents() {
     // Arrange
-    CodegenModel parentModel = new CodegenModel();
+    final CodegenModel parentModel = new CodegenModel();
     parentModel.name = "ParentModel";
 
-    CodegenProperty enumProperty = new CodegenProperty();
+    final CodegenProperty enumProperty = new CodegenProperty();
     enumProperty.baseName = "status";
     enumProperty.name = "status";
     enumProperty.dataType = "StatusEnum";
@@ -35,11 +35,11 @@ public class CodegenInheritedEnumSupportTest {
 
     parentModel.vars = List.of(enumProperty);
 
-    CodegenModel childModel = new CodegenModel();
+    final CodegenModel childModel = new CodegenModel();
     childModel.name = "ChildModel";
     childModel.parentModel = parentModel;
 
-    CodegenProperty childEnumProperty = new CodegenProperty();
+    final CodegenProperty childEnumProperty = new CodegenProperty();
     childEnumProperty.baseName = "status";
     childEnumProperty.name = "status";
     childEnumProperty.dataType = "StatusEnum";
@@ -49,11 +49,11 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    Map<String, CodegenModel> allModels = new HashMap<>();
+    final Map<String, CodegenModel> allModels = new HashMap<>();
     allModels.put("ParentModel", parentModel);
     allModels.put("ChildModel", childModel);
 
-    CodegenModel expectedEnumModel = new CodegenModel();
+    final CodegenModel expectedEnumModel = new CodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 
@@ -65,8 +65,8 @@ public class CodegenInheritedEnumSupportTest {
           .thenReturn(expectedEnumModel);
 
       // Act
-      CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
-      CodegenInheritedEnumSupport.ExtractedEnumModels result =
+      final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
+      final CodegenInheritedEnumSupport.ExtractedEnumModels result =
           support.fixAndExtractInheritedEnums(allModels);
 
       // Assert
@@ -91,10 +91,10 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromDiscriminatorParentModels() {
     // Arrange
-    CodegenModel parentModel = new CodegenModel();
+    final CodegenModel parentModel = new CodegenModel();
     parentModel.name = "ParentModel";
 
-    CodegenProperty enumProperty = new CodegenProperty();
+    final CodegenProperty enumProperty = new CodegenProperty();
     enumProperty.baseName = "status";
     enumProperty.name = "status";
     enumProperty.dataType = "StatusEnum";
@@ -105,16 +105,16 @@ public class CodegenInheritedEnumSupportTest {
     parentModel.vars = List.of(enumProperty);
 
     // Create discriminator for parent model
-    CodegenDiscriminator discriminator = new CodegenDiscriminator();
-    MappedModel mappedModel = new MappedModel("childMapping", "ChildModel", true);
+    final CodegenDiscriminator discriminator = new CodegenDiscriminator();
+    final MappedModel mappedModel = new MappedModel("childMapping", "ChildModel", true);
     discriminator.setMappedModels(Set.of(mappedModel));
     parentModel.discriminator = discriminator;
 
     // Create child model
-    CodegenModel childModel = new CodegenModel();
+    final CodegenModel childModel = new CodegenModel();
     childModel.name = "ChildModel";
 
-    CodegenProperty childEnumProperty = new CodegenProperty();
+    final CodegenProperty childEnumProperty = new CodegenProperty();
     childEnumProperty.baseName = "status";
     childEnumProperty.name = "status";
     childEnumProperty.dataType = "StatusEnum";
@@ -124,12 +124,12 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    Map<String, CodegenModel> allModels = new HashMap<>();
+    final Map<String, CodegenModel> allModels = new HashMap<>();
     allModels.put("ParentModel", parentModel);
     allModels.put("ChildModel", childModel);
 
     // Mock static method to return expected enum model
-    CodegenModel expectedEnumModel = new CodegenModel();
+    final CodegenModel expectedEnumModel = new CodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 
@@ -149,8 +149,8 @@ public class CodegenInheritedEnumSupportTest {
           .thenReturn(expectedEnumModel);
 
       // Act
-      CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
-      CodegenInheritedEnumSupport.ExtractedEnumModels result =
+      final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
+      final CodegenInheritedEnumSupport.ExtractedEnumModels result =
           support.fixAndExtractInheritedEnums(allModels);
 
       // Assert
@@ -175,10 +175,10 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromModelsWithNonDiscriminatorChildren() {
     // Arrange
-    CodegenModel parentModel = new CodegenModel();
+    final CodegenModel parentModel = new CodegenModel();
     parentModel.name = "ParentModel";
 
-    CodegenProperty enumProperty = new CodegenProperty();
+    final CodegenProperty enumProperty = new CodegenProperty();
     enumProperty.baseName = "status";
     enumProperty.name = "status";
     enumProperty.dataType = "StatusEnum";
@@ -192,10 +192,10 @@ public class CodegenInheritedEnumSupportTest {
     parentModel.oneOf = Set.of("ChildModel");
 
     // Create child model
-    CodegenModel childModel = new CodegenModel();
+    final CodegenModel childModel = new CodegenModel();
     childModel.name = "ChildModel";
 
-    CodegenProperty childEnumProperty = new CodegenProperty();
+    final CodegenProperty childEnumProperty = new CodegenProperty();
     childEnumProperty.baseName = "status";
     childEnumProperty.name = "status";
     childEnumProperty.dataType = "StatusEnum";
@@ -205,12 +205,12 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    Map<String, CodegenModel> allModels = new HashMap<>();
+    final Map<String, CodegenModel> allModels = new HashMap<>();
     allModels.put("ParentModel", parentModel);
     allModels.put("ChildModel", childModel);
 
     // Mock static method to return expected enum model
-    CodegenModel expectedEnumModel = new CodegenModel();
+    final CodegenModel expectedEnumModel = new CodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 
@@ -242,7 +242,7 @@ public class CodegenInheritedEnumSupportTest {
           .thenReturn(expectedEnumModel);
 
       // Act
-      CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
+      final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
       CodegenInheritedEnumSupport.ExtractedEnumModels result =
           support.fixAndExtractInheritedEnums(allModels);
 

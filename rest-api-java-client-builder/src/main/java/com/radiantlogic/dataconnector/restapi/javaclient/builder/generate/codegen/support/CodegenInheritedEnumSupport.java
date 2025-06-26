@@ -41,13 +41,19 @@ public class CodegenInheritedEnumSupport {
         fixAndExtractEnumsFromAllDiscriminatedUnionModels(allModels);
     final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
         fixAndExtractEnumsFromAllNonDiscriminatorModelsWithChildren(allModels.values());
+
     return new ExtractedEnumModels(
         enumsFromModelsWithParents,
         enumsFromDiscriminatorParentModels,
         enumsFromModelsWithNonDiscriminatorChildren);
   }
 
-  // TODO document this
+  /**
+   * Find all models that have children but don't use a discriminator. Then make sure any properties
+   * the parent and all its children have that are enums are separate models (no inline) and are
+   * extracted if not. Both parent and child will have that property point to the extracted enum
+   * model.
+   */
   private static List<CodegenModel> fixAndExtractEnumsFromAllNonDiscriminatorModelsWithChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()

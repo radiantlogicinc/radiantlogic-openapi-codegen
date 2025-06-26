@@ -88,14 +88,8 @@ public class CodegenNewEnumProcessorSupport {
     if (!one.isEnum || !two.isEnum) {
       throw new IllegalArgumentException("Cannot merge non-enum models");
     }
-    final var oneEnumVars =
-        (Collection<Map<String, Object>>)
-            Optional.ofNullable(one.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
-                .orElseGet(List::of);
-    final var twoEnumVars =
-        (Collection<Map<String, Object>>)
-            Optional.ofNullable(two.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
-                .orElseGet(List::of);
+    final var oneEnumVars = getEnumVars(one);
+    final var twoEnumVars = getEnumVars(two);
     final Collection<Map<String, Object>> enumVars =
         Stream.of(oneEnumVars.stream(), twoEnumVars.stream())
             .flatMap(Function.identity())
@@ -120,5 +114,13 @@ public class CodegenNewEnumProcessorSupport {
     one.allowableValues =
         Map.of(CodegenConstants.ENUM_VARS_KEY, enumVars, CodegenConstants.VALUES_KEY, values);
     return one;
+  }
+
+  @NonNull
+  private static Collection<Map<String, Object>> getEnumVars(@NonNull final CodegenModel model) {
+    return Optional.ofNullable(
+            (Collection<Map<String, Object>>)
+                model.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
+        .orElseGet(List::of);
   }
 }

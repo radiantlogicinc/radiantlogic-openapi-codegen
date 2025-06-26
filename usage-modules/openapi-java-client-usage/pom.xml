@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.radiantlogic.openapi.builder</groupId>
-        <artifactId>openapi-builder-parent</artifactId>
+        <groupId>com.radiantlogic.openapi.codegen</groupId>
+        <artifactId>openapi-codegen-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>

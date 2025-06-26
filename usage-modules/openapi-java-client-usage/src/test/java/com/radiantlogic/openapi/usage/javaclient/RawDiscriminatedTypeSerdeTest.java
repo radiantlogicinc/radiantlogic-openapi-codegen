@@ -12,11 +12,8 @@ import com.radiantlogic.custom.dataconnector.openaiapi.model.StatusEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
 import java.util.Collections;
 import java.util.Map;
-import java.util.stream.IntStream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * This is a test of the de-serialization of the .Raw type for a discriminated union that lacks a
@@ -58,25 +55,6 @@ public class RawDiscriminatedTypeSerdeTest {
 
   @Test
   void itCanGetRawDiscriminatorAnyType() {
-    throw new RuntimeException();
-  }
-
-  // TODO delete this
-  @Test
-  void foo() {
-    final RestTemplate restTemplate = new RestTemplate();
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setObjectMapper(objectMapper);
-    final int convertersCount = restTemplate.getMessageConverters().size();
-    final int matchingIndex =
-        IntStream.range(0, restTemplate.getMessageConverters().size())
-            .filter(
-                index ->
-                    restTemplate.getMessageConverters().get(index)
-                        instanceof MappingJackson2HttpMessageConverter)
-            .findFirst()
-            .orElseThrow(RuntimeException::new);
-    restTemplate.getMessageConverters().set(matchingIndex, converter);
     throw new RuntimeException();
   }
 }

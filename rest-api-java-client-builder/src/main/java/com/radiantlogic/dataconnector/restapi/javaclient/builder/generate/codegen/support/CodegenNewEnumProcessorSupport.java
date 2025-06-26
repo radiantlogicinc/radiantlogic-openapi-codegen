@@ -97,14 +97,8 @@ public class CodegenNewEnumProcessorSupport {
                 Collectors.toMap(
                     map -> map.get(CodegenConstants.NAME_KEY), Function.identity(), (a, b) -> b))
             .values();
-    final var oneValues =
-        (List<Object>)
-            Optional.ofNullable(one.allowableValues.get(CodegenConstants.VALUES_KEY))
-                .orElseGet(List::of);
-    final var twoValues =
-        (List<Object>)
-            Optional.ofNullable(two.allowableValues.get(CodegenConstants.VALUES_KEY))
-                .orElseGet(List::of);
+    final var oneValues = getEnumValues(one);
+    final var twoValues = getEnumValues(two);
     final List<Object> values =
         Stream.of(oneValues.stream(), twoValues.stream())
             .flatMap(Function.identity())
@@ -121,6 +115,13 @@ public class CodegenNewEnumProcessorSupport {
     return Optional.ofNullable(
             (Collection<Map<String, Object>>)
                 model.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
+        .orElseGet(List::of);
+  }
+
+  @NonNull
+  private static List<Object> getEnumValues(@NonNull final CodegenModel model) {
+    return Optional.ofNullable(
+            (List<Object>) model.allowableValues.get(CodegenConstants.VALUES_KEY))
         .orElseGet(List::of);
   }
 }

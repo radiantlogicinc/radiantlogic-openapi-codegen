@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenEnumModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,9 +47,8 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    final Map<String, CodegenModel> allModels = new HashMap<>();
-    allModels.put("ParentModel", parentModel);
-    allModels.put("ChildModel", childModel);
+    final Map<String, CodegenModel> allModels =
+        Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
     final CodegenModel expectedEnumModel = new CodegenModel();
     expectedEnumModel.name = "StatusEnum";
@@ -127,9 +125,8 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    final Map<String, CodegenModel> allModels = new HashMap<>();
-    allModels.put("ParentModel", parentModel);
-    allModels.put("ChildModel", childModel);
+    final Map<String, CodegenModel> allModels =
+        Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
     // Mock static method to return expected enum model
     final CodegenModel expectedEnumModel = new CodegenModel();
@@ -210,9 +207,8 @@ public class CodegenInheritedEnumSupportTest {
 
     childModel.vars = List.of(childEnumProperty);
 
-    final Map<String, CodegenModel> allModels = new HashMap<>();
-    allModels.put("ParentModel", parentModel);
-    allModels.put("ChildModel", childModel);
+    final Map<String, CodegenModel> allModels =
+        Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
     // Mock static method to return expected enum model
     final CodegenModel expectedEnumModel = new CodegenModel();

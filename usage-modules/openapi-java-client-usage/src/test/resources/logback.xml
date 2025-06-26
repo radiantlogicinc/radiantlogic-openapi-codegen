@@ -12,12 +12,4 @@
     <logger name="com.radiantlogic" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.fasterxml.jackson" level="DEBUG">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <!-- For even more detailed logging about serializer selection -->
-    <logger name="com.fasterxml.jackson.databind.ser" level="TRACE">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
 </configuration>

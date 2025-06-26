@@ -33,15 +33,7 @@ public class CodegenNewEnumProcessorSupport {
 
     final Map<String, CodegenModel> allNewEnums =
         newEnums.stream()
-            .map(
-                newEnum -> {
-                  return Optional.ofNullable(allModelMaps.get(newEnum.name))
-                      .map(
-                          e ->
-                              mergeEnumCodegenModels(
-                                  ModelUtils.getModelByName(newEnum.name, allModelMaps), newEnum))
-                      .orElse(newEnum);
-                })
+            .map(newEnum -> mergeWithExistingEnum(newEnum, allModelMaps))
             .collect(
                 Collectors.toMap(
                     CodegenModel::getName,
@@ -76,6 +68,18 @@ public class CodegenNewEnumProcessorSupport {
                     && !importValue.startsWith("io.swagger.annotations"))
         .map(importValue -> Map.of("import", importValue))
         .toList();
+  }
+
+  @NonNull
+  private static CodegenModel mergeWithExistingEnum(
+      @NonNull final CodegenModel newEnum, @NonNull final Map<String, ModelsMap> allModelMaps) {
+    final ModelsMap modelsMap = allModelMaps.get(newEnum.name);
+    if (modelsMap == null) {
+      return newEnum;
+    }
+
+    final CodegenModel existingEnumModel = ModelUtils.getModelByName(newEnum.name, allModelMaps);
+    return mergeEnumCodegenModels(existingEnumModel, newEnum);
   }
 
   // TODO clean this up

@@ -57,7 +57,11 @@ public class RawDiscriminatedTypeSerdeTest {
   }
 
   @Test
+  @SneakyThrows
   void itCanGetRawDiscriminatorAnyType() {
-    throw new RuntimeException();
+    final String json =
+        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+    final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
+    assertThat(raw.getType()).isEqualTo(TypeEnum.MESSAGE);
   }
 }

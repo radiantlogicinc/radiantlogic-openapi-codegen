@@ -99,11 +99,7 @@ public class CodegenNewEnumProcessorSupport {
             .values();
     final var oneValues = getEnumValues(one);
     final var twoValues = getEnumValues(two);
-    final List<Object> values =
-        Stream.of(oneValues.stream(), twoValues.stream())
-            .flatMap(Function.identity())
-            .distinct()
-            .toList();
+    final List<Object> values = mergeEnumValues(oneValues, twoValues);
 
     one.allowableValues =
         Map.of(CodegenConstants.ENUM_VARS_KEY, enumVars, CodegenConstants.VALUES_KEY, values);
@@ -123,5 +119,13 @@ public class CodegenNewEnumProcessorSupport {
     return Optional.ofNullable(
             (List<Object>) model.allowableValues.get(CodegenConstants.VALUES_KEY))
         .orElseGet(List::of);
+  }
+
+  private static List<Object> mergeEnumValues(
+      @NonNull final List<Object> values1, @NonNull final List<Object> values2) {
+    return Stream.of(values1.stream(), values2.stream())
+        .flatMap(Function.identity())
+        .distinct()
+        .toList();
   }
 }

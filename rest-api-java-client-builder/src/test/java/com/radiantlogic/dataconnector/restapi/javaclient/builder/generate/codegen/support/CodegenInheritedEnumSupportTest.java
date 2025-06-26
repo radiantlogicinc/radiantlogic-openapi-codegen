@@ -4,7 +4,17 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenInheritedEnumSupportTest {
   @Test
-  void test() {
+  void itFixesAndExtractsEnumsFromModelsWithParents() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itFixesAndExtractsEnumsFromDiscriminatorParentModels() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itFixesAndExtractsEnumsFromModelsWithNonDiscriminatorChildren() {
     throw new RuntimeException();
   }
 }

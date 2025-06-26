@@ -47,7 +47,10 @@ public class RawDiscriminatedTypeSerdeTest {
     messageItem.setContent(Collections.emptyList());
     messageItem.setRole(RoleEnum.USER);
 
-    final String json = objectMapper.writeValueAsString(messageItem.toItemRaw());
+    final Item.Raw raw = messageItem.toItemRaw();
+    assertThat(raw.get("type")).isEqualTo("message");
+
+    final String json = objectMapper.writeValueAsString(raw);
     final String expectedJson =
         ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
     assertThatJson(json).isEqualTo(expectedJson);

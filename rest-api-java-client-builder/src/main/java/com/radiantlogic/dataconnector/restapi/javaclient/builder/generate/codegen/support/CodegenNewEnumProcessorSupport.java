@@ -22,7 +22,7 @@ import org.openapitools.codegen.utils.ModelUtils;
  * merges the new enums into the existing ModelMaps map so that the codegen can correctly generate
  * the necessary model classes.
  */
-public class NewEnumProcessorSupport {
+public class CodegenNewEnumProcessorSupport {
   public void processNewEnumsAndMergeToModelMaps(
       @NonNull final List<CodegenModel> newEnums,
       @NonNull final Map<String, ModelsMap> allModelMaps,
@@ -46,7 +46,7 @@ public class NewEnumProcessorSupport {
                 Collectors.toMap(
                     CodegenModel::getName,
                     Function.identity(),
-                    NewEnumProcessorSupport::mergeEnumCodegenModels));
+                    CodegenNewEnumProcessorSupport::mergeEnumCodegenModels));
 
     // TODO clean this up
     final List<Map<String, String>> importsForEnums =

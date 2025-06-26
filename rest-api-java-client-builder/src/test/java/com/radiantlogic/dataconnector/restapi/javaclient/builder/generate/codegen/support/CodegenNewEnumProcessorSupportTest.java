@@ -2,7 +2,7 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 
 import org.junit.jupiter.api.Test;
 
-public class NewEnumProcessorSupportTest {
+public class CodegenNewEnumProcessorSupportTest {
   @Test
   void test() {
     throw new RuntimeException();

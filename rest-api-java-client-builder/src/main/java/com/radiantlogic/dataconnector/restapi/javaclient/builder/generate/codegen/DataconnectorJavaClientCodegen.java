@@ -8,6 +8,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenLiteralPropertyNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMetadataSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenMissingModelInheritanceSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNewEnumProcessorSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
@@ -60,6 +61,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   private final CodegenFilenameSupport codegenFilenameSupport = new CodegenFilenameSupport();
   private final CodegenInheritedEnumSupport codegenInheritedEnumSupport =
       new CodegenInheritedEnumSupport();
+  private final CodegenNewEnumProcessorSupport codegenNewEnumProcessorSupport =
+      new CodegenNewEnumProcessorSupport();
 
   @NonNull private final Args args;
 
@@ -193,18 +196,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     final Map<String, CodegenModel> allModels = getAllModels(allModelMaps);
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
-
     final ExtractedEnumModels extractedEnumModels =
         codegenInheritedEnumSupport.fixAndExtractInheritedEnums(allModels);
-
-    addNewEnumModelMaps(
-        allModelMaps,
-        extractedEnumModels.enumsFromModelsWithParents(),
-        extractedEnumModels.enumsFromDiscriminatorParentModels(),
-        extractedEnumModels.enumsFromModelsWithNonDiscriminatorChildren());
-
+    codegenNewEnumProcessorSupport.processNewEnumsAndMergeToModelMaps(
+        extractedEnumModels.allEnums(), allModelMaps, modelPackage(), importMapping());
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
-
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
 
     return super.postProcessAllModels(allModelMaps);

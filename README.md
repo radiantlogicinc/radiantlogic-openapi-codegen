@@ -1,10 +1,10 @@
-# rest_api_java_client_builder
-
-This project provides a tool that generates a Java CLI client from an OpenAPI spec.
+# radiantlogic-openapi-builder
 
 ## What Is It
 
-This is an extension to the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) that has been significantly enhanced to handle a wide range of permutations that can occur in OpenAPI specifications. The goal is to be able to produce workable Java API client code from nearly all OpenAPI specifications out there in the wild.  The generated code produced is intended to work well as a part of the RadiantLogic IDDM product. For this reason the code is Java 8 compliant and uses the Spring 5 `RestTemplate` under the hood.
+This is an extension to the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) that has been significantly enhanced to handle a wide range of permutations that can occur in OpenAPI specifications. The goal is to be able to produce workable code from nearly all OpenAPI specifications out there in the wild. 
+
+The primary use for the generated code is to support building custom connectors for the RadiantLogic IDDM product. The generated code has been designed for maximum compatibility with this product. At the moment only Java client code is outputted.
 
 ### Enhancements to openapi-generator
 
@@ -60,6 +60,12 @@ At the time of writing, all generated methods that return a type with this kind 
 
 ## Development
 
+### Modules
+
+This is a multi-module maven project. The primary modules for the codegen will be found in the `builder-modules` directory. Modules that exist to use (and therefore test) the generated code will be found in the `usage-modules` directory.
+
+By default, only the `builder-modules` will be impacted by maven commands. Running commands with the `usage` profile (ie, `mvn -P usage ...`) will execute commands on the `usage-modules` and running commands with the `all` profile (ie, `mvn -P all ...`) will execute commands on all modules. 
+
 ### Requirements
 
 - Java 24
@@ -98,5 +104,12 @@ To see all possible arguments, run with `-DprogramArgs='-h'`
 
 ### Full Codegen From IntelliJ
 
-Run the main class `com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner`. Make sure to configure the pre-requisite settings described above.
+Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner`. Make sure to configure the pre-requisite settings described above.
 
+### End-to-End Testing
+
+A robust set of end-to-end tests have been constructed to validate the behavior of the Java client code generation. This is how to use them.
+
+First is the `com.radiantlogic.openapi.builder.javaclient.integration.CodegenIT` class in `source-modules/openapi-java-client-builder`. This test suite executes the code generation against a wide range of official OpenAPI specs from a variety of companies. It generates, compiles, and installs the maven artifacts from those specs.
+
+Next is the full test suite in `test-modules/openapi-java-client-usage`. Once all tests from `CodegenIT` complete successfully, all the artifacts will be available in the local `.m2` directory. At that point the test suite in this project can be run to execute a variety of java client operations against a mock server. This validates that the generated code performs as-expected.

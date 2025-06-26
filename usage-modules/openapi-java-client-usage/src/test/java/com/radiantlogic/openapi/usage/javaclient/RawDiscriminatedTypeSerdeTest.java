@@ -30,5 +30,7 @@ public class RawDiscriminatedTypeSerdeTest {
     final String expectedJson =
         ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
     assertThatJson(json).isEqualTo(expectedJson);
+
+    // TODO ItemResource and Item need to be tested
   }
 }

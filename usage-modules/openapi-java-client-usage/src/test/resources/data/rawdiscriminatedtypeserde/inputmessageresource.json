@@ -2,5 +2,6 @@
   "type": "message",
   "role": "user",
   "id": "item_1",
-  "status": "completed"
+  "status": "completed",
+  "content": []
 }

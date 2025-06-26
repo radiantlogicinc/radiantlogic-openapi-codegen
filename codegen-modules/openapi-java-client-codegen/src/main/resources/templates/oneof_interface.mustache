@@ -1,9 +1,14 @@
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+{{#discriminator}}
+{{^hasDiscriminatorWithNonEmptyMapping}}
+// NOTE: The lack of a discriminator mapping means serialization/deserialization of this interface and its implementations can only be done with the Raw inner class.
+{{/hasDiscriminatorWithNonEmptyMapping}}
+{{/discriminator}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();
 
-    {{#hasNoMapping}}
+    {{^hasDiscriminatorWithNonEmptyMapping}}
     /**
      * This represents the raw JSON data associated with this type. If this has been included
      * by the codegen in this interface, that means the original OpenAPI spec was incomplete,
@@ -18,7 +23,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
             return ({{propertyType}}) get("{{propertyName}}");
         }
     }
-    {{/hasNoMapping}}
+    {{/hasDiscriminatorWithNonEmptyMapping}}
     {{/discriminator}}
 
 {{#vars}}

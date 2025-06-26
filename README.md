@@ -4,7 +4,7 @@
 
 This is an extension to the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) that has been significantly enhanced to handle a wide range of permutations that can occur in OpenAPI specifications. The goal is to be able to produce workable code from nearly all OpenAPI specifications out there in the wild. 
 
-The primary use for the generated code is to support building custom connectors for the RadiantLogic IDDM product. The generated code has been designed for maximum compatibility with this product.
+The primary use for the generated code is to support building custom connectors for the RadiantLogic IDDM product. The generated code has been designed for maximum compatibility with this product. At the moment only Java client code is outputted.
 
 ### Enhancements to openapi-generator
 
@@ -60,6 +60,10 @@ At the time of writing, all generated methods that return a type with this kind 
 
 ## Development
 
+### Modules
+
+This is a multi-module maven project. The primary modules for the codegen will be found in the `source-modules` directory. Modules that exist to test the generated code will be found in the `test-modules` directory. 
+
 ### Requirements
 
 - Java 24
@@ -100,3 +104,10 @@ To see all possible arguments, run with `-DprogramArgs='-h'`
 
 Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner`. Make sure to configure the pre-requisite settings described above.
 
+### End-to-End Testing
+
+A robust set of end-to-end tests have been constructed to validate the behavior of the Java client code generation. This is how to use them.
+
+First is the `com.radiantlogic.openapi.builder.javaclient.integration.CodegenIT` class in `source-modules/openapi-java-client-builder`. This test suite executes the code generation against a wide range of official OpenAPI specs from a variety of companies. It generates, compiles, and installs the maven artifacts from those specs.
+
+Next is the full test suite in `test-modules/openapi-java-client-usage`. Once all tests from `CodegenIT` complete successfully, all the artifacts will be available in the local `.m2` directory. At that point the test suite in this project can be run to execute a variety of java client operations against a mock server. This validates that the generated code performs as-expected.

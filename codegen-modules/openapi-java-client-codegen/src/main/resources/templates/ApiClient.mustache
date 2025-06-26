@@ -882,6 +882,16 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
         // This allows us to read the response more than once - Necessary for debugging.
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(restTemplate.getRequestFactory()));
 
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(JacksonConfig.OBJECT_MAPPER);
+        final int matchingIndex = IntStream.range(0, restTemplate.getMessageConverters().size())
+            .filter(index ->
+                restTemplate.getMessageConverters().get(index) instanceof MappingJackson2HttpMessageConverter
+            )
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Cannot find jackson message converter in RestTemplate"));
+        restTemplate.getMessageConverters().set(matchingIndex, converter);
+
         // disable default URL encoding
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
         uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);

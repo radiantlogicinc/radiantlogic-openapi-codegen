@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.codegen.CodegenDiscriminator;
 
+/**
+ * Extended version of the CodegenDiscriminator to add extra properties to deal with a lack of a
+ * mapping in the spec.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class ExtendedCodegenDiscriminator extends CodegenDiscriminator {
-  // TODO will this work in model
+
   public boolean hasNoMapping() {
-    return true;
+    return getMapping() == null || getMapping().isEmpty();
   }
 }

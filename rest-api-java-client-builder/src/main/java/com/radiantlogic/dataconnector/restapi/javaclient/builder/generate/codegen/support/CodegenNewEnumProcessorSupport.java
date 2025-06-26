@@ -82,7 +82,6 @@ public class CodegenNewEnumProcessorSupport {
     return mergeEnumCodegenModels(existingEnumModel, newEnum);
   }
 
-  // TODO clean this up
   private static CodegenModel mergeEnumCodegenModels(
       @NonNull final CodegenModel one, @NonNull final CodegenModel two) {
     if (!one.isEnum || !two.isEnum) {

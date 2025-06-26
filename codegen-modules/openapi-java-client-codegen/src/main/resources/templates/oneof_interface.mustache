@@ -15,7 +15,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      */
     class Raw extends HashMap<String, Object> {
         public {{propertyType}} {{propertyGetter}}() {
-
+            return ({{propertyType}}) get("{{propertyName}}");
         }
     }
     {{/hasNoMapping}}

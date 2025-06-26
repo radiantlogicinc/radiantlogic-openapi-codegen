@@ -30,7 +30,6 @@ public class CodegenInheritedEnumSupport {
       @NonNull List<CodegenModel> enumsFromDiscriminatorParentModels,
       @NonNull List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren) {}
 
-  // TODO consider merging the enums here
   public ExtractedEnumModels fixAndExtractInheritedEnums(
       @NonNull final Map<String, CodegenModel> allModels) {
 

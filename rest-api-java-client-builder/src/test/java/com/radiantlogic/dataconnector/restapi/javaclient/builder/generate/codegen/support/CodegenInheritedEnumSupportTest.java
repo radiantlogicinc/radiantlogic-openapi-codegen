@@ -63,8 +63,7 @@ public class CodegenInheritedEnumSupportTest {
 
       // Act
       final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
-      final CodegenInheritedEnumSupport.ExtractedEnumModels result =
-          support.fixAndExtractInheritedEnums(allModels);
+      final ExtractedEnumModels result = support.fixAndExtractInheritedEnums(allModels);
 
       // Assert
       assertThat(result.enumsFromModelsWithParents()).hasSize(1);
@@ -150,8 +149,7 @@ public class CodegenInheritedEnumSupportTest {
 
       // Act
       final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
-      final CodegenInheritedEnumSupport.ExtractedEnumModels result =
-          support.fixAndExtractInheritedEnums(allModels);
+      final ExtractedEnumModels result = support.fixAndExtractInheritedEnums(allModels);
 
       // Assert
       assertThat(result.enumsFromDiscriminatorParentModels()).hasSize(1);
@@ -222,8 +220,7 @@ public class CodegenInheritedEnumSupportTest {
 
       // Act
       final CodegenInheritedEnumSupport support = new CodegenInheritedEnumSupport();
-      CodegenInheritedEnumSupport.ExtractedEnumModels result =
-          support.fixAndExtractInheritedEnums(allModels);
+      final ExtractedEnumModels result = support.fixAndExtractInheritedEnums(allModels);
 
       // Assert
       assertThat(result.enumsFromModelsWithNonDiscriminatorChildren()).hasSize(1);

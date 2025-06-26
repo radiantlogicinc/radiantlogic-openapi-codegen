@@ -11,6 +11,7 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenNonEnglishNameSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
+import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.ExtractedEnumModels;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
@@ -292,7 +293,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     codegenMissingModelInheritanceSupport.fixInheritanceAllModels(allModels);
 
-    final CodegenInheritedEnumSupport.ExtractedEnumModels extractedEnumModels =
+    final ExtractedEnumModels extractedEnumModels =
         codegenInheritedEnumSupport.fixAndExtractInheritedEnums(allModels);
 
     addNewEnumModelMaps(

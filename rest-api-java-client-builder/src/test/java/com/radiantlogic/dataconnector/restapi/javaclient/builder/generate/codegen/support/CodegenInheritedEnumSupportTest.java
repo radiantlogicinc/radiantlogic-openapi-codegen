@@ -190,10 +190,8 @@ public class CodegenInheritedEnumSupportTest {
 
     parentModel.vars = List.of(enumProperty);
 
-    // Set up oneOf relationship (non-discriminator children)
     parentModel.oneOf = Set.of("ChildModel");
 
-    // Create child model
     final CodegenModel childModel = new CodegenModel();
     childModel.name = "ChildModel";
 
@@ -210,7 +208,6 @@ public class CodegenInheritedEnumSupportTest {
     final Map<String, CodegenModel> allModels =
         Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
-    // Mock static method to return expected enum model
     final CodegenModel expectedEnumModel = new CodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;

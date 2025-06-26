@@ -11,7 +11,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{^hasDiscriminatorWithNonEmptyMapping}}
 
     default Raw toRaw() {
-
+        return JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
     }
 
     /**

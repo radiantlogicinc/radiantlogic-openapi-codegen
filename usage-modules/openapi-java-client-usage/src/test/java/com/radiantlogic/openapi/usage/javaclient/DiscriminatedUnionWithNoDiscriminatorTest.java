@@ -42,7 +42,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
   @Test
   @SneakyThrows
-  void testListInputItems() {
+  void itRetrievesDiscriminatedUnion() {
     final String responseId = "resp_123456789";
     final ResponseItemList responseItemList = new ResponseItemList();
     responseItemList.setObject(ResponseItemList.ObjectEnum.LIST);
@@ -89,5 +89,10 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     verify(
         getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
             .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN))));
+  }
+
+  @Test
+  void itSendsDiscriminatedUnion() {
+    throw new RuntimeException();
   }
 }

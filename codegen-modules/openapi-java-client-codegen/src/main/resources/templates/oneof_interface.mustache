@@ -1,7 +1,7 @@
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 {{#discriminator}}
 {{^hasDiscriminatorWithNonEmptyMapping}}
-// NOTE: The lack of a discriminator mapping means serialization/deserialization of this interface and its implementations can only be done with the Raw inner class.
+// NOTE: This type lacked a discriminator mapping in the openapi spec it was generated from. Please see the Raw inner class for serialization/deserialization.
 {{/hasDiscriminatorWithNonEmptyMapping}}
 {{/discriminator}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
@@ -12,11 +12,8 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     /**
      * This represents the raw JSON data associated with this type. If this has been included
      * by the codegen in this interface, that means the original OpenAPI spec was incomplete,
-     * lacking necessary discriminator mapping information to properly de-serialize into the
-     * appropriate implementation of this interface.
-     *
-     * This Raw type can be manually de-serialized into the appropriate implementation by
-     * calling code as-necessary.
+     * lacking necessary discriminator mapping information to properly serialize or de-serialization
+     * this interface and its implementations.
      */
     class Raw extends HashMap<String, Object> {
         public {{propertyType}} {{propertyGetter}}() {

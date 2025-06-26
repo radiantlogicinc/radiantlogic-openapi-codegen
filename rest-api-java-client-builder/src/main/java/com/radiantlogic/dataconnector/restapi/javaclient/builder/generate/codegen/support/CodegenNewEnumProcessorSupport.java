@@ -56,11 +56,11 @@ public class CodegenNewEnumProcessorSupport {
 
     allNewEnums.entrySet().stream()
         .map(
-            entry ->
-                Map.entry(
-                    entry.getKey(),
-                    CodegenModelUtils.wrapInModelsMap(
-                        enumModelBase, modelPackage, entry.getValue())))
+            entry -> {
+              final ModelsMap modelsMap =
+                  CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage, entry.getValue());
+              return Map.entry(entry.getKey(), modelsMap);
+            })
         .forEach(entry -> allModelMaps.put(entry.getKey(), entry.getValue()));
   }
 

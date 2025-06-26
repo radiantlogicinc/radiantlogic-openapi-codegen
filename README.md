@@ -1,10 +1,10 @@
-# rest_api_java_client_builder
-
-This project provides a tool that generates a Java CLI client from an OpenAPI spec.
+# radiantlogic-openapi-builder
 
 ## What Is It
 
-This is an extension to the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) that has been significantly enhanced to handle a wide range of permutations that can occur in OpenAPI specifications. The goal is to be able to produce workable Java API client code from nearly all OpenAPI specifications out there in the wild.  The generated code produced is intended to work well as a part of the RadiantLogic IDDM product. For this reason the code is Java 8 compliant and uses the Spring 5 `RestTemplate` under the hood.
+This is an extension to the [openapi-generator](https://github.com/OpenAPITools/openapi-generator) that has been significantly enhanced to handle a wide range of permutations that can occur in OpenAPI specifications. The goal is to be able to produce workable code from nearly all OpenAPI specifications out there in the wild. 
+
+The primary use for the generated code is to support building custom connectors for the RadiantLogic IDDM product. The generated code has been designed for maximum compatibility with this product.
 
 ### Enhancements to openapi-generator
 

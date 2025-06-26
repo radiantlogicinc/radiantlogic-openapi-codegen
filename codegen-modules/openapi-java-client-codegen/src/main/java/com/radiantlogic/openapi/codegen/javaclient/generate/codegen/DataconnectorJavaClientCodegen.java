@@ -39,7 +39,7 @@ import org.openapitools.codegen.model.ModelsMap;
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     implements ExtendedCodegenConfig {
 
-  private static final ExtendedCodegenMapper codegenMapper =
+  private final ExtendedCodegenMapper codegenMapper =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();

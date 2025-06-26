@@ -12,23 +12,16 @@ import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codege
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.support.ExtractedEnumModels;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenConstants;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -37,7 +30,6 @@ import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
-import org.openapitools.codegen.utils.ModelUtils;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
@@ -192,97 +184,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     modelMap.put("importPath", importPath);
     modelsMap.setModels(List.of(modelMap));
     return modelsMap;
-  }
-
-  // TODO clean this up
-  private static CodegenModel mergeEnumCodegenModels(
-      @NonNull final CodegenModel one, @NonNull final CodegenModel two) {
-    if (!one.isEnum || !two.isEnum) {
-      throw new IllegalArgumentException("Cannot merge non-enum models");
-    }
-    final var oneEnumVars =
-        (Collection<Map<String, Object>>)
-            Optional.ofNullable(one.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
-                .orElseGet(List::of);
-    final var twoEnumVars =
-        (Collection<Map<String, Object>>)
-            Optional.ofNullable(two.allowableValues.get(CodegenConstants.ENUM_VARS_KEY))
-                .orElseGet(List::of);
-    final Collection<Map<String, Object>> enumVars =
-        Stream.of(oneEnumVars.stream(), twoEnumVars.stream())
-            .flatMap(Function.identity())
-            .collect(
-                Collectors.toMap(
-                    map -> map.get(CodegenConstants.NAME_KEY), Function.identity(), (a, b) -> b))
-            .values();
-    final var oneValues =
-        (List<Object>)
-            Optional.ofNullable(one.allowableValues.get(CodegenConstants.VALUES_KEY))
-                .orElseGet(List::of);
-    final var twoValues =
-        (List<Object>)
-            Optional.ofNullable(two.allowableValues.get(CodegenConstants.VALUES_KEY))
-                .orElseGet(List::of);
-    final List<Object> values =
-        Stream.of(oneValues.stream(), twoValues.stream())
-            .flatMap(Function.identity())
-            .distinct()
-            .toList();
-
-    one.allowableValues =
-        Map.of(CodegenConstants.ENUM_VARS_KEY, enumVars, CodegenConstants.VALUES_KEY, values);
-    return one;
-  }
-
-  private void addNewEnumModelMaps(
-      @NonNull final Map<String, ModelsMap> allModelMaps,
-      @NonNull final List<CodegenModel> newEnumsFromParentModels,
-      @NonNull final List<CodegenModel> newEnumsFromDiscriminatorParentModels,
-      @NonNull final List<CodegenModel> newEnumsFromModelsWithNonDiscriminatorChildren) {
-    final ModelsMap rawEnumModelBase =
-        allModelMaps.get(allModelMaps.keySet().stream().findFirst().orElseThrow());
-
-    final Map<String, CodegenModel> allNewEnums =
-        Stream.of(
-                newEnumsFromParentModels.stream(),
-                newEnumsFromDiscriminatorParentModels.stream(),
-                newEnumsFromModelsWithNonDiscriminatorChildren.stream())
-            .flatMap(Function.identity())
-            .map(
-                newEnum -> {
-                  return Optional.ofNullable(allModelMaps.get(newEnum.name))
-                      .map(
-                          e ->
-                              mergeEnumCodegenModels(
-                                  ModelUtils.getModelByName(newEnum.name, allModelMaps), newEnum))
-                      .orElse(newEnum);
-                })
-            .collect(
-                Collectors.toMap(
-                    CodegenModel::getName,
-                    Function.identity(),
-                    DataconnectorJavaClientCodegen::mergeEnumCodegenModels));
-
-    final List<Map<String, String>> importsForEnums =
-        importMapping().entrySet().stream()
-            .filter(
-                entry ->
-                    !entry.getValue().startsWith("org.joda")
-                        && !entry.getValue().startsWith("com.google")
-                        && !entry.getValue().startsWith("com.radiantlogic")
-                        && !entry.getValue().startsWith("io.swagger.annotations"))
-            .map(entry -> Map.of("import", entry.getValue()))
-            .toList();
-
-    final ModelsMap enumModelBase = new ModelsMap();
-    enumModelBase.putAll(rawEnumModelBase);
-    enumModelBase.setImports(importsForEnums);
-
-    allNewEnums.forEach(
-        (key, model) -> {
-          allModelMaps.put(
-              key, CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage(), model));
-        });
   }
 
   @Override

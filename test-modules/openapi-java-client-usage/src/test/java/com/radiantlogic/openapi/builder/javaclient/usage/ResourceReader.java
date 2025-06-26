@@ -1,4 +1,4 @@
-package com.radiantlogic.dataconnector.client.usage;
+package com.radiantlogic.openapi.builder.javaclient.usage;
 
 import java.io.InputStream;
 import java.net.URL;

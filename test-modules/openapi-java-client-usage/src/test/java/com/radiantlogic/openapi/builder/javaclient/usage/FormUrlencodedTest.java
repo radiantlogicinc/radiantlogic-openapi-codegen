@@ -1,7 +1,7 @@
-package com.radiantlogic.dataconnector.client.usage;
+package com.radiantlogic.openapi.builder.javaclient.usage;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.radiantlogic.dataconnector.client.usage.ApiClientSupport.BASE_URL;
+import static com.radiantlogic.openapi.builder.javaclient.usage.ApiClientSupport.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

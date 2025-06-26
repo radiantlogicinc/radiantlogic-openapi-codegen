@@ -36,8 +36,7 @@ import org.openapitools.codegen.model.ModelsMap;
  * style we want.
  */
 @RequiredArgsConstructor
-public class DataconnectorJavaClientCodegen extends JavaClientCodegen
-    implements ExtendedCodegenConfig {
+public class RadiantJavaClientCodegen extends JavaClientCodegen implements ExtendedCodegenConfig {
 
   private final ExtendedCodegenMapper codegenMapper =
       Mappers.getMapper(ExtendedCodegenMapper.class);

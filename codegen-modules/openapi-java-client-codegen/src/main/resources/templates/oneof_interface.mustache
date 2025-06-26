@@ -13,7 +13,11 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      * This Raw type can be manually de-serialized into the appropriate implementation by
      * calling code as-necessary.
      */
-    class Raw extends HashMap<String, Object> {}
+    class Raw extends HashMap<String, Object> {
+        public {{propertyType}} {{propertyGetter}}() {
+
+        }
+    }
     {{/hasNoMapping}}
     {{/discriminator}}
 

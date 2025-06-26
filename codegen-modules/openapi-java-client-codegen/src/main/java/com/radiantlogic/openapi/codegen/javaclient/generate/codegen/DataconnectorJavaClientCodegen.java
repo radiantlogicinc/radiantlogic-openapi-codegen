@@ -157,6 +157,11 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
      */
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(result, model, openAPI);
 
+    // TODO refactor this
+    if (result.discriminator != null) {
+      result.discriminator = CODEGEN_MAPPER.extendDiscriminator(result.discriminator);
+    }
+
     // The equals method from the codegen labels the "other" object with the variable name 'o'.
     // It is possible for an OpenAPI schema to have a variable named 'o', in which case we get a
     // compiler error

@@ -59,7 +59,8 @@ public class CodegenNewEnumProcessorSupport {
             entry ->
                 Map.entry(
                     entry.getKey(),
-                    CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage, model)))
+                    CodegenModelUtils.wrapInModelsMap(
+                        enumModelBase, modelPackage, entry.getValue())))
         .forEach(entry -> allModelMaps.put(entry.getKey(), entry.getValue()));
   }
 

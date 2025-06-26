@@ -90,13 +90,7 @@ public class CodegenNewEnumProcessorSupport {
     }
     final var oneEnumVars = getEnumVars(one);
     final var twoEnumVars = getEnumVars(two);
-    final Collection<Map<String, Object>> enumVars =
-        Stream.of(oneEnumVars.stream(), twoEnumVars.stream())
-            .flatMap(Function.identity())
-            .collect(
-                Collectors.toMap(
-                    map -> map.get(CodegenConstants.NAME_KEY), Function.identity(), (a, b) -> b))
-            .values();
+    final Collection<Map<String, Object>> enumVars = mergeEnumVars(oneEnumVars, twoEnumVars);
     final var oneValues = getEnumValues(one);
     final var twoValues = getEnumValues(two);
     final List<Object> values = mergeEnumValues(oneValues, twoValues);
@@ -121,11 +115,24 @@ public class CodegenNewEnumProcessorSupport {
         .orElseGet(List::of);
   }
 
+  @NonNull
   private static List<Object> mergeEnumValues(
       @NonNull final List<Object> values1, @NonNull final List<Object> values2) {
     return Stream.of(values1.stream(), values2.stream())
         .flatMap(Function.identity())
         .distinct()
         .toList();
+  }
+
+  @NonNull
+  private static Collection<Map<String, Object>> mergeEnumVars(
+      @NonNull final Collection<Map<String, Object>> enumVars1,
+      @NonNull final Collection<Map<String, Object>> enumVars2) {
+    return Stream.of(enumVars1.stream(), enumVars2.stream())
+        .flatMap(Function.identity())
+        .collect(
+            Collectors.toMap(
+                map -> map.get(CodegenConstants.NAME_KEY), Function.identity(), (a, b) -> b))
+        .values();
   }
 }

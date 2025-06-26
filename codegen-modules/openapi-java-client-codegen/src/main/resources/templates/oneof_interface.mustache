@@ -4,6 +4,15 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{propertyType}} {{propertyGetter}}();
 
     {{#hasNoMapping}}
+    /**
+     * This represents the raw JSON data associated with this type. If this has been included
+     * by the codegen in this interface, that means the original OpenAPI spec was incomplete,
+     * lacking necessary discriminator mapping information to properly de-serialize into the
+     * appropriate implementation of this interface.
+     *
+     * This Raw type can be manually de-serialized into the appropriate implementation by
+     * calling code as-necessary.
+     */
     class Raw extends HashMap<String, Object> {}
     {{/hasNoMapping}}
     {{/discriminator}}

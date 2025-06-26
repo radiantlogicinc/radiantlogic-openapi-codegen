@@ -66,7 +66,7 @@ public class CodegenNewEnumProcessorSupport {
                     && !importValue.startsWith("com.google")
                     && !importValue.startsWith("com.radiantlogic")
                     && !importValue.startsWith("io.swagger.annotations"))
-        .map(importValue -> Map.of("import", importValue))
+        .map(importValue -> Map.of(CodegenConstants.IMPORT_KEY, importValue))
         .toList();
   }
 

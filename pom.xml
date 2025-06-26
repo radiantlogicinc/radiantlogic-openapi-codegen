@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.radiantlogic.openapi.javaclient</groupId>
-    <artifactId>openapi-javaclient-client-parent</artifactId>
+    <groupId>com.radiantlogic.openapi.builder</groupId>
+    <artifactId>openapi-builder-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 

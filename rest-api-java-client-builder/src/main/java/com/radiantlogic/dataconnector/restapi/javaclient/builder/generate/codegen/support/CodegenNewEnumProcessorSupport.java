@@ -100,6 +100,7 @@ public class CodegenNewEnumProcessorSupport {
   }
 
   @NonNull
+  @SuppressWarnings("unchecked")
   private static Collection<Map<String, Object>> getEnumVars(@NonNull final CodegenModel model) {
     return Optional.ofNullable(
             (Collection<Map<String, Object>>)
@@ -108,6 +109,7 @@ public class CodegenNewEnumProcessorSupport {
   }
 
   @NonNull
+  @SuppressWarnings("unchecked")
   private static List<Object> getEnumValues(@NonNull final CodegenModel model) {
     return Optional.ofNullable(
             (List<Object>) model.allowableValues.get(CodegenConstants.VALUES_KEY))

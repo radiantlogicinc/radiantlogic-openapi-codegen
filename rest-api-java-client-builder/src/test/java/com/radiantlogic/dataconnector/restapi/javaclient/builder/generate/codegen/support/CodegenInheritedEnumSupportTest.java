@@ -72,9 +72,9 @@ public class CodegenInheritedEnumSupportTest {
       // Assert
       assertThat(result.enumsFromModelsWithParents()).hasSize(1);
       assertThat(result.enumsFromDiscriminatorParentModels()).isEmpty();
-      ;
+
       assertThat(result.enumsFromModelsWithNonDiscriminatorChildren()).isEmpty();
-      ;
+
       assertThat(result.enumsFromModelsWithParents().get(0)).isSameAs(expectedEnumModel);
 
       // Verify the parent property was modified correctly
@@ -159,6 +159,8 @@ public class CodegenInheritedEnumSupportTest {
 
       // Assert
       assertThat(result.enumsFromDiscriminatorParentModels()).hasSize(1);
+      assertThat(result.enumsFromModelsWithParents()).isEmpty();
+      assertThat(result.enumsFromModelsWithNonDiscriminatorChildren()).isEmpty();
       assertThat(result.enumsFromDiscriminatorParentModels().get(0)).isSameAs(expectedEnumModel);
 
       // Verify the parent property was modified correctly

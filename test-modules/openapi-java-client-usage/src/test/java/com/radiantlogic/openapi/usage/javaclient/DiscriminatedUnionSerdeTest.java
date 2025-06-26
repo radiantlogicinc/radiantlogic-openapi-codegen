@@ -1,4 +1,4 @@
-package com.radiantlogic.openapi.builder.javaclient.usage;
+package com.radiantlogic.openapi.usage.javaclient;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;

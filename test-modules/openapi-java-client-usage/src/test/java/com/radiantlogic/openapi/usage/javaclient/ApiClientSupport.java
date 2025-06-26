@@ -1,4 +1,4 @@
-package com.radiantlogic.openapi.builder.javaclient.usage;
+package com.radiantlogic.openapi.usage.javaclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;

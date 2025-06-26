@@ -1,7 +1,7 @@
-package com.radiantlogic.openapi.builder.javaclient.usage;
+package com.radiantlogic.openapi.usage.javaclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.radiantlogic.openapi.builder.javaclient.usage.ApiClientSupport.GITLAB_PRIVATE_TOKEN;
+import static com.radiantlogic.openapi.usage.javaclient.ApiClientSupport.GITLAB_PRIVATE_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

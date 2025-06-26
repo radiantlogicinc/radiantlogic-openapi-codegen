@@ -64,4 +64,10 @@ public class RawDiscriminatedTypeSerdeTest {
     final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
     assertThat(raw.getType()).isEqualTo(TypeEnum.MESSAGE);
   }
+
+  @Test
+  void itCanGetRawDiscriminatorNonEnumType() {
+    // TODO what about String? BigDecimal? Int? Double?
+    throw new RuntimeException();
+  }
 }

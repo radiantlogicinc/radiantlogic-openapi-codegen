@@ -175,7 +175,7 @@ public class CodegenInheritedEnumSupportTest {
   }
 
   @Test
-  void itFixesAndExtractsEnumsFromModelsWithNonDiscriminatorChildren() {
+  void itFixesAndExtractsEnumsFromNonDiscriminatorModelsWithChildren() {
     // Arrange
     final CodegenModel parentModel = new CodegenModel();
     parentModel.name = "ParentModel";

@@ -40,22 +40,23 @@ public class CodegenInheritedEnumSupport {
     final List<CodegenModel> enumsFromDiscriminatorParentModels =
         fixAndExtractEnumsFromAllDiscriminatedUnionModels(allModels);
     final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
-        fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(allModels.values());
+        fixAndExtractEnumsFromAllNonDiscriminatorModelsWithChildren(allModels.values());
     return new ExtractedEnumModels(
         enumsFromModelsWithParents,
         enumsFromDiscriminatorParentModels,
         enumsFromModelsWithNonDiscriminatorChildren);
   }
 
-  private static List<CodegenModel> fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(
+  // TODO document this
+  private static List<CodegenModel> fixAndExtractEnumsFromAllNonDiscriminatorModelsWithChildren(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()
         .filter(CodegenModelUtils::hasNonDiscriminatorChildren)
-        .flatMap(model -> fixAndExtractEnumsFromModelWithNonDiscriminatorChildren(model, allModels))
+        .flatMap(model -> fixAndExtractEnumsFromNonDiscriminatorModelWithChildren(model, allModels))
         .toList();
   }
 
-  private static Stream<CodegenModel> fixAndExtractEnumsFromModelWithNonDiscriminatorChildren(
+  private static Stream<CodegenModel> fixAndExtractEnumsFromNonDiscriminatorModelWithChildren(
       @NonNull final CodegenModel model, @NonNull final Collection<CodegenModel> allModels) {
     return model.vars.stream()
         .filter(CodegenPropertyUtils::isEnumProperty)

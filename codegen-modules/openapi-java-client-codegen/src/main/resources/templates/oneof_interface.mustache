@@ -11,7 +11,11 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{^hasDiscriminatorWithNonEmptyMapping}}
 
     default Raw to{{classname}}Raw() {
-        return JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+        final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+        final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
+        // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
+        raw.put("{{propertyName}}", discriminatorValue);
+        return raw;
     }
 
     /**

@@ -234,6 +234,8 @@ public class CodegenInheritedEnumSupportTest {
 
       // Assert
       assertThat(result.enumsFromModelsWithNonDiscriminatorChildren()).hasSize(1);
+      assertThat(result.enumsFromModelsWithParents()).isEmpty();
+      assertThat(result.enumsFromDiscriminatorParentModels()).isEmpty();
       assertThat(result.enumsFromModelsWithNonDiscriminatorChildren().get(0))
           .isSameAs(expectedEnumModel);
 

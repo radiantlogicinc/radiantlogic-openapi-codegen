@@ -35,8 +35,7 @@ public class CodegenInheritedEnumSupport {
       @NonNull final Map<String, CodegenModel> allModels) {
 
     // The ordering here is important as subsequent passes through the models assume any enums that
-    // meet
-    // the prior criteria have been removed
+    // meet the prior criteria have been removed
     final List<CodegenModel> enumsFromModelsWithParents =
         fixAndExtractEnumsFromAllModelsWithParents(allModels.values());
     final List<CodegenModel> enumsFromDiscriminatorParentModels =

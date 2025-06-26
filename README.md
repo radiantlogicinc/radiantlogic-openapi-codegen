@@ -98,5 +98,5 @@ To see all possible arguments, run with `-DprogramArgs='-h'`
 
 ### Full Codegen From IntelliJ
 
-Run the main class `com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner`. Make sure to configure the pre-requisite settings described above.
+Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner`. Make sure to configure the pre-requisite settings described above.
 

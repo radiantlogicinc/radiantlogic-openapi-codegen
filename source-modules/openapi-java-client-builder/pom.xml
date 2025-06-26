@@ -93,7 +93,7 @@
                             <arguments>
                                 <argument>-cp</argument>
                                 <classpath />
-                                <argument>com.radiantlogic.dataconnector.restapi.javaclient.builder.Runner</argument>
+                                <argument>com.radiantlogic.openapi.builder.javaclient.Runner</argument>
                                 <argument>dev</argument>
                                 <argument>${programArgs}</argument>
                             </arguments>

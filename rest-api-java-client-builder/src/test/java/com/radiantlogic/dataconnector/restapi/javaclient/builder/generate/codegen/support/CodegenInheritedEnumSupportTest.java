@@ -90,7 +90,7 @@ public class CodegenInheritedEnumSupportTest {
   }
 
   @Test
-  void itFixesAndExtractsEnumsFromDiscriminatorParentModels() {
+  void itFixesAndExtractsEnumsFromAllDiscriminatedUnionModels() {
     // Arrange
     final CodegenModel parentModel = new CodegenModel();
     parentModel.name = "ParentModel";

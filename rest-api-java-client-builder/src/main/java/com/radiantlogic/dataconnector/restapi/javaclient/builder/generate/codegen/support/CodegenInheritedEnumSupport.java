@@ -38,7 +38,7 @@ public class CodegenInheritedEnumSupport {
     final List<CodegenModel> enumsFromModelsWithParents =
         fixAndExtractEnumsFromAllModelsWithParents(allModels.values());
     final List<CodegenModel> enumsFromDiscriminatorParentModels =
-        fixAndExtractEnumsFromAllDiscriminatorParentModels(allModels);
+        fixAndExtractEnumsFromAllDiscriminatedUnionModels(allModels);
     final List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren =
         fixAndExtractEnumsFromAllModelsWithNonDiscriminatorChildren(allModels.values());
     return new ExtractedEnumModels(
@@ -73,15 +73,21 @@ public class CodegenInheritedEnumSupport {
             });
   }
 
-  private static List<CodegenModel> fixAndExtractEnumsFromAllDiscriminatorParentModels(
+  /**
+   * Find all models that are discriminated unions, ie they have oneOf children and a discriminator
+   * with a mapping. Then make sure that any properties the parent and all its children have that
+   * are enums are separate models (no inline) and are extracted if not. Both parent and child will
+   * have that property point to the extracted enum model.
+   */
+  private static List<CodegenModel> fixAndExtractEnumsFromAllDiscriminatedUnionModels(
       @NonNull final Map<String, CodegenModel> allModels) {
     return allModels.values().stream()
         .filter(CodegenModelUtils::hasDiscriminatorChildren)
-        .flatMap(model -> fixAndExtractEnumsFromDiscriminatorParentModel(model, allModels))
+        .flatMap(model -> fixAndExtractEnumsFromDiscriminatedUnionModel(model, allModels))
         .toList();
   }
 
-  private static Stream<CodegenModel> fixAndExtractEnumsFromDiscriminatorParentModel(
+  private static Stream<CodegenModel> fixAndExtractEnumsFromDiscriminatedUnionModel(
       @NonNull final CodegenModel model, @NonNull final Map<String, CodegenModel> allModels) {
     return model.vars.stream()
         .filter(CodegenPropertyUtils::isEnumProperty)
@@ -100,6 +106,11 @@ public class CodegenInheritedEnumSupport {
             });
   }
 
+  /**
+   * Any models that have a parent model, all properties will be checked and if any are enums are
+   * separate models (no inline) and are extracted to be a separate model if not. Also both the
+   * parent and child will have that property point to the extracted enum model.
+   */
   private static List<CodegenModel> fixAndExtractEnumsFromAllModelsWithParents(
       @NonNull final Collection<CodegenModel> allModels) {
     return allModels.stream()

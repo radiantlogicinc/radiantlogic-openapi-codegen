@@ -95,7 +95,7 @@ This executes the codegen CLI tool from source using the following command:
 
 ```bash
 mvn clean compile \
-  -pl rest-api-java-client-builder -am \
+  -pl builder-modules/openapi-java-client-builder -am \
   exec:exec@generate \
   -DprogramArgs="ARGUMENTS GO HERE"
 ```
@@ -104,7 +104,7 @@ To see all possible arguments, run with `-DprogramArgs='-h'`
 
 ### Full Codegen From IntelliJ
 
-Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner`. Make sure to configure the pre-requisite settings described above.
+Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner` in the module `builder-modules/openapi-java-client-builder`. Make sure to configure the pre-requisite settings described above.
 
 ### End-to-End Testing
 

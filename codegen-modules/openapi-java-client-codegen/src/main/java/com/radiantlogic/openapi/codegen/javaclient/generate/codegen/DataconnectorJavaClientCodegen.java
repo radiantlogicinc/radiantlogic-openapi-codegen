@@ -148,6 +148,9 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
     final ExtendedCodegenModel result = codegenMapper.extendModel(super.fromModel(name, model));
+    if (result.discriminator != null) {
+      result.discriminator = codegenMapper.extendDiscriminator(result.discriminator);
+    }
     codegenDiscriminatorSupport.fixDiscriminatorType(result);
 
     /*
@@ -156,11 +159,6 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
      * At the time of writing I've spent an extensive amount of time on this project and don't have the time to further investigate the discrepancy.
      */
     codegenUnsupportedUnionTypeSupport.fixUnsupportedUnionTypes(result, model, openAPI);
-
-    // TODO refactor this
-    if (result.discriminator != null) {
-      result.discriminator = codegenMapper.extendDiscriminator(result.discriminator);
-    }
 
     // The equals method from the codegen labels the "other" object with the variable name 'o'.
     // It is possible for an OpenAPI schema to have a variable named 'o', in which case we get a

@@ -62,7 +62,9 @@ At the time of writing, all generated methods that return a type with this kind 
 
 ### Modules
 
-This is a multi-module maven project. The primary modules for the codegen will be found in the `builder-modules` directory. Modules that exist to use (and therefore test) the generated code will be found in the `usage-modules` directory. 
+This is a multi-module maven project. The primary modules for the codegen will be found in the `builder-modules` directory. Modules that exist to use (and therefore test) the generated code will be found in the `usage-modules` directory.
+
+By default, only the `builder-modules` will be impacted by maven commands. Running commands with the `usage` profile (ie, `mvn -P usage ...`) will execute commands on the `usage-modules` and running commands with the `all` profile (ie, `mvn -P all ...`) will execute commands on all modules. 
 
 ### Requirements
 

@@ -104,12 +104,12 @@ To see all possible arguments, run with `-DprogramArgs='-h'`
 
 ### Full Codegen From IntelliJ
 
-Run the main class `com.radiantlogic.openapi.builder.javaclient.Runner` in the module `builder-modules/openapi-java-client-builder`. Make sure to configure the pre-requisite settings described above.
+Run the main class `com.radiantlogic.openapi.codegen.javaclient.Runner` in the module `builder-modules/openapi-java-client-builder`. Make sure to configure the pre-requisite settings described above.
 
 ### End-to-End Testing
 
 A robust set of end-to-end tests have been constructed to validate the behavior of the Java client code generation. This is how to use them.
 
-First is the `com.radiantlogic.openapi.builder.javaclient.integration.CodegenIT` class in `source-modules/openapi-java-client-builder`. This test suite executes the code generation against a wide range of official OpenAPI specs from a variety of companies. It generates, compiles, and installs the maven artifacts from those specs.
+First is the `integration.com.radiantlogic.openapi.codegen.javaclient.CodegenIT` class in `source-modules/openapi-java-client-builder`. This test suite executes the code generation against a wide range of official OpenAPI specs from a variety of companies. It generates, compiles, and installs the maven artifacts from those specs.
 
 Next is the full test suite in `test-modules/openapi-java-client-usage`. Once all tests from `CodegenIT` complete successfully, all the artifacts will be available in the local `.m2` directory. At that point the test suite in this project can be run to execute a variety of java client operations against a mock server. This validates that the generated code performs as-expected.

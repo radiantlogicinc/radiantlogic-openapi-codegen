@@ -25,11 +25,6 @@ import org.openapitools.codegen.CodegenProperty;
  * to ensure that the files are all created correctly.
  */
 public class CodegenInheritedEnumSupport {
-  public record ExtractedEnumModels(
-      @NonNull List<CodegenModel> enumsFromModelsWithParents,
-      @NonNull List<CodegenModel> enumsFromDiscriminatorParentModels,
-      @NonNull List<CodegenModel> enumsFromModelsWithNonDiscriminatorChildren) {}
-
   public ExtractedEnumModels fixAndExtractInheritedEnums(
       @NonNull final Map<String, CodegenModel> allModels) {
 

@@ -1,8 +1,11 @@
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
-        // HAS NO MAPPING {{hasNoMapping}}
-    public {{propertyType}} {{propertyGetter}}();
+    {{propertyType}} {{propertyGetter}}();
+
+    {{#hasNoMapping}}
+    class Raw extends HashMap<String, Object> {}
+    {{/hasNoMapping}}
     {{/discriminator}}
 
 {{#vars}}

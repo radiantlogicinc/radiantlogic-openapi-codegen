@@ -8,6 +8,10 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();
 
+    Raw toRaw() {
+
+    }
+
     {{^hasDiscriminatorWithNonEmptyMapping}}
     /**
      * This represents the raw JSON data associated with this type. If this has been included

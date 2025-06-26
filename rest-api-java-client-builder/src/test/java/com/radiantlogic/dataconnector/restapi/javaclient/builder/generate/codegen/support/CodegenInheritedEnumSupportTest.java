@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenEnumModelUtils;
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenModelUtils;
-import com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codegen.utils.CodegenPropertyUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,26 +221,7 @@ public class CodegenInheritedEnumSupportTest {
 
     // Mock the static methods
     try (MockedStatic<CodegenEnumModelUtils> mockedStatic =
-            mockStatic(CodegenEnumModelUtils.class);
-        MockedStatic<CodegenModelUtils> modelUtilsMockedStatic =
-            mockStatic(CodegenModelUtils.class);
-        MockedStatic<CodegenPropertyUtils> propertyUtilsMockedStatic =
-            mockStatic(CodegenPropertyUtils.class)) {
-
-      // Mock hasNonDiscriminatorChildren to return true for parent model
-      modelUtilsMockedStatic
-          .when(() -> CodegenModelUtils.hasNonDiscriminatorChildren(parentModel))
-          .thenReturn(true);
-
-      // Mock isEnumProperty to return true for the enum property
-      propertyUtilsMockedStatic
-          .when(() -> CodegenPropertyUtils.isEnumProperty(enumProperty))
-          .thenReturn(true);
-
-      // Mock isSamePropertyInChild to return true for the parent and child properties
-      propertyUtilsMockedStatic
-          .when(() -> CodegenPropertyUtils.isSamePropertyInChild(enumProperty, childEnumProperty))
-          .thenReturn(true);
+        mockStatic(CodegenEnumModelUtils.class)) {
 
       mockedStatic
           .when(() -> CodegenEnumModelUtils.createEnumModelFromEnumProp(any(CodegenProperty.class)))

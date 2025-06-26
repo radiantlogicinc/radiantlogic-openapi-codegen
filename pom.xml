@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.radiantlogic.openapi.builder</groupId>
-    <artifactId>openapi-builder-parent</artifactId>
+    <groupId>com.radiantlogic.openapi.codegen</groupId>
+    <artifactId>openapi-codegen-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <profiles>
         <profile>
-            <id>builder</id>
+            <id>codegen</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>${java.client.builder.path}</module>
+                <module>${java.client.codegen.path}</module>
             </modules>
         </profile>
         <profile>
@@ -28,7 +28,7 @@
         <profile>
             <id>all</id>
             <modules>
-                <module>${java.client.builder.path}</module>
+                <module>${java.client.codegen.path}</module>
                 <module>${java.client.usage.path}</module>
             </modules>
         </profile>
@@ -41,7 +41,7 @@
         <pmd.version>7.12.0</pmd.version>
         <wiremock.version>3.13.1</wiremock.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <java.client.builder.path>./builder-modules/openapi-java-client-builder</java.client.builder.path>
+        <java.client.codegen.path>./codegen-modules/openapi-java-client-codegen</java.client.codegen.path>
         <java.client.usage.path>./usage-modules/openapi-java-client-usage</java.client.usage.path>
     </properties>
 

@@ -1,6 +1,21 @@
 {{#discriminator}}
 {{^hasDiscriminatorWithNonEmptyMapping}}
-// NOTE: This type lacked a discriminator mapping in the openapi spec it was generated from. Please see the Raw inner class for serialization/deserialization.
+/*
+ * This interface was defined by a discriminated union schema in an OpenAPI specification, however the
+ * specification lacked the mapping for the discriminator. The result is that this interface on its own
+ * cannot be serialized or de-serialized due to that missing type information.
+ *
+ * To compensate for this flaw, additional logic has been added to this interface. Please do the following
+ * when trying to serialize and/or de-serialize it:
+ *
+ * FOR SERIALIZATION = First call to{{classname}}Raw() on the instance you are trying to serialize. Then
+ *                     serialize what is returned from that method.
+ *
+ * FOR DESERIALIZATION = Use the type {{classname}}.Raw rather than this type directly when de-serializing.
+ *                       That will at least give you a custom Map of all properties. If you know the specific
+ *                       implementation type, you can also call toImplementation(ClassName.class) on the Raw
+ *                       type to convert it.
+ */
 {{/hasDiscriminatorWithNonEmptyMapping}}
 {{/discriminator}}
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
@@ -28,10 +43,8 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     }
 
     /**
-     * This represents the raw JSON data associated with this type. If this has been included
-     * by the codegen in this interface, that means the original OpenAPI spec was incomplete,
-     * lacking necessary discriminator mapping information to properly serialize or de-serialization
-     * this interface and its implementations.
+     * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
+     * despite not having proper openapi discriminator mapping information.
      */
     class Raw extends HashMap<String, Object> {
         public {{propertyType}} {{propertyGetter}}() {

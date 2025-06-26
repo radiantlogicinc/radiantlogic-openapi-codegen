@@ -39,7 +39,7 @@ import org.openapitools.codegen.model.ModelsMap;
 public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     implements ExtendedCodegenConfig {
 
-  private static final ExtendedCodegenMapper CODEGEN_MAPPER =
+  private static final ExtendedCodegenMapper codegenMapper =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
@@ -134,7 +134,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
         super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
-    final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
+    final ExtendedCodegenProperty extendedProp = codegenMapper.extendProperty(prop);
     codegenLiteralPropertyNameSupport.fixBadNames(extendedProp);
     return extendedProp;
   }
@@ -147,7 +147,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
-    final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
+    final ExtendedCodegenModel result = codegenMapper.extendModel(super.fromModel(name, model));
     codegenDiscriminatorSupport.fixDiscriminatorType(result);
 
     /*
@@ -159,7 +159,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
 
     // TODO refactor this
     if (result.discriminator != null) {
-      result.discriminator = CODEGEN_MAPPER.extendDiscriminator(result.discriminator);
+      result.discriminator = codegenMapper.extendDiscriminator(result.discriminator);
     }
 
     // The equals method from the codegen labels the "other" object with the variable name 'o'.

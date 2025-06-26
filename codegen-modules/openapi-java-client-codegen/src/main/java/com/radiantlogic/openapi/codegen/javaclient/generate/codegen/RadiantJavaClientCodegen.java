@@ -18,6 +18,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodeg
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
+import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelsMap;
 
@@ -142,6 +144,18 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
   public void preprocessOpenAPI(@NonNull final OpenAPI openAPI) {
     super.preprocessOpenAPI(openAPI);
     codegenNonEnglishNameSupport.fixOperationIds(openAPI);
+  }
+
+  @Override
+  public List<SupportingFile> supportingFiles() {
+    final List<SupportingFile> supportingFiles = super.supportingFiles();
+    final String packageDirectories = getInvokerPackage().replaceAll("\\.", File.separator);
+    final SupportingFile jacksonConfigFile =
+        new SupportingFile(
+            "JacksonConfig.mustache",
+            "src/main/java/%s/JacksonConfig.java".formatted(packageDirectories));
+    supportingFiles.add(jacksonConfigFile);
+    return supportingFiles;
   }
 
   @Override

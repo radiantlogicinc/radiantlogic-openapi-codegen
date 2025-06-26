@@ -2,8 +2,6 @@ package com.radiantlogic.dataconnector.restapi.javaclient.builder.generate.codeg
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.radiantlogic.dataconnector.restapi.javaclient.builder.exceptions.ModelNotFoundException;
 import java.util.List;
@@ -22,7 +20,7 @@ public class CodegenModelUtilsTest {
     @Test
     void itHasNoDiscriminator() {
       final CodegenModel model = new CodegenModel();
-      assertFalse(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isFalse();
     }
 
     @Test
@@ -30,7 +28,7 @@ public class CodegenModelUtilsTest {
       final CodegenModel model = new CodegenModel();
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(null);
-      assertFalse(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isFalse();
     }
 
     @Test
@@ -38,7 +36,7 @@ public class CodegenModelUtilsTest {
       final CodegenModel model = new CodegenModel();
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(Set.of());
-      assertTrue(CodegenModelUtils.hasDiscriminatorChildren(model));
+      assertThat(CodegenModelUtils.hasDiscriminatorChildren(model)).isTrue();
     }
   }
 
@@ -98,6 +96,38 @@ public class CodegenModelUtilsTest {
 
       final ModelsMap actual = CodegenModelUtils.wrapInModelsMap(base, packageName, model);
       assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+  }
+
+  @Nested
+  class HasNonDiscriminatorChildren {
+    @Test
+    void itHasOneOfChildrenWithUnmappedDiscriminator() {
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = Set.of("Child1", "Child2");
+      model.discriminator = new CodegenDiscriminator();
+      model.discriminator.setMappedModels(null);
+
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isTrue();
+    }
+
+    @Test
+    void itHasOneOfChildrenWithMappedDiscriminator() {
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = Set.of("Child1", "Child2");
+      model.discriminator = new CodegenDiscriminator();
+      model.discriminator.setMappedModels(
+          Set.of(new CodegenDiscriminator.MappedModel("Child1", "Child1Model", true)));
+
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
+    }
+
+    @Test
+    void itHasNoOneOfChildren() {
+      final CodegenModel model = new CodegenModel();
+      model.oneOf = null;
+
+      assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
     }
   }
 }

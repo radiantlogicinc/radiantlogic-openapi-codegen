@@ -48,17 +48,7 @@ public class CodegenNewEnumProcessorSupport {
                     Function.identity(),
                     CodegenNewEnumProcessorSupport::mergeEnumCodegenModels));
 
-    // TODO clean this up
-    final List<Map<String, String>> importsForEnums =
-        importMapping.entrySet().stream()
-            .filter(
-                entry ->
-                    !entry.getValue().startsWith("org.joda")
-                        && !entry.getValue().startsWith("com.google")
-                        && !entry.getValue().startsWith("com.radiantlogic")
-                        && !entry.getValue().startsWith("io.swagger.annotations"))
-            .map(entry -> Map.of("import", entry.getValue()))
-            .toList();
+    final List<Map<String, String>> importsForEnums = getImportsForEnum(importMapping);
 
     final ModelsMap enumModelBase = new ModelsMap();
     enumModelBase.putAll(rawEnumModelBase);
@@ -69,6 +59,20 @@ public class CodegenNewEnumProcessorSupport {
           allModelMaps.put(
               key, CodegenModelUtils.wrapInModelsMap(enumModelBase, modelPackage, model));
         });
+  }
+
+  @NonNull
+  private static List<Map<String, String>> getImportsForEnum(
+      @NonNull final Map<String, String> importMapping) {
+    return importMapping.values().stream()
+        .filter(
+            importValue ->
+                !importValue.startsWith("org.joda")
+                    && !importValue.startsWith("com.google")
+                    && !importValue.startsWith("com.radiantlogic")
+                    && !importValue.startsWith("io.swagger.annotations"))
+        .map(importValue -> Map.of("import", importValue))
+        .toList();
   }
 
   // TODO clean this up

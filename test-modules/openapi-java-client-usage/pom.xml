@@ -8,7 +8,7 @@
         <groupId>com.radiantlogic.openapi.builder</groupId>
         <artifactId>openapi-builder-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>openapi-java-client-usage</artifactId>

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.codegen.CodegenDiscriminator;
 
+// TODO is not necessary, delete this
 /**
  * Extended version of the CodegenDiscriminator to add extra properties to deal with a lack of a
  * mapping in the spec.

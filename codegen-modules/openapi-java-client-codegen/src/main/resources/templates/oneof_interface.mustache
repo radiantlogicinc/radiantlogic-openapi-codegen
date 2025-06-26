@@ -1,9 +1,9 @@
-{{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 {{#discriminator}}
 {{^hasDiscriminatorWithNonEmptyMapping}}
 // NOTE: This type lacked a discriminator mapping in the openapi spec it was generated from. Please see the Raw inner class for serialization/deserialization.
 {{/hasDiscriminatorWithNonEmptyMapping}}
 {{/discriminator}}
+{{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();
@@ -18,6 +18,10 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     class Raw extends HashMap<String, Object> {
         public {{propertyType}} {{propertyGetter}}() {
             return ({{propertyType}}) get("{{propertyName}}");
+        }
+
+        public <T extends {{classname}}> T toImplementation(final Class<T> type) {
+            return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
         }
     }
     {{/hasDiscriminatorWithNonEmptyMapping}}

@@ -62,7 +62,7 @@ At the time of writing, all generated methods that return a type with this kind 
 
 ### Modules
 
-This is a multi-module maven project. The primary modules for the codegen will be found in the `source-modules` directory. Modules that exist to test the generated code will be found in the `test-modules` directory. 
+This is a multi-module maven project. The primary modules for the codegen will be found in the `builder-modules` directory. Modules that exist to use (and therefore test) the generated code will be found in the `usage-modules` directory. 
 
 ### Requirements
 

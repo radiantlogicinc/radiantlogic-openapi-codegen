@@ -41,8 +41,8 @@
         <pmd.version>7.12.0</pmd.version>
         <wiremock.version>3.13.1</wiremock.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <java.client.builder.path>./source-modules/openapi-java-client-builder</java.client.builder.path>
-        <java.client.usage.path>./test-modules/openapi-java-client-usage</java.client.usage.path>
+        <java.client.builder.path>./builder-modules/openapi-java-client-builder</java.client.builder.path>
+        <java.client.usage.path>./usage-modules/openapi-java-client-usage</java.client.usage.path>
     </properties>
 
     <dependencyManagement>

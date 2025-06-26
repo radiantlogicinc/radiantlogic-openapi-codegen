@@ -56,6 +56,11 @@ public class RawDiscriminatedTypeSerdeTest {
     assertThatJson(json).isEqualTo(expectedJson);
   }
 
+  @Test
+  void itCanGetRawDiscriminatorAnyType() {
+    throw new RuntimeException();
+  }
+
   // TODO delete this
   @Test
   void foo() {

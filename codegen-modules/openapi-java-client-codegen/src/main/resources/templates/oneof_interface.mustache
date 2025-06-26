@@ -9,6 +9,11 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     {{propertyType}} {{propertyGetter}}();
 
     {{^hasDiscriminatorWithNonEmptyMapping}}
+
+    default Raw toRaw() {
+
+    }
+
     /**
      * This represents the raw JSON data associated with this type. If this has been included
      * by the codegen in this interface, that means the original OpenAPI spec was incomplete,

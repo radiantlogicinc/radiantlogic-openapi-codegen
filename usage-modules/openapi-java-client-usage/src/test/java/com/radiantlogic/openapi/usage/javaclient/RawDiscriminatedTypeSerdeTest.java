@@ -1,11 +1,16 @@
 package com.radiantlogic.openapi.usage.javaclient;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.InputMessageResource;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.Item;
+import com.radiantlogic.custom.dataconnector.openaiapi.model.RoleEnum;
+import com.radiantlogic.custom.dataconnector.openaiapi.model.StatusEnum;
+import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
+import java.util.Collections;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -20,7 +25,6 @@ public class RawDiscriminatedTypeSerdeTest {
   @Test
   @SneakyThrows
   void itDeserializedRawDiscriminatedType() {
-    final InputMessageResource messageItem = new InputMessageResource();
     final String json =
         ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
     final Map<String, Object> map =
@@ -34,5 +38,18 @@ public class RawDiscriminatedTypeSerdeTest {
   }
 
   @Test
-  void itSerializesRawDiscriminatedType() {}
+  @SneakyThrows
+  void itSerializesRawDiscriminatedType() {
+    final InputMessageResource messageItem = new InputMessageResource();
+    messageItem.setType(TypeEnum.MESSAGE);
+    messageItem.setId("item_1");
+    messageItem.setStatus(StatusEnum.COMPLETED);
+    messageItem.setContent(Collections.emptyList());
+    messageItem.setRole(RoleEnum.USER);
+
+    final String json = objectMapper.writeValueAsString(messageItem);
+    final String expectedJson =
+        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+    assertThatJson(json).isEqualTo(expectedJson);
+  }
 }

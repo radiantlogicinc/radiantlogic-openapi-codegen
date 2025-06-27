@@ -57,6 +57,10 @@ public class CodegenModelUtils {
     return hasOneOfChildren && hasNoDiscriminatorChildren;
   }
 
+  public static boolean hasDiscriminatorNoMapping(@NonNull final CodegenModel model) {
+    return model.discriminator != null && model.discriminator.getMappedModels() == null;
+  }
+
   @NonNull
   public static Map<String, CodegenModel> modelMapListToModelClassMap(
       @NonNull final List<ModelMap> modelMapList) {

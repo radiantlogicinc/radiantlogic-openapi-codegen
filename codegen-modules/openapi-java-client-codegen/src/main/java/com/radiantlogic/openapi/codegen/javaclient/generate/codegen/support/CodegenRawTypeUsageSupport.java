@@ -1,6 +1,7 @@
 package com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support;
 
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
@@ -25,12 +26,15 @@ public class CodegenRawTypeUsageSupport {
             model -> {
               model.vars.forEach(
                   prop -> {
+                    // TODO prop.complexType is not null, look up the model and check for
+                    // discriminator
+
                     System.out.println(
                         model.classname
                             + " "
                             + prop.name
                             + " "
-                            + prop.dataType
+                            + prop.complexType
                             + " "
                             + prop.datatypeWithEnum);
                   });
@@ -50,8 +54,7 @@ public class CodegenRawTypeUsageSupport {
         .filter(
             opAndType ->
                 opAndType.returnType() != null
-                    && opAndType.returnType().discriminator != null
-                    && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
+                    && CodegenModelUtils.hasDiscriminatorNoMapping(opAndType.returnType()))
         .forEach(
             opAndType -> {
               final String returnBaseType =

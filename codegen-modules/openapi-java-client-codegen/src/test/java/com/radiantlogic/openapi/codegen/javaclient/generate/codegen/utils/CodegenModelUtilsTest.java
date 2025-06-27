@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -135,7 +136,37 @@ public class CodegenModelUtilsTest {
   class ModelMapListToModelClassMap {
     @Test
     void itConvertsListToMap() {
-      throw new RuntimeException();
+      // Create test models
+      final CodegenModel model1 = new CodegenModel();
+      model1.classname = "Model1";
+
+      final CodegenModel model2 = new CodegenModel();
+      model2.classname = "Model2";
+
+      // Create ModelMaps
+      final ModelMap modelMap1 = new ModelMap();
+      modelMap1.setModel(model1);
+
+      final ModelMap modelMap2 = new ModelMap();
+      modelMap2.setModel(model2);
+
+      // Create list of ModelMaps
+      final List<ModelMap> modelMapList = List.of(modelMap1, modelMap2);
+
+      // Expected map - create manually to avoid Map.of() which might not be available
+      final Map<String, CodegenModel> expected = new java.util.HashMap<>();
+      expected.put("Model1", model1);
+      expected.put("Model2", model2);
+
+      // Call the method under test
+      final Map<String, CodegenModel> actual =
+          CodegenModelUtils.modelMapListToModelClassMap(modelMapList);
+
+      // Verify the result - use specific assertion to avoid ambiguity
+      assertThat(actual)
+          .containsExactlyInAnyOrderEntriesOf(expected)
+          .hasSize(2)
+          .containsKeys("Model1", "Model2");
     }
   }
 }

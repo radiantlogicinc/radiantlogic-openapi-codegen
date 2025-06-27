@@ -66,6 +66,22 @@ public class RawDiscriminatedTypeSerdeTest {
   }
 
   @Test
+  @SneakyThrows
+  void itCanConvertRawToImpl() {
+    final InputMessageResource messageItem = new InputMessageResource();
+    messageItem.setType(TypeEnum.MESSAGE);
+    messageItem.setId("item_1");
+    messageItem.setStatus(StatusEnum.COMPLETED);
+    messageItem.setContent(Collections.emptyList());
+    messageItem.setRole(RoleEnum.USER);
+
+    final String json =
+        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+    final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
+    assertThat(raw.toImplementation(InputMessageResource.class)).isEqualTo(messageItem);
+  }
+
+  @Test
   void itCanGetRawDiscriminatorNonEnumType() {
     // TODO what about String? BigDecimal? Int? Double?
     throw new RuntimeException();

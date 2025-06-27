@@ -13,6 +13,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
@@ -195,10 +196,22 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
                 final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
                 return new OperationWithReturnType(operation, returnType);
               })
-          .filter(opAndType -> opAndType.returnType() != null)
-          .map(
+          .filter(
+              opAndType ->
+                  opAndType.returnType() != null
+                      && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
+          .forEach(
               opAndType -> {
-                return opAndType;
+                final String returnBaseType =
+                    "%s.Raw".formatted(opAndType.operation().returnBaseType);
+                opAndType.operation().returnBaseType = returnBaseType;
+                if (CodegenConstants.LIST_TYPE_PATTERN
+                    .matcher(opAndType.operation().returnType)
+                    .matches()) {
+                  opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
+                } else {
+                  opAndType.operation().returnType = returnBaseType;
+                }
               });
     }
 

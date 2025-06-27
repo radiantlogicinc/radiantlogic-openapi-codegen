@@ -170,7 +170,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     final Map<String, CodegenModel> allModelsClassMap =
         CodegenModelUtils.modelMapListToModelClassMap(allModels);
     final List<CodegenOperation> operations =
-        CodegenOperationUtils.operationsMapToOperationsList(operationsMap);
+        CodegenOperationUtils.operationsMapToList(operationsMap);
     operations.stream()
         .map(
             operation -> {

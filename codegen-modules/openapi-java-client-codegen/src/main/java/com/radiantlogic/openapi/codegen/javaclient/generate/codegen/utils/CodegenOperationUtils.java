@@ -12,7 +12,7 @@ import org.openapitools.codegen.model.OperationsMap;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CodegenOperationUtils {
   @NonNull
-  public static List<CodegenOperation> operationsMapToOperationsList(
+  public static List<CodegenOperation> operationsMapToList(
       @NonNull final OperationsMap operationsMap) {
     return Optional.ofNullable(operationsMap.getOperations())
         .map(OperationMap::getOperation)

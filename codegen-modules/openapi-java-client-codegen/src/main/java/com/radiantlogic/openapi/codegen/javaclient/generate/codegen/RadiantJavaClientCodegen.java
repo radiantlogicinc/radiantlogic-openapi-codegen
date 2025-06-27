@@ -17,7 +17,9 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodeg
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.servers.Server;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +30,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
+import org.openapitools.codegen.model.OperationsMap;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
@@ -156,6 +161,25 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
             "src/main/java/%s/JacksonConfig.java".formatted(packageDirectories));
     supportingFiles.add(jacksonConfigFile);
     return supportingFiles;
+  }
+
+  // TODO delete if unused
+  @Override
+  public CodegenOperation fromOperation(
+      @NonNull final String path,
+      @NonNull final String httpMethod,
+      @NonNull final Operation operation,
+      @NonNull final List<Server> servers) {
+    final CodegenOperation codegenOperation =
+        super.fromOperation(path, httpMethod, operation, servers);
+    return codegenOperation;
+  }
+
+  // TODO delete if unused
+  @Override
+  public OperationsMap postProcessOperationsWithModels(
+      @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
+    return super.postProcessOperationsWithModels(operationsMap, allModels);
   }
 
   @Override

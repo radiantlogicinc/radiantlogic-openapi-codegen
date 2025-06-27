@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -179,12 +181,23 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
   @Override
   public OperationsMap postProcessOperationsWithModels(
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
+    final Map<String, CodegenModel> allModelsClassMap =
+        allModels.stream()
+            .map(ModelMap::getModel)
+            .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
     final OperationMap operationMap = operationsMap.getOperations();
     if (operationMap != null) {
       final List<CodegenOperation> operations = operationMap.getOperation();
       operations.forEach(
           operation -> {
-            System.out.println("RETURN TYPE: " + operation.returnType);
+            final CodegenModel match = allModelsClassMap.get(operation.returnBaseType);
+            System.out.println(
+                "RETURN TYPE: "
+                    + operation.returnType
+                    + " "
+                    + operation.returnBaseType
+                    + " "
+                    + (match != null));
           });
     }
 

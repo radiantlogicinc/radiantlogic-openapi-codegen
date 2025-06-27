@@ -189,18 +189,24 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     final OperationMap operationMap = operationsMap.getOperations();
     if (operationMap != null) {
       final List<CodegenOperation> operations = operationMap.getOperation();
-      operations.forEach(
-          operation -> {
-            final CodegenModel match = allModelsClassMap.get(operation.returnBaseType);
-            if (match == null) {
-              System.out.println(
-                  "MISSING TYPE: " + operation.returnType + " " + operation.returnBaseType);
-            }
-          });
+      operations.stream()
+          .map(
+              operation -> {
+                final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
+                return new OperationWithReturnType(operation, returnType);
+              })
+          .filter(opAndType -> opAndType.returnType() != null)
+          .map(
+              opAndType -> {
+                return opAndType;
+              });
     }
 
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }
+
+  private record OperationWithReturnType(
+      @NonNull CodegenOperation operation, CodegenModel returnType) {}
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {

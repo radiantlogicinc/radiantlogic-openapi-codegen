@@ -2,7 +2,10 @@ package com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -52,5 +55,13 @@ public class CodegenModelUtils {
             || (model.discriminator.getMappedModels() == null
                 || model.discriminator.getMappedModels().isEmpty());
     return hasOneOfChildren && hasNoDiscriminatorChildren;
+  }
+
+  @NonNull
+  public static Map<String, CodegenModel> modelMapListToModelClassMap(
+      @NonNull final List<ModelMap> modelMapList) {
+    return modelMapList.stream()
+        .map(ModelMap::getModel)
+        .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
   }
 }

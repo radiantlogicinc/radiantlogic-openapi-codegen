@@ -130,4 +130,12 @@ public class CodegenModelUtilsTest {
       assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
     }
   }
+
+  @Nested
+  class ModelMapListToModelClassMap {
+    @Test
+    void itConvertsListToMap() {
+      throw new RuntimeException();
+    }
+  }
 }

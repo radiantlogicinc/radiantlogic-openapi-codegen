@@ -4,6 +4,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.Codege
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
@@ -20,24 +21,19 @@ public class CodegenRawTypeUsageSupport {
   // TODO refactor this further
   public void applyRawTypesToModelProperties(
       @NonNull final Map<String, CodegenModel> modelClassMap) {
-    modelClassMap
-        .values()
+    modelClassMap.values().stream()
+        .flatMap(model -> model.vars.stream())
+        .filter(prop -> Objects.nonNull(prop.complexType))
+        .filter(prop -> modelClassMap.containsKey(prop.complexType))
+        .filter(
+            prop ->
+                CodegenModelUtils.hasDiscriminatorNoMapping(modelClassMap.get(prop.complexType)))
         .forEach(
-            model -> {
-              model.vars.forEach(
-                  prop -> {
-                    // TODO prop.complexType is not null, look up the model and check for
-                    // discriminator
-
-                    System.out.println(
-                        model.classname
-                            + " "
-                            + prop.name
-                            + " "
-                            + prop.complexType
-                            + " "
-                            + prop.datatypeWithEnum);
-                  });
+            prop -> {
+              final String complexType = "%s.Raw".formatted(prop.complexType);
+              prop.datatypeWithEnum =
+                  prop.datatypeWithEnum.replaceAll(prop.complexType, complexType);
+              prop.complexType = complexType;
             });
   }
 

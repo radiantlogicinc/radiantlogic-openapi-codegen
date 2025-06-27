@@ -179,7 +179,6 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
-    // TODO child properties must be Raw if not a correct discriminator
     final ExtendedCodegenModel result = codegenMapper.extendModel(super.fromModel(name, model));
     if (result.discriminator != null) {
       result.discriminator = codegenMapper.extendDiscriminator(result.discriminator);
@@ -220,6 +219,10 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
         extractedEnumModels.allEnums(), allModelMaps, modelPackage(), importMapping());
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
+
+    final Map<String, CodegenModel> modelClassMap =
+        CodegenModelUtils.modelNameMapToModelClassMap(allModels);
+    codegenRawTypeUsageSupport.applyRawTypesToModelProperties(modelClassMap);
 
     return super.postProcessAllModels(allModelMaps);
   }

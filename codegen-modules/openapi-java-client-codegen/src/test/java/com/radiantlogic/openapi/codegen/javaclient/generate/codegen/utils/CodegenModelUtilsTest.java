@@ -159,4 +159,12 @@ public class CodegenModelUtilsTest {
       assertThat(actual).containsExactlyInAnyOrderEntriesOf(expected).hasSize(2);
     }
   }
+
+  @Nested
+  class ModelNameMapToModelClassMap {
+    @Test
+    void test() {
+      throw new RuntimeException();
+    }
+  }
 }

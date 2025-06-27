@@ -17,6 +17,27 @@ import org.openapitools.codegen.CodegenOperation;
  */
 public class CodegenRawTypeUsageSupport {
   // TODO refactor this further
+  public void applyRawTypesToModelProperties(
+      @NonNull final Map<String, CodegenModel> modelClassMap) {
+    modelClassMap
+        .values()
+        .forEach(
+            model -> {
+              model.vars.forEach(
+                  prop -> {
+                    System.out.println(
+                        model.classname
+                            + " "
+                            + prop.name
+                            + " "
+                            + prop.dataType
+                            + " "
+                            + prop.datatypeWithEnum);
+                  });
+            });
+  }
+
+  // TODO refactor this further
   public void applyRawTypesToOperationReturnTypes(
       @NonNull final List<CodegenOperation> operations,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {

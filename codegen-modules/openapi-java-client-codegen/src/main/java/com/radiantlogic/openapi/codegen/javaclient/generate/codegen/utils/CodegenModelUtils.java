@@ -64,4 +64,11 @@ public class CodegenModelUtils {
         .map(ModelMap::getModel)
         .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
   }
+
+  @NonNull
+  public static Map<String, CodegenModel> modelNameMapToModelClassMap(
+      @NonNull final Map<String, CodegenModel> modelNameMap) {
+    return modelNameMap.values().stream()
+        .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
+  }
 }

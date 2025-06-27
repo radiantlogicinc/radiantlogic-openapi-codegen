@@ -58,7 +58,9 @@ public class CodegenModelUtils {
   }
 
   public static boolean hasDiscriminatorNoMapping(@NonNull final CodegenModel model) {
-    return model.discriminator != null && model.discriminator.getMappedModels() == null;
+    return model.discriminator != null
+        && (model.discriminator.getMappedModels() == null
+            || model.discriminator.getMappedModels().isEmpty());
   }
 
   @NonNull

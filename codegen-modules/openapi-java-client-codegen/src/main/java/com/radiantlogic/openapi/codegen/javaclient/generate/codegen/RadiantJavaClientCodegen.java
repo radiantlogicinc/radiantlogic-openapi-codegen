@@ -14,6 +14,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
@@ -25,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -169,9 +168,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
   public OperationsMap postProcessOperationsWithModels(
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
     final Map<String, CodegenModel> allModelsClassMap =
-        allModels.stream()
-            .map(ModelMap::getModel)
-            .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
+        CodegenModelUtils.modelMapListToModelClassMap(allModels);
     final OperationMap operationMap = operationsMap.getOperations();
     if (operationMap != null) {
       final List<CodegenOperation> operations = operationMap.getOperation();

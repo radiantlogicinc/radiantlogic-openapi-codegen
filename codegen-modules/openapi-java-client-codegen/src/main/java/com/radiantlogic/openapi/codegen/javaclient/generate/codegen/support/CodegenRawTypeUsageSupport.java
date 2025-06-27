@@ -16,6 +16,7 @@ import org.openapitools.codegen.CodegenOperation;
  * lacking its mapping information is adjusted to use the Raw type instead.
  */
 public class CodegenRawTypeUsageSupport {
+  // TODO refactor this further
   public void applyRawTypesToOperationReturnTypes(
       @NonNull final List<CodegenOperation> operations,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {

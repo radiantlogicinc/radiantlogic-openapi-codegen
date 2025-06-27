@@ -36,6 +36,7 @@ import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
+import org.openapitools.codegen.model.OperationMap;
 import org.openapitools.codegen.model.OperationsMap;
 
 /**
@@ -44,7 +45,6 @@ import org.openapitools.codegen.model.OperationsMap;
  */
 @RequiredArgsConstructor
 public class RadiantJavaClientCodegen extends JavaClientCodegen implements ExtendedCodegenConfig {
-
   private final ExtendedCodegenMapper codegenMapper =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
@@ -169,7 +169,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
       @NonNull final String path,
       @NonNull final String httpMethod,
       @NonNull final Operation operation,
-      @NonNull final List<Server> servers) {
+      final List<Server> servers) {
     final CodegenOperation codegenOperation =
         super.fromOperation(path, httpMethod, operation, servers);
     return codegenOperation;
@@ -179,6 +179,15 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
   @Override
   public OperationsMap postProcessOperationsWithModels(
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
+    final OperationMap operationMap = operationsMap.getOperations();
+    if (operationMap != null) {
+      final List<CodegenOperation> operations = operationMap.getOperation();
+      operations.forEach(
+          operation -> {
+            System.out.println("RETURN TYPE: " + operation.returnType);
+          });
+    }
+
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }
 

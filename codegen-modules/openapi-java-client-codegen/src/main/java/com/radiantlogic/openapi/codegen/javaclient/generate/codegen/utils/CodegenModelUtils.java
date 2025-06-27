@@ -57,10 +57,13 @@ public class CodegenModelUtils {
     return hasOneOfChildren && hasNoDiscriminatorChildren;
   }
 
-  public static boolean hasDiscriminatorNoMapping(@NonNull final CodegenModel model) {
-    return model.discriminator != null
-        && (model.discriminator.getMappedModels() == null
-            || model.discriminator.getMappedModels().isEmpty());
+  public static boolean hasOneOfDiscriminatorWithoutMapping(@NonNull final CodegenModel model) {
+    final boolean hasOneOf = model.oneOf != null && !model.oneOf.isEmpty();
+    final boolean hasDiscriminatorNoMapping =
+        model.discriminator != null
+            && (model.discriminator.getMappedModels() == null
+                || model.discriminator.getMappedModels().isEmpty());
+    return hasOneOf && hasDiscriminatorNoMapping;
   }
 
   @NonNull

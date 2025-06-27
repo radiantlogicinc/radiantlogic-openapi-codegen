@@ -27,7 +27,8 @@ public class CodegenRawTypeUsageSupport {
         .filter(prop -> modelClassMap.containsKey(prop.complexType))
         .filter(
             prop ->
-                CodegenModelUtils.hasDiscriminatorNoMapping(modelClassMap.get(prop.complexType)))
+                CodegenModelUtils.hasOneOfDiscriminatorWithoutMapping(
+                    modelClassMap.get(prop.complexType)))
         .forEach(
             prop -> {
               final String complexType = "%s.Raw".formatted(prop.complexType);
@@ -50,7 +51,8 @@ public class CodegenRawTypeUsageSupport {
         .filter(
             opAndType ->
                 opAndType.returnType() != null
-                    && CodegenModelUtils.hasDiscriminatorNoMapping(opAndType.returnType()))
+                    && CodegenModelUtils.hasOneOfDiscriminatorWithoutMapping(
+                        opAndType.returnType()))
         .forEach(
             opAndType -> {
               final String returnBaseType =

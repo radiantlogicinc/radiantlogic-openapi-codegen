@@ -10,6 +10,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenMissingModelInheritanceSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenNewEnumProcessorSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenNonEnglishNameSupport;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRawTypeUsageSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
@@ -67,6 +68,8 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
       new CodegenInheritedEnumSupport();
   private final CodegenNewEnumProcessorSupport codegenNewEnumProcessorSupport =
       new CodegenNewEnumProcessorSupport();
+  private final CodegenRawTypeUsageSupport codegenRawTypeUsageSupport =
+      new CodegenRawTypeUsageSupport();
 
   @NonNull private final Args args;
 
@@ -162,7 +165,6 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     return supportingFiles;
   }
 
-  // TODO if used, refactor into support class and write tests
   @Override
   public OperationsMap postProcessOperationsWithModels(
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
@@ -170,6 +172,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
         CodegenModelUtils.modelMapListToModelClassMap(allModels);
     final List<CodegenOperation> operations =
         CodegenOperationUtils.operationsMapToList(operationsMap);
+    codegenRawTypeUsageSupport.applyRawTypesToOperationReturnTypes(operations, allModelsClassMap);
 
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }

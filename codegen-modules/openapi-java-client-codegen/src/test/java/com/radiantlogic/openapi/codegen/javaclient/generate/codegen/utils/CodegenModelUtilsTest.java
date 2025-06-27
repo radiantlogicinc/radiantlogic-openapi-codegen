@@ -136,37 +136,27 @@ public class CodegenModelUtilsTest {
   class ModelMapListToModelClassMap {
     @Test
     void itConvertsListToMap() {
-      // Create test models
       final CodegenModel model1 = new CodegenModel();
       model1.classname = "Model1";
 
       final CodegenModel model2 = new CodegenModel();
       model2.classname = "Model2";
 
-      // Create ModelMaps
       final ModelMap modelMap1 = new ModelMap();
       modelMap1.setModel(model1);
 
       final ModelMap modelMap2 = new ModelMap();
       modelMap2.setModel(model2);
 
-      // Create list of ModelMaps
       final List<ModelMap> modelMapList = List.of(modelMap1, modelMap2);
 
-      // Expected map - create manually to avoid Map.of() which might not be available
-      final Map<String, CodegenModel> expected = new java.util.HashMap<>();
-      expected.put("Model1", model1);
-      expected.put("Model2", model2);
+      final Map<String, CodegenModel> expected =
+          Map.ofEntries(Map.entry("Model1", model1), Map.entry("Model2", model2));
 
-      // Call the method under test
       final Map<String, CodegenModel> actual =
           CodegenModelUtils.modelMapListToModelClassMap(modelMapList);
 
-      // Verify the result - use specific assertion to avoid ambiguity
-      assertThat(actual)
-          .containsExactlyInAnyOrderEntriesOf(expected)
-          .hasSize(2)
-          .containsKeys("Model1", "Model2");
+      assertThat(actual).containsExactlyInAnyOrderEntriesOf(expected).hasSize(2);
     }
   }
 }

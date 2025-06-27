@@ -178,6 +178,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
   }
 
   // TODO delete if unused
+  // TODO if used, refactor into support class and write tests
   @Override
   public OperationsMap postProcessOperationsWithModels(
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {

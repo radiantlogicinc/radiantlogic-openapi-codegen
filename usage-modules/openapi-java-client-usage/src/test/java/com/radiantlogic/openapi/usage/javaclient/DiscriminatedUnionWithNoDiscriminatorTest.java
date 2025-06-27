@@ -92,6 +92,11 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   }
 
   @Test
+  void itRetrievesDiscriminatedUnionWithHttpInfo() {
+    throw new RuntimeException();
+  }
+
+  @Test
   void itSendsDiscriminatedUnion() {
     throw new RuntimeException();
   }

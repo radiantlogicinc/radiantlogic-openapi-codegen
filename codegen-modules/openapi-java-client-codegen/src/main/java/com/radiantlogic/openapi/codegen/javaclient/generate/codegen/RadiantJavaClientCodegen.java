@@ -15,6 +15,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenOperationUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
@@ -36,7 +37,6 @@ import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
-import org.openapitools.codegen.model.OperationMap;
 import org.openapitools.codegen.model.OperationsMap;
 
 /**
@@ -169,34 +169,32 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
       @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
     final Map<String, CodegenModel> allModelsClassMap =
         CodegenModelUtils.modelMapListToModelClassMap(allModels);
-    final OperationMap operationMap = operationsMap.getOperations();
-    if (operationMap != null) {
-      final List<CodegenOperation> operations = operationMap.getOperation();
-      operations.stream()
-          .map(
-              operation -> {
-                final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
-                return new OperationWithReturnType(operation, returnType);
-              })
-          .filter(
-              opAndType ->
-                  opAndType.returnType() != null
-                      && opAndType.returnType().discriminator != null
-                      && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
-          .forEach(
-              opAndType -> {
-                final String returnBaseType =
-                    "%s.Raw".formatted(opAndType.operation().returnBaseType);
-                opAndType.operation().returnBaseType = returnBaseType;
-                if (CodegenConstants.LIST_TYPE_PATTERN
-                    .matcher(opAndType.operation().returnType)
-                    .matches()) {
-                  opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
-                } else {
-                  opAndType.operation().returnType = returnBaseType;
-                }
-              });
-    }
+    final List<CodegenOperation> operations =
+        CodegenOperationUtils.operationsMapToOperationsList(operationsMap);
+    operations.stream()
+        .map(
+            operation -> {
+              final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
+              return new OperationWithReturnType(operation, returnType);
+            })
+        .filter(
+            opAndType ->
+                opAndType.returnType() != null
+                    && opAndType.returnType().discriminator != null
+                    && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
+        .forEach(
+            opAndType -> {
+              final String returnBaseType =
+                  "%s.Raw".formatted(opAndType.operation().returnBaseType);
+              opAndType.operation().returnBaseType = returnBaseType;
+              if (CodegenConstants.LIST_TYPE_PATTERN
+                  .matcher(opAndType.operation().returnType)
+                  .matches()) {
+                opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
+              } else {
+                opAndType.operation().returnType = returnBaseType;
+              }
+            });
 
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }

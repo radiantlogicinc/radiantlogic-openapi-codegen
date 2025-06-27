@@ -87,6 +87,13 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
         responsesApi.listInputItems(responseId, null, null, null, null, null);
     assertThat(response).usingRecursiveComparison().isEqualTo(responseItemList);
 
+    assertThat(response.getData().get(0).getType()).isEqualTo(TypeEnum.MESSAGE);
+    assertThat(response.getData().get(0).toImplementation(InputMessageResource.class))
+        .isEqualTo(messageItem);
+    assertThat(response.getData().get(1).getType()).isEqualTo(TypeEnum.MESSAGE);
+    assertThat(response.getData().get(1).toImplementation(FunctionToolCallResource.class))
+        .isEqualTo(functionCallItem);
+
     verify(
         getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
             .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN))));

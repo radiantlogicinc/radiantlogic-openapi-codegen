@@ -191,13 +191,10 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
       operations.forEach(
           operation -> {
             final CodegenModel match = allModelsClassMap.get(operation.returnBaseType);
-            System.out.println(
-                "RETURN TYPE: "
-                    + operation.returnType
-                    + " "
-                    + operation.returnBaseType
-                    + " "
-                    + (match != null));
+            if (match == null) {
+              System.out.println(
+                  "MISSING TYPE: " + operation.returnType + " " + operation.returnBaseType);
+            }
           });
     }
 

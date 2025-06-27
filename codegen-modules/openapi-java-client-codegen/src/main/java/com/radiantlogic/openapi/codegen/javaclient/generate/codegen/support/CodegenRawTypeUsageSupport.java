@@ -35,6 +35,10 @@ public class CodegenRawTypeUsageSupport {
               prop.datatypeWithEnum =
                   prop.datatypeWithEnum.replaceAll(prop.complexType, complexType);
               prop.complexType = complexType;
+              if (prop.items != null) {
+                prop.items.complexType = complexType;
+                prop.items.datatypeWithEnum = complexType;
+              }
             });
   }
 

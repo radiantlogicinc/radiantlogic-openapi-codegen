@@ -2,6 +2,7 @@ package com.radiantlogic.openapi.usage.javaclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.radiantlogic.openapi.usage.javaclient.ApiClientSupport.ACCESS_TOKEN;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -68,8 +69,8 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     functionCallItem.setArguments("{\"location\": \"San Francisco\", \"unit\": \"celsius\"}");
     functionCallItem.setStatus(StatusEnum.COMPLETED);
 
-    responseItemList.addDataItem(messageItem);
-    responseItemList.addDataItem(functionCallItem);
+    responseItemList.addDataItem(messageItem.toItemResourceRaw());
+    responseItemList.addDataItem(functionCallItem.toItemResourceRaw());
 
     final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
 
@@ -84,7 +85,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
     final ResponseItemList response =
         responsesApi.listInputItems(responseId, null, null, null, null, null);
-    // TODO assert correct items in response
+    assertThat(response).usingRecursiveComparison().isEqualTo(responseItemList);
 
     verify(
         getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))

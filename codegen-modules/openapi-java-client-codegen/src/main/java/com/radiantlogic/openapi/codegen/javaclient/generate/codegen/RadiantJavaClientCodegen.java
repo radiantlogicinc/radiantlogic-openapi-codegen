@@ -199,6 +199,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
           .filter(
               opAndType ->
                   opAndType.returnType() != null
+                      && opAndType.returnType().discriminator != null
                       && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
           .forEach(
               opAndType -> {

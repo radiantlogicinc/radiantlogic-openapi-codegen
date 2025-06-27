@@ -17,8 +17,10 @@
  *                       type to convert it.
  */
 {{/hasDiscriminatorWithNonEmptyMapping}}
-{{/discriminator}}
+{{#hasDiscriminatorWithNonEmptyMapping}}
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+{{/hasDiscriminatorWithNonEmptyMapping}}
+{{/discriminator}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();

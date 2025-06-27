@@ -18,9 +18,7 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodeg
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.servers.Server;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,19 +164,6 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     return supportingFiles;
   }
 
-  // TODO delete if unused
-  @Override
-  public CodegenOperation fromOperation(
-      @NonNull final String path,
-      @NonNull final String httpMethod,
-      @NonNull final Operation operation,
-      final List<Server> servers) {
-    final CodegenOperation codegenOperation =
-        super.fromOperation(path, httpMethod, operation, servers);
-    return codegenOperation;
-  }
-
-  // TODO delete if unused
   // TODO if used, refactor into support class and write tests
   @Override
   public OperationsMap postProcessOperationsWithModels(

@@ -13,7 +13,6 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
-import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenOperationUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenMapper;
@@ -171,36 +170,9 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
         CodegenModelUtils.modelMapListToModelClassMap(allModels);
     final List<CodegenOperation> operations =
         CodegenOperationUtils.operationsMapToList(operationsMap);
-    operations.stream()
-        .map(
-            operation -> {
-              final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
-              return new OperationWithReturnType(operation, returnType);
-            })
-        .filter(
-            opAndType ->
-                opAndType.returnType() != null
-                    && opAndType.returnType().discriminator != null
-                    && !opAndType.returnType().getHasDiscriminatorWithNonEmptyMapping())
-        .forEach(
-            opAndType -> {
-              final String returnBaseType =
-                  "%s.Raw".formatted(opAndType.operation().returnBaseType);
-              opAndType.operation().returnBaseType = returnBaseType;
-              if (CodegenConstants.LIST_TYPE_PATTERN
-                  .matcher(opAndType.operation().returnType)
-                  .matches()) {
-                opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
-              } else {
-                opAndType.operation().returnType = returnBaseType;
-              }
-            });
 
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }
-
-  private record OperationWithReturnType(
-      @NonNull CodegenOperation operation, CodegenModel returnType) {}
 
   @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {

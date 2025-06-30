@@ -7,9 +7,14 @@ info:
     necessary, however they don't provide enough opportunities to exercise all possible implications
     of the code change.
   version: "1.0.0"
+tags:
+  - name: union-serde
+    description: Endpoints to test serialization/de-serialization of broken discriminated unions during API calls.
 paths:
   /union-serde/send-union:
     post:
+      tags:
+        - union-serde
       operationId: send-union
       summary: Send a discriminated union
       description: >-
@@ -25,6 +30,8 @@ paths:
           description: The operation was a success
   /union-serde/send-union-list:
     post:
+      tags:
+        - union-serde
       operationId: send-union-list
       summary: Send a discriminated union list
       description: >-
@@ -40,6 +47,8 @@ paths:
           description: The operation was a success.
   /union-serde/get-union-list:
     get:
+      tags:
+        - union-serde
       operationId: get-union-list
       summary: Get a discriminated union list
       description: >-

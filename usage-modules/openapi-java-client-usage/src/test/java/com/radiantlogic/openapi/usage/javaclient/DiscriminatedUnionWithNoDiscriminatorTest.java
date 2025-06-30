@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.radiantlogic.openapi.generated.brokendiscriminatortest.api.RequestBodyApi;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.api.UnionSerdeApi;
 import com.radiantlogic.openapi.generated.openaiapi.api.ResponsesApi;
 import com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient;
 import com.radiantlogic.openapi.generated.openaiapi.model.FunctionToolCallResource;
@@ -38,7 +38,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   private static ApiClient openaiApiClient;
   private static com.radiantlogic.openapi.generated.brokendiscriminatortest.invoker.ApiClient
       brokenDiscriminatorApiClient;
-  private RequestBodyApi requestBodyApi;
+  private UnionSerdeApi unionSerdeApi;
   private ResponsesApi responsesApi;
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -51,7 +51,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   @BeforeEach
   void setUp() {
     responsesApi = new ResponsesApi(openaiApiClient);
-    requestBodyApi = new RequestBodyApi(brokenDiscriminatorApiClient);
+    unionSerdeApi = new UnionSerdeApi(brokenDiscriminatorApiClient);
   }
 
   private static ResponseItemList buildResponseItemList() {

@@ -188,7 +188,8 @@ public class RawDiscriminatedTypeSerdeTest {
       final BigDecimalDiscriminator.Raw raw2 =
           objectMapper.readValue(json, BigDecimalDiscriminator.Raw.class);
       assertThat(raw2.getType()).isEqualTo(new BigDecimal(20));
-      //      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      // Cannot directly compare raw and raw2 because raw2.type will be an Integer, not a BigDecimal
+      // Other methods successfully convert it though where necessary
       final BigDecimalDiscriminatorOne actualOne =
           raw2.toImplementation(BigDecimalDiscriminatorOne.class);
       assertThat(actualOne).usingRecursiveComparison().isEqualTo(bigDecimalOne);

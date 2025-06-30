@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +105,7 @@ public class CodegenModelUtilsTest {
   class HasNonDiscriminatorChildren {
     @Test
     void itHasOneOfChildrenWithUnmappedDiscriminator() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = Set.of("Child1", "Child2");
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(null);
@@ -114,7 +115,7 @@ public class CodegenModelUtilsTest {
 
     @Test
     void itHasOneOfChildrenWithMappedDiscriminator() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = Set.of("Child1", "Child2");
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(
@@ -125,7 +126,7 @@ public class CodegenModelUtilsTest {
 
     @Test
     void itHasNoOneOfChildren() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = null;
 
       assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
@@ -163,16 +164,31 @@ public class CodegenModelUtilsTest {
   @Nested
   class ModelNameMapToModelClassMap {
     @Test
-    void test() {
-      throw new RuntimeException();
-    }
-  }
+    void itConvertsModelNameMapToModelClassMap() {
+      // Given
+      final CodegenModel model1 = new CodegenModel();
+      model1.name = "ModelName1";
+      model1.classname = "ModelClass1";
 
-  @Nested
-  class HasDiscriminatorNoMapping {
-    @Test
-    void test() {
-      throw new RuntimeException();
+      final CodegenModel model2 = new CodegenModel();
+      model2.name = "ModelName2";
+      model2.classname = "ModelClass2";
+
+      final Map<String, CodegenModel> modelNameMap =
+          Map.of(
+              "ModelName1", model1,
+              "ModelName2", model2);
+
+      // When
+      final Map<String, CodegenModel> result =
+          CodegenModelUtils.modelNameMapToModelClassMap(modelNameMap);
+
+      // Then
+      final Map<String, CodegenModel> expected =
+          Map.of(
+              "ModelClass1", model1,
+              "ModelClass2", model2);
+      assertThat(result).containsExactlyInAnyOrderEntriesOf(expected).hasSize(2);
     }
   }
 }

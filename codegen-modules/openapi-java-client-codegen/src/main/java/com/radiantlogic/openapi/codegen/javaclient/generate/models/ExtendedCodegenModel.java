@@ -14,8 +14,7 @@ public class ExtendedCodegenModel extends CodegenModel {
 
   public UnionType getUnionType() {
     final boolean hasOneOf = oneOf != null && !oneOf.isEmpty();
-    final boolean hasDiscriminator =
-        discriminator != null && discriminator.getPropertyName() != null;
+    final boolean hasDiscriminator = discriminator != null;
     final boolean hasMapping =
         discriminator != null
             && discriminator.getMappedModels() != null

@@ -1,11 +1,18 @@
 package com.radiantlogic.openapi.usage.javaclient;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.radiantlogic.openapi.usage.javaclient.ApiClientSupport.ACCESS_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.api.RequestBodyApi;
 import com.radiantlogic.openapi.generated.openaiapi.api.ResponsesApi;
 import com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient;
 import com.radiantlogic.openapi.generated.openaiapi.model.FunctionToolCallResource;
@@ -28,18 +35,23 @@ import org.springframework.http.ResponseEntity;
  */
 @WireMockTest(httpPort = 9000)
 public class DiscriminatedUnionWithNoDiscriminatorTest {
-  private static ApiClient apiClient;
+  private static ApiClient openaiApiClient;
+  private static com.radiantlogic.openapi.generated.brokendiscriminatortest.invoker.ApiClient
+      brokenDiscriminatorApiClient;
+  private RequestBodyApi requestBodyApi;
   private ResponsesApi responsesApi;
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   @BeforeAll
   static void beforeAll() {
-    apiClient = ApiClientSupport.createAndAuthenticateOpenAIApiClient();
+    openaiApiClient = ApiClientSupport.createAndAuthenticateOpenAIApiClient();
+    brokenDiscriminatorApiClient = ApiClientSupport.createBrokenDiscriminatorApiClient();
   }
 
   @BeforeEach
   void setUp() {
-    responsesApi = new ResponsesApi(apiClient);
+    responsesApi = new ResponsesApi(openaiApiClient);
+    requestBodyApi = new RequestBodyApi(brokenDiscriminatorApiClient);
   }
 
   private static ResponseItemList buildResponseItemList() {

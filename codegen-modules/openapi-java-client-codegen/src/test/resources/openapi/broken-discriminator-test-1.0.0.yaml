@@ -7,9 +7,13 @@ info:
     necessary, however they don't provide enough opportunities to exercise all possible implications
     of the code change.
   version: "1.0.0"
+tags:
+  - name: request-body
 paths:
   /send-union:
     post:
+      tags:
+        - request-body
       operationId: send-union
       summary: Send a discriminated union
       description: >-

@@ -2,8 +2,11 @@ package com.radiantlogic.openapi.usage.javaclient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -11,8 +14,13 @@ import static com.radiantlogic.openapi.usage.javaclient.ApiClientSupport.ACCESS_
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.api.UnionSerdeApi;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.Discriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.FirstChild;
 import com.radiantlogic.openapi.generated.openaiapi.api.ResponsesApi;
 import com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient;
 import com.radiantlogic.openapi.generated.openaiapi.model.FunctionToolCallResource;
@@ -158,8 +166,21 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   }
 
   @Test
+  @SneakyThrows
   void itSendsDiscriminatedUnion() {
-    throw new RuntimeException();
+    final FirstChild firstChild = new FirstChild().first("The First").type(Discriminator.FIRST);
+
+    final UrlPathPattern urlPathPattern = urlPathEqualTo("/union-serde/send-union");
+    final MappingBuilder mappingBuilder =
+        post(urlPathPattern).willReturn(aResponse().withStatus(204));
+    stubFor(mappingBuilder);
+
+    unionSerdeApi.sendUnion(firstChild);
+
+    final String json = objectMapper.writeValueAsString(firstChild);
+    final RequestPatternBuilder requestPatternBuilder =
+        postRequestedFor(urlPathPattern).withRequestBody(equalToJson(json));
+    verify(requestPatternBuilder);
   }
 
   @Test

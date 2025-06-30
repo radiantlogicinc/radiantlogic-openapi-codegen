@@ -29,6 +29,7 @@ import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.languages.JavaClientCodegen;
+import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 
 /**
@@ -169,6 +170,23 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
     }
 
     return result;
+  }
+
+  // TODO delete this
+  private ModelsMap enumModelToModelsMap(
+      @NonNull final CodegenModel enumModel,
+      @NonNull final ModelsMap base,
+      @NonNull final List<Map<String, String>> importsForEnums) {
+    final ModelsMap modelsMap = new ModelsMap();
+    modelsMap.putAll(base);
+    modelsMap.setImports(importsForEnums);
+
+    final String importPath = toModelImport(enumModel.classname);
+    final ModelMap modelMap = new ModelMap();
+    modelMap.setModel(enumModel);
+    modelMap.put("importPath", importPath);
+    modelsMap.setModels(List.of(modelMap));
+    return modelsMap;
   }
 
   @Override

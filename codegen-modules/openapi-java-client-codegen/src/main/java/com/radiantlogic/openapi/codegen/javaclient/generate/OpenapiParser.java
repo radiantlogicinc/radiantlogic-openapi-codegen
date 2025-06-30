@@ -5,6 +5,9 @@ import com.radiantlogic.openapi.codegen.javaclient.exceptions.OpenapiParseExcept
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.ParseOptions;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +33,20 @@ public class OpenapiParser {
     parseOptions.setResolveFully(false);
 
     try {
+      final Path tempFile = Files.createTempFile("openapi", ".yaml");
+      try (InputStream stream = args.openapiUrl().openStream()) {
+        Files.copy(stream, tempFile);
+      }
+
       final OpenAPI openAPI =
-          parser.readLocation(args.openapiPath(), List.of(), parseOptions).getOpenAPI();
+          parser.readLocation(tempFile.toString(), List.of(), parseOptions).getOpenAPI();
       if (openAPI == null) {
         throw new OpenapiParseException("OpenAPI parse result is null");
       }
       return openAPI;
     } catch (final Exception ex) {
       throw new OpenapiParseException(
-          "Failed to parse OpenAPI: %s".formatted(args.openapiPath()), ex);
+          "Failed to parse OpenAPI: %s".formatted(args.openapiUrl()), ex);
     }
   }
 }

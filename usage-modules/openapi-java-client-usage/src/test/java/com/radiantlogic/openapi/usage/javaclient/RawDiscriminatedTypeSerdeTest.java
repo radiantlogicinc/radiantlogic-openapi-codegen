@@ -88,7 +88,9 @@ public class RawDiscriminatedTypeSerdeTest {
       final String json =
           ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
       final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
-      assertThat(raw.toImplementation(InputMessageResource.class)).isEqualTo(messageItem);
+      assertThat(raw.toImplementation(InputMessageResource.class))
+          .usingRecursiveComparison()
+          .isEqualTo(messageItem);
     }
 
     @Test

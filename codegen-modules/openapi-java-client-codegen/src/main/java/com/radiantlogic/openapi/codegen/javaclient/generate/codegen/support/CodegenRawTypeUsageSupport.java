@@ -78,7 +78,7 @@ public class CodegenRawTypeUsageSupport {
     }
   }
 
-  // TODO
+  // TODO delete if unused
   private static void convertToRawBodyParam(@NonNull final OperationWithBodyParam opAndType) {
     final String bodyParamBaseType = "%s.Raw".formatted(opAndType.operation().bodyParam.baseType);
     opAndType.operation().bodyParam.baseType = bodyParamBaseType;

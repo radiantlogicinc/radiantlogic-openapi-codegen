@@ -157,4 +157,27 @@ components:
         - $ref: "#/components/schemas/IntDiscriminatorTwo"
       discriminator:
         propertyName: type
+    BooleanDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: boolean
+        one:
+          type: string
+      required:
+        - type
+    BooleanDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: boolean
+        two:
+          type: string
+    BooleanDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/BooleanDiscriminatorOne"
+        - $ref: "#/components/schemas/BooleanDiscriminatorTwo"
+      discriminator:
+        propertyName: type
 

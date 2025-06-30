@@ -38,9 +38,11 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      */
     default Raw to{{classname}}Raw() {
         final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+        {{#discriminator}}
         final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
         // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
         raw.put("{{propertyName}}", discriminatorValue);
+        {{/discriminator}}
         return raw;
     }
 
@@ -49,9 +51,10 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
      * despite not having proper openapi discriminator mapping information.
      */
     class Raw extends HashMap<String, Object> {
+        {{#discriminator}}
         public {{propertyType}} {{propertyGetter}}() {
             {{#isEnum}}
-            return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
+                return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
             {{/isEnum}}
             {{#useConstructor}}
                 return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
@@ -60,6 +63,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
                 return ({{propertyType}}) get("{{propertyName}}");
             {{/useCast}}
         }
+        {{/discriminator}}
 
         public <T extends {{classname}}> T toImplementation(final Class<T> type) {
             return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);

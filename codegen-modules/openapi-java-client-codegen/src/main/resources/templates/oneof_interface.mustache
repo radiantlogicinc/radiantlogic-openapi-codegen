@@ -1,11 +1,19 @@
 {{#isInvalidUnionType}}
 /**
- * This interface was defined by a discriminated union schema in an OpenAPI specification, however the
- * specification lacked the mapping for the discriminator. The result is that this interface on its own
- * cannot be serialized or de-serialized due to that missing type information.
+ * This interface represents a broken union type. A union type is a type definition that can be one of
+ * multiple types. Proper code generation from an OpenAPI schema requires the type to have a oneOf mapping,
+ * a discriminator, and a discriminator mapping. Lacking all of that combined, a proper discriminated union
+ * interface cannot be constructed.
  *
- * To compensate for this flaw, additional logic has been added to this interface. Please do the following
- * when trying to serialize and/or de-serialize it:
+ * As a solution, this interface is designed to present a workaround to the limitations of the incomplete
+ * OpenAPI schema it is based on. While on its own it cannot be correctly serialized or de-serialized, it
+ * provides a special "Raw" inner type that serves as a workaround to those limitations. It is an
+ * extension to a HashMap with some utility code to handle manually converting to and from implementations.
+ *
+ * While this is hardly the perfect solution, and it does put an extra burden on developers working with this
+ * generated code, it is the best option for handling otherwise un-generate-able code.
+ *
+ * HOW TO USE THE RAW TYPES
  *
  * FOR SERIALIZATION = First call to{{classname}}Raw() on the instance you are trying to serialize. Then
  *                     serialize what is returned from that method.

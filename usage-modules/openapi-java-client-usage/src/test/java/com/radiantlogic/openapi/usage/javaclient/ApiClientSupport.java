@@ -85,4 +85,6 @@ public class ApiClientSupport {
 
     return apiClient;
   }
+
+  public static com.radiantlogic.custom.dataconnector.snykapi.invoker.ApiClient foo() {}
 }

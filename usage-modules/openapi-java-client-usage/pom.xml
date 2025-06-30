@@ -21,6 +21,11 @@
     <dependencies>
         <dependency>
             <groupId>com.radiantlogic.custom.dataconnector</groupId>
+            <artifactId>Broken-Discriminator-Test</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.radiantlogic.custom.dataconnector</groupId>
             <artifactId>RadiantOne-V8-API</artifactId>
             <version>8.1.4-beta.2-SNAPSHOT</version>
         </dependency>

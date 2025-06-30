@@ -19,8 +19,11 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.api.UnionSerdeApi;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BrokenDiscriminatedUnion;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.Discriminator;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.FirstChild;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.SecondChild;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.ThirdChild;
 import com.radiantlogic.openapi.generated.openaiapi.api.ResponsesApi;
 import com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient;
 import com.radiantlogic.openapi.generated.openaiapi.model.FunctionToolCallResource;
@@ -30,6 +33,9 @@ import com.radiantlogic.openapi.generated.openaiapi.model.ResponseItemList;
 import com.radiantlogic.openapi.generated.openaiapi.model.RoleEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.StatusEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.TypeEnum;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +66,14 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   void setUp() {
     responsesApi = new ResponsesApi(openaiApiClient);
     unionSerdeApi = new UnionSerdeApi(brokenDiscriminatorApiClient);
+  }
+
+  private static List<BrokenDiscriminatedUnion> buildBrokenUnionList() {
+    final FirstChild firstChild = new FirstChild().first("The First").type(Discriminator.FIRST);
+    final SecondChild secondChild =
+        new SecondChild().second("The Second").type(Discriminator.SECOND);
+    final ThirdChild thirdChild = new ThirdChild().third("The Third").type(Discriminator.THIRD);
+    return Arrays.asList(firstChild, secondChild, thirdChild);
   }
 
   private static ResponseItemList buildResponseItemList() {
@@ -165,13 +179,32 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
   @Test
   void itRetrievesDiscriminatedUnionList() {
-    throw new RuntimeException();
+    final List<BrokenDiscriminatedUnion> brokenUnionList = buildBrokenUnionList();
+    final String json =
+        ResourceReader.readString("data/discriminatedunionnodiscriminator/brokenlist.json");
+
+    final UrlPathPattern urlPathPattern = urlPathEqualTo("/union-serde/get-union-list");
+    final MappingBuilder mappingBuilder =
+        get(urlPathPattern)
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(json));
+    stubFor(mappingBuilder);
+
+    final List<BrokenDiscriminatedUnion.Raw> actualList = unionSerdeApi.getUnionList();
+    final List<BrokenDiscriminatedUnion.Raw> expectedList =
+        brokenUnionList.stream()
+            .map(BrokenDiscriminatedUnion::toBrokenDiscriminatedUnionRaw)
+            .collect(Collectors.toList());
+    assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
 
   @Test
   @SneakyThrows
   void itSendsDiscriminatedUnion() {
-    final FirstChild firstChild = new FirstChild().first("The First").type(Discriminator.FIRST);
+    final FirstChild firstChild = (FirstChild) buildBrokenUnionList().get(0);
 
     final UrlPathPattern urlPathPattern = urlPathEqualTo("/union-serde/send-union");
     final MappingBuilder mappingBuilder =

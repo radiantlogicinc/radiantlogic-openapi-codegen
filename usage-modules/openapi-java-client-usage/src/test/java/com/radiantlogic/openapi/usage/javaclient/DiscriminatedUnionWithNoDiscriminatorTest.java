@@ -222,6 +222,23 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
   @Test
   void itSendsDiscriminatedUnionList() {
-    throw new RuntimeException();
+    final List<BrokenDiscriminatedUnion> brokenUnionList = buildBrokenUnionList();
+    final String json =
+        ResourceReader.readString("data/discriminatedunionnodiscriminator/brokenlist.json");
+
+    final UrlPathPattern urlPathPattern = urlPathEqualTo("/union-serde/send-union-list");
+    final MappingBuilder mappingBuilder =
+        post(urlPathPattern).willReturn(aResponse().withStatus(204));
+    stubFor(mappingBuilder);
+
+    final List<BrokenDiscriminatedUnion.Raw> requestBody =
+        brokenUnionList.stream()
+            .map(BrokenDiscriminatedUnion::toBrokenDiscriminatedUnionRaw)
+            .collect(Collectors.toList());
+    unionSerdeApi.sendUnionList(requestBody);
+
+    final RequestPatternBuilder requestPatternBuilder =
+        postRequestedFor(urlPathPattern).withRequestBody(equalToJson(json));
+    verify(requestPatternBuilder);
   }
 }

@@ -20,7 +20,7 @@ public class CodegenLiteralPropertyNameSupportTest {
 
     // Assert
     assertThat(property.name).isEqualTo("validName");
-    assertThat(property.jsonName).isNull();
+    assertThat(property.getJsonName()).isNull();
   }
 
   @Test
@@ -34,7 +34,7 @@ public class CodegenLiteralPropertyNameSupportTest {
 
     // Assert
     assertThat(property.name).isEqualTo("value123");
-    assertThat(property.jsonName).isEqualTo("123");
+    assertThat(property.getJsonName()).isEqualTo("123");
   }
 
   @Test
@@ -48,7 +48,7 @@ public class CodegenLiteralPropertyNameSupportTest {
 
     // Assert
     assertThat(property.name).isEqualTo("valueTrue");
-    assertThat(property.jsonName).isEqualTo("true");
+    assertThat(property.getJsonName()).isEqualTo("true");
   }
 
   @Test
@@ -62,6 +62,6 @@ public class CodegenLiteralPropertyNameSupportTest {
 
     // Assert
     assertThat(property.name).isEqualTo("valueFalse");
-    assertThat(property.jsonName).isEqualTo("false");
+    assertThat(property.getJsonName()).isEqualTo("false");
   }
 }

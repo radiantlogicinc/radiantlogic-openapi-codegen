@@ -132,7 +132,8 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   void itRetrievesDiscriminatedUnionWithHttpInfo() {
     final String responseId = "resp_123456789";
     final ResponseItemList responseItemList = buildResponseItemList();
-    final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
+    final String jsonResponse =
+        ResourceReader.readString("data/discriminatedunionnodiscriminator/responseitemlist.json");
 
     stubFor(
         get(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
@@ -179,7 +180,8 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
     unionSerdeApi.sendUnion(firstChild.toBrokenDiscriminatedUnionRaw());
 
-    final String json = objectMapper.writeValueAsString(firstChild);
+    final String json =
+        ResourceReader.readString("data/discriminatedunionnodiscriminator/firstchild.json");
     final RequestPatternBuilder requestPatternBuilder =
         postRequestedFor(urlPathPattern).withRequestBody(equalToJson(json));
     verify(requestPatternBuilder);

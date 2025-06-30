@@ -90,7 +90,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     assertThat(response.getData().get(0).getType()).isEqualTo(TypeEnum.MESSAGE);
     assertThat(response.getData().get(0).toImplementation(InputMessageResource.class))
         .isEqualTo(messageItem);
-    assertThat(response.getData().get(1).getType()).isEqualTo(TypeEnum.MESSAGE);
+    assertThat(response.getData().get(1).getType()).isEqualTo(TypeEnum.FUNCTION_CALL);
     assertThat(response.getData().get(1).toImplementation(FunctionToolCallResource.class))
         .isEqualTo(functionCallItem);
 

@@ -28,20 +28,20 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
 
     {{#isInvalidUnionType}}
     /**
-    * Convert the instance of this interface into the Raw type. The Raw type will be modified during the conversion
-    * so that issues due to the missing discriminator mapping are resolved. When attempting to serialize implementations
-    * of this interface
-    *
-    * This method contains the classname in it because multiple interfaces like this may be implemented by a single class
-    * thus the need to avoid naming collisions. The Raw type produced by any toClassnameRaw() method on an implementation of
-    * this interface will always be serializable to the same output.
-    */
+     * Convert the instance of this interface into the Raw type. The Raw type will be modified during the conversion
+     * so that issues due to the missing discriminator mapping are resolved. When attempting to serialize implementations
+     * of this interface
+     *
+     * This method contains the classname in it because multiple interfaces like this may be implemented by a single class
+     * thus the need to avoid naming collisions. The Raw type produced by any toClassnameRaw() method on an implementation of
+     * this interface will always be serializable to the same output.
+     */
     default Raw to{{classname}}Raw() {
-    final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
-    final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
-    // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
-    raw.put("{{propertyName}}", discriminatorValue);
-    return raw;
+        final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+        final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
+        // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
+        raw.put("{{propertyName}}", discriminatorValue);
+        return raw;
     }
 
     /**

@@ -52,8 +52,7 @@ public class CodegenRawTypeUsageSupport {
         .filter(
             opAndType ->
                 opAndType.returnType() != null
-                    && CodegenModelUtils.hasOneOfDiscriminatorWithoutMapping(
-                        opAndType.returnType()))
+                    && CodegenModelUtils.isInvalidUnionType(opAndType.returnType()))
         .forEach(
             opAndType -> {
               final String returnBaseType =

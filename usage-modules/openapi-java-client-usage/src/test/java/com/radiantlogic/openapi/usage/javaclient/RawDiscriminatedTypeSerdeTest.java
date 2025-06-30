@@ -5,11 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.custom.dataconnector.openaiapi.model.InputFileContent;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.InputMessageResource;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.Item;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.RoleEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.StatusEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -76,7 +78,12 @@ public class RawDiscriminatedTypeSerdeTest {
       messageItem.setType(TypeEnum.MESSAGE);
       messageItem.setId("item_1");
       messageItem.setStatus(StatusEnum.COMPLETED);
-      messageItem.setContent(Collections.emptyList());
+
+      final InputFileContent inputFileContent = new InputFileContent();
+      inputFileContent.setType(TypeEnum.INPUT_FILE);
+      inputFileContent.setFilename("test.txt");
+
+      messageItem.setContent(Arrays.asList(inputFileContent));
       messageItem.setRole(RoleEnum.USER);
 
       final String json =

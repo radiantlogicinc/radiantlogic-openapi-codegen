@@ -3,5 +3,10 @@
   "role": "user",
   "id": "item_1",
   "status": "completed",
-  "content": []
+  "content": [
+    {
+      "type": "input_file",
+      "filename": "test.txt"
+    }
+  ]
 }

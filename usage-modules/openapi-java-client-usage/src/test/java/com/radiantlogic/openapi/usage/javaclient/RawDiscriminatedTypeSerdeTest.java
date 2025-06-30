@@ -82,7 +82,7 @@ public class RawDiscriminatedTypeSerdeTest {
       inputFileContent.setType(TypeEnum.INPUT_FILE);
       inputFileContent.setFilename("test.txt");
 
-      messageItem.setContent(Collections.singletonList(inputFileContent));
+      messageItem.setContent(Collections.singletonList(inputFileContent.toInputContentRaw()));
       messageItem.setRole(RoleEnum.USER);
 
       final String json =

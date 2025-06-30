@@ -197,9 +197,9 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     // compiler error
     if (result.classVarName != null) {
       if (result.classVarName.equals("o")) {
-        result.equalsClassVarName = "otherO";
+        result.setEqualsClassVarName("otherO");
       } else {
-        result.equalsClassVarName = result.classVarName;
+        result.setEqualsClassVarName(result.classVarName);
       }
     }
 

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenEnumModelUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromModelsWithParents() {
     // Arrange
-    final CodegenModel parentModel = new CodegenModel();
+    final ExtendedCodegenModel parentModel = new ExtendedCodegenModel();
     parentModel.name = "ParentModel";
 
     final CodegenProperty enumProperty = new CodegenProperty();
@@ -33,7 +34,7 @@ public class CodegenInheritedEnumSupportTest {
 
     parentModel.vars = List.of(enumProperty);
 
-    final CodegenModel childModel = new CodegenModel();
+    final ExtendedCodegenModel childModel = new ExtendedCodegenModel();
     childModel.name = "ChildModel";
     childModel.parentModel = parentModel;
 
@@ -50,7 +51,7 @@ public class CodegenInheritedEnumSupportTest {
     final Map<String, CodegenModel> allModels =
         Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
-    final CodegenModel expectedEnumModel = new CodegenModel();
+    final ExtendedCodegenModel expectedEnumModel = new ExtendedCodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 
@@ -91,7 +92,7 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromAllDiscriminatedUnionModels() {
     // Arrange
-    final CodegenModel parentModel = new CodegenModel();
+    final ExtendedCodegenModel parentModel = new ExtendedCodegenModel();
     parentModel.name = "ParentModel";
 
     final CodegenProperty enumProperty = new CodegenProperty();
@@ -111,7 +112,7 @@ public class CodegenInheritedEnumSupportTest {
     parentModel.discriminator = discriminator;
 
     // Create child model
-    final CodegenModel childModel = new CodegenModel();
+    final ExtendedCodegenModel childModel = new ExtendedCodegenModel();
     childModel.name = "ChildModel";
 
     final CodegenProperty childEnumProperty = new CodegenProperty();
@@ -128,7 +129,7 @@ public class CodegenInheritedEnumSupportTest {
         Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
     // Mock static method to return expected enum model
-    final CodegenModel expectedEnumModel = new CodegenModel();
+    final ExtendedCodegenModel expectedEnumModel = new ExtendedCodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 
@@ -175,7 +176,7 @@ public class CodegenInheritedEnumSupportTest {
   @Test
   void itFixesAndExtractsEnumsFromNonDiscriminatorModelsWithChildren() {
     // Arrange
-    final CodegenModel parentModel = new CodegenModel();
+    final ExtendedCodegenModel parentModel = new ExtendedCodegenModel();
     parentModel.name = "ParentModel";
 
     final CodegenProperty enumProperty = new CodegenProperty();
@@ -190,7 +191,7 @@ public class CodegenInheritedEnumSupportTest {
 
     parentModel.oneOf = Set.of("ChildModel");
 
-    final CodegenModel childModel = new CodegenModel();
+    final ExtendedCodegenModel childModel = new ExtendedCodegenModel();
     childModel.name = "ChildModel";
 
     final CodegenProperty childEnumProperty = new CodegenProperty();
@@ -206,7 +207,7 @@ public class CodegenInheritedEnumSupportTest {
     final Map<String, CodegenModel> allModels =
         Map.ofEntries(Map.entry("ParentModel", parentModel), Map.entry("ChildModel", childModel));
 
-    final CodegenModel expectedEnumModel = new CodegenModel();
+    final ExtendedCodegenModel expectedEnumModel = new ExtendedCodegenModel();
     expectedEnumModel.name = "StatusEnum";
     expectedEnumModel.isEnum = true;
 

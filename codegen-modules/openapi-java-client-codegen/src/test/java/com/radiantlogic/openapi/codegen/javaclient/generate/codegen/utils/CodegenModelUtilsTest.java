@@ -168,12 +168,4 @@ public class CodegenModelUtilsTest {
       throw new RuntimeException();
     }
   }
-
-  @Nested
-  class HasDiscriminatorNoMapping {
-    @Test
-    void test() {
-      throw new RuntimeException();
-    }
-  }
 }

@@ -59,7 +59,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
     final InputTextContent textContent = new InputTextContent();
     textContent.setText("Hello, world!");
-    messageItem.addContentItem(textContent);
+    messageItem.addContentItem(textContent.toInputContentRaw());
 
     final FunctionToolCallResource functionCallItem = new FunctionToolCallResource();
     functionCallItem.setType(TypeEnum.FUNCTION_CALL);

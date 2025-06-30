@@ -102,12 +102,6 @@ public class RawDiscriminatedTypeSerdeTest {
           actualImpl.getContent().get(0).toImplementation(InputFileContent.class);
       assertThat(actualContentImpl).usingRecursiveComparison().isEqualTo(inputFileContent);
     }
-
-    @Test
-    void itCanGetRawDiscriminatorNonEnumType() {
-      // TODO what about String? BigDecimal? Int? Double?
-      throw new RuntimeException();
-    }
   }
 
   /** InputContent has a oneOf mapping and nothing else. */

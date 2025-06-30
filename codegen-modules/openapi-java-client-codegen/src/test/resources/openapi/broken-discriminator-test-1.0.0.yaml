@@ -1,0 +1,57 @@
+openapi: "3.0.2"
+info:
+  title: Broken Discriminator Test
+  description: >-
+    A test spec for scenarios involving broken discriminated unions beyond what is available in
+    actual specs. The actual specs have enough examples that handling broken discriminators is 
+    necessary, however they don't provide enough opportunities to exercise all possible implications
+    of the code change.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/v1
+paths:
+components:
+  schemas:
+    Discriminator:
+      type: string
+      nullable: false
+      enum:
+        - FIRST
+        - SECOND
+        - THIRD
+    FirstChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        first:
+          type: string
+      required:
+        - type
+    SecondChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        second:
+          type: string
+      required:
+        - type
+    ThirdChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        third:
+          type: string
+      required:
+        - type
+    BrokenDiscriminatedUnion:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/FirstChild"
+        - $ref: "#/components/schemas/SecondChild"
+        - $ref: "#/components/schemas/ThirdChild"
+      discriminator:
+        propertyName: type
+

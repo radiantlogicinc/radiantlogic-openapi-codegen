@@ -7,8 +7,6 @@ info:
     necessary, however they don't provide enough opportunities to exercise all possible implications
     of the code change.
   version: "1.0.0"
-servers:
-  - url: http://localhost:8080/v1
 paths:
   /send-union:
     post:

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.custom.dataconnector.openaiapi.model.InputContent;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.InputFileContent;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.InputMessageResource;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.Item;
@@ -26,7 +27,7 @@ public class RawDiscriminatedTypeSerdeTest {
 
   /** InputMessage has a oneOf mapping, a discriminator, but no discriminator mapping */
   @Nested
-  class InputMessage {
+  class InputMessageTests {
     @Test
     @SneakyThrows
     void itDeserializedRawDiscriminatedType() {
@@ -106,11 +107,20 @@ public class RawDiscriminatedTypeSerdeTest {
 
   /** InputContent has a oneOf mapping and nothing else. */
   @Nested
-  class InputContent {
+  class InputContentTests {
     @Test
     @SneakyThrows
     void itDeserializedRawDiscriminatedType() {
-      throw new RuntimeException();
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/fileinputcontent.json");
+      final Map<String, Object> map =
+          objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+
+      final InputContent.Raw expectedRaw = new InputContent.Raw();
+      expectedRaw.putAll(map);
+
+      final InputContent.Raw raw = objectMapper.readValue(json, InputContent.Raw.class);
+      assertThat(raw).isEqualTo(expectedRaw);
     }
 
     @Test

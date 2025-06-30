@@ -1,6 +1,8 @@
 package com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.UnionType;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,13 +50,9 @@ public class CodegenModelUtils {
     return modelsMap;
   }
 
-  public static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
-    final boolean hasOneOfChildren = model.oneOf != null && !model.oneOf.isEmpty();
-    final boolean hasNoDiscriminatorChildren =
-        model.discriminator == null
-            || (model.discriminator.getMappedModels() == null
-                || model.discriminator.getMappedModels().isEmpty());
-    return hasOneOfChildren && hasNoDiscriminatorChildren;
+  public static boolean hasNonDiscriminatorChildren(@NonNull final ExtendedCodegenModel model) {
+    return model.getUnionType() == UnionType.UNION_NO_DISCRIMINATOR
+        || model.getUnionType() == UnionType.DISCRIMINATED_UNION_NO_MAPPING;
   }
 
   public static boolean hasOneOfDiscriminatorWithoutMapping(@NonNull final CodegenModel model) {

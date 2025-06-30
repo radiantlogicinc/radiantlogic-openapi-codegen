@@ -138,6 +138,16 @@ public class CodegenIT {
     generateAndBuild("github-billing-v3-1.1.4.yaml", "GitHub-v3-REST-API---billing/1.1.4");
   }
 
+  /**
+   * This generates test code to validate more scenarios involving broken discriminated unions. The
+   * existing real specs produce several scenarios, but to fully exercise the impact of the code
+   * changes this new test-only spec is required.
+   */
+  @Test
+  void brokenDiscriminatorTest() {
+    generateAndBuild("broken-discriminator-test-1.0.0.yaml", "Broken-Discriminator-Test/1.0.0");
+  }
+
   @SneakyThrows
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {

@@ -1,0 +1,6 @@
+{
+  "type": "input_file",
+  "filename": "test.txt",
+  "file_data": "The data",
+  "file_id": null
+}

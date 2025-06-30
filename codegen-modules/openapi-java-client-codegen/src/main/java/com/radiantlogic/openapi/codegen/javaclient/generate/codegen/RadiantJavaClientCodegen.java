@@ -10,14 +10,18 @@ import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.Code
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenMissingModelInheritanceSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenNewEnumProcessorSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenNonEnglishNameSupport;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRawTypeUsageSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenRemoveInheritanceEnumsSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.CodegenUnsupportedUnionTypeSupport;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support.ExtractedEnumModels;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenModelUtils;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenOperationUtils;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenMapper;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenProperty;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,20 +31,21 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
+import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.languages.JavaClientCodegen;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
+import org.openapitools.codegen.model.OperationsMap;
 
 /**
  * A customized version of the default JavaClientCodegen designed to produce the exact artifact
  * style we want.
  */
 @RequiredArgsConstructor
-public class DataconnectorJavaClientCodegen extends JavaClientCodegen
-    implements ExtendedCodegenConfig {
-
-  private static final ExtendedCodegenMapper CODEGEN_MAPPER =
+public class RadiantJavaClientCodegen extends JavaClientCodegen implements ExtendedCodegenConfig {
+  private final ExtendedCodegenMapper codegenMapper =
       Mappers.getMapper(ExtendedCodegenMapper.class);
 
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
@@ -63,6 +68,8 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       new CodegenInheritedEnumSupport();
   private final CodegenNewEnumProcessorSupport codegenNewEnumProcessorSupport =
       new CodegenNewEnumProcessorSupport();
+  private final CodegenRawTypeUsageSupport codegenRawTypeUsageSupport =
+      new CodegenRawTypeUsageSupport();
 
   @NonNull private final Args args;
 
@@ -135,7 +142,7 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
       final boolean schemaIsFromAdditionalProperties) {
     final CodegenProperty prop =
         super.fromProperty(name, propertySchema, required, schemaIsFromAdditionalProperties);
-    final ExtendedCodegenProperty extendedProp = CODEGEN_MAPPER.extendProperty(prop);
+    final ExtendedCodegenProperty extendedProp = codegenMapper.extendProperty(prop);
     codegenLiteralPropertyNameSupport.fixBadNames(extendedProp);
     return extendedProp;
   }
@@ -147,8 +154,35 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
   }
 
   @Override
+  public List<SupportingFile> supportingFiles() {
+    final List<SupportingFile> supportingFiles = super.supportingFiles();
+    final String packageDirectories = getInvokerPackage().replaceAll("\\.", File.separator);
+    final SupportingFile jacksonConfigFile =
+        new SupportingFile(
+            "JacksonConfig.mustache",
+            "src/main/java/%s/JacksonConfig.java".formatted(packageDirectories));
+    supportingFiles.add(jacksonConfigFile);
+    return supportingFiles;
+  }
+
+  @Override
+  public OperationsMap postProcessOperationsWithModels(
+      @NonNull final OperationsMap operationsMap, @NonNull final List<ModelMap> allModels) {
+    final Map<String, CodegenModel> allModelsClassMap =
+        CodegenModelUtils.modelMapListToModelClassMap(allModels);
+    final List<CodegenOperation> operations =
+        CodegenOperationUtils.operationsMapToList(operationsMap);
+    codegenRawTypeUsageSupport.applyRawTypesToOperationReturnTypes(operations, allModelsClassMap);
+
+    return super.postProcessOperationsWithModels(operationsMap, allModels);
+  }
+
+  @Override
   public CodegenModel fromModel(@NonNull final String name, @NonNull final Schema model) {
-    final ExtendedCodegenModel result = CODEGEN_MAPPER.extendModel(super.fromModel(name, model));
+    final ExtendedCodegenModel result = codegenMapper.extendModel(super.fromModel(name, model));
+    if (result.discriminator != null) {
+      result.discriminator = codegenMapper.extendDiscriminator(result.discriminator);
+    }
     codegenDiscriminatorSupport.fixDiscriminatorType(result);
 
     /*
@@ -202,6 +236,10 @@ public class DataconnectorJavaClientCodegen extends JavaClientCodegen
         extractedEnumModels.allEnums(), allModelMaps, modelPackage(), importMapping());
     codegenDiscriminatorSupport.fixAllDiscriminatorMappings(allModels);
     codegenRemoveInheritanceEnumsSupport.removeInheritedEnums(allModels);
+
+    final Map<String, CodegenModel> modelClassMap =
+        CodegenModelUtils.modelNameMapToModelClassMap(allModels);
+    codegenRawTypeUsageSupport.applyRawTypesToModelProperties(modelClassMap);
 
     return super.postProcessAllModels(allModelMaps);
   }

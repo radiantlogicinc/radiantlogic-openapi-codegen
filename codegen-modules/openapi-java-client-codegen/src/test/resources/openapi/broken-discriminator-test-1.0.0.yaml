@@ -1,0 +1,112 @@
+openapi: "3.0.2"
+info:
+  title: Broken Discriminator Test
+  description: >-
+    A test spec for scenarios involving broken discriminated unions beyond what is available in
+    actual specs. The actual specs have enough examples that handling broken discriminators is 
+    necessary, however they don't provide enough opportunities to exercise all possible implications
+    of the code change.
+  version: "1.0.0"
+tags:
+  - name: union-serde
+    description: Endpoints to test serialization/de-serialization of broken discriminated unions during API calls.
+paths:
+  /union-serde/send-union:
+    post:
+      tags:
+        - union-serde
+      operationId: send-union
+      summary: Send a discriminated union
+      description: >-
+        Make a post request where the body is a broken discriminated union type to ensure 
+        that serialization works correctly.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokenDiscriminatedUnion"
+      responses:
+        204:
+          description: The operation was a success
+  /union-serde/send-union-list:
+    post:
+      tags:
+        - union-serde
+      operationId: send-union-list
+      summary: Send a discriminated union list
+      description: >-
+        Make a post request where the body is a list of broken discriminated union types
+        to ensure that serialization works correctly.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokenDiscriminatedUnionList"
+      responses:
+        204:
+          description: The operation was a success.
+  /union-serde/get-union-list:
+    get:
+      tags:
+        - union-serde
+      operationId: get-union-list
+      summary: Get a discriminated union list
+      description: >-
+        Make a get request where the body is a list of broken discriminated union types
+        to make sure that de-serialization works correctly.
+      responses:
+        200:
+          description: The operation was a success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrokenDiscriminatedUnionList"
+components:
+  schemas:
+    Discriminator:
+      type: string
+      nullable: false
+      enum:
+        - FIRST
+        - SECOND
+        - THIRD
+    FirstChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        first:
+          type: string
+      required:
+        - type
+    SecondChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        second:
+          type: string
+      required:
+        - type
+    ThirdChild:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/Discriminator"
+        third:
+          type: string
+      required:
+        - type
+    BrokenDiscriminatedUnion:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/FirstChild"
+        - $ref: "#/components/schemas/SecondChild"
+        - $ref: "#/components/schemas/ThirdChild"
+      discriminator:
+        propertyName: type
+    BrokenDiscriminatedUnionList:
+      type: array
+      items:
+        $ref: "#/components/schemas/BrokenDiscriminatedUnion"
+

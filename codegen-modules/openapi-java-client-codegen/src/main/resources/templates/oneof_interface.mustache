@@ -1,8 +1,88 @@
+{{#isInvalidUnionType}}
+/**
+ * This interface represents a broken union type. A union type is a type definition that can be one of
+ * multiple types. Proper code generation from an OpenAPI schema requires the type to have a oneOf mapping,
+ * a discriminator, and a discriminator mapping. Lacking all of that combined, a proper discriminated union
+ * interface cannot be constructed.
+ *
+ * As a solution, this interface is designed to present a workaround to the limitations of the incomplete
+ * OpenAPI schema it is based on. While on its own it cannot be correctly serialized or de-serialized, it
+ * provides a special "Raw" inner type that serves as a workaround to those limitations. It is an
+ * extension to a HashMap with some utility code to handle manually converting to and from implementations.
+ *
+ * While this is hardly the perfect solution, and it does put an extra burden on developers working with this
+ * generated code, it is the best option for handling otherwise un-generate-able code.
+ *
+ * HOW TO USE THE RAW TYPES
+ *
+ * FOR SERIALIZATION = First call to{{classname}}Raw() on the instance you are trying to serialize. Then
+ *                     serialize what is returned from that method.
+ *
+ * FOR DESERIALIZATION = Use the type {{classname}}.Raw rather than this type directly when de-serializing.
+ *                       That will at least give you a custom Map of all properties. If you know the specific
+ *                       implementation type, you can also call toImplementation(ClassName.class) on the Raw
+ *                       type to convert it.
+ *
+ * A NOTE ON DISCRIMINATORS
+ *
+ * If the original OpenAPI schema contains a discriminator, the Raw type will have some extra logic to help
+ * work with it. If the schema did not contain a discriminator, then that will be absent from the Raw type.
+ */
+{{/isInvalidUnionType}}
+{{#discriminator}}
+{{#hasDiscriminatorWithNonEmptyMapping}}
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
+{{/hasDiscriminatorWithNonEmptyMapping}}
+{{/discriminator}}
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
-    public {{propertyType}} {{propertyGetter}}();
+    {{propertyType}} {{propertyGetter}}();
     {{/discriminator}}
+
+    {{#isInvalidUnionType}}
+    /**
+     * Convert the instance of this interface into the Raw type. The Raw type will be modified during the conversion
+     * so that issues due to the missing discriminator mapping are resolved. When attempting to serialize implementations
+     * of this interface
+     *
+     * This method contains the classname in it because multiple interfaces like this may be implemented by a single class
+     * thus the need to avoid naming collisions. The Raw type produced by any toClassnameRaw() method on an implementation of
+     * this interface will always be serializable to the same output.
+     */
+    default Raw to{{classname}}Raw() {
+        final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+        {{#discriminator}}
+        final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
+        // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
+        raw.put("{{propertyName}}", discriminatorValue);
+        {{/discriminator}}
+        return raw;
+    }
+
+    /**
+     * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
+     * despite not having proper openapi discriminator mapping information.
+     */
+    class Raw extends HashMap<String, Object> {
+        {{#discriminator}}
+        public {{propertyType}} {{propertyGetter}}() {
+            {{#isEnum}}
+                return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
+            {{/isEnum}}
+            {{#useConstructor}}
+                return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
+            {{/useConstructor}}
+            {{#useCast}}
+                return ({{propertyType}}) get("{{propertyName}}");
+            {{/useCast}}
+        }
+        {{/discriminator}}
+
+        public <T extends {{classname}}> T toImplementation(final Class<T> type) {
+            return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
+        }
+    }
+    {{/isInvalidUnionType}}
 
 {{#vars}}
     {{#isEnum}}

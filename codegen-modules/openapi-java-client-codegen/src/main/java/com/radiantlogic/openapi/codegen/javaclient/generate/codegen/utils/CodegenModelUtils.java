@@ -1,8 +1,13 @@
 package com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.UnionType;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -46,11 +51,34 @@ public class CodegenModelUtils {
   }
 
   public static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
-    final boolean hasOneOfChildren = model.oneOf != null && !model.oneOf.isEmpty();
-    final boolean hasNoDiscriminatorChildren =
-        model.discriminator == null
-            || (model.discriminator.getMappedModels() == null
-                || model.discriminator.getMappedModels().isEmpty());
-    return hasOneOfChildren && hasNoDiscriminatorChildren;
+    if (!(model instanceof ExtendedCodegenModel extendedModel)) {
+      throw new IllegalArgumentException("Did not receive instance of ExtendedCodegenModel");
+    }
+
+    return extendedModel.getUnionType() == UnionType.UNION_NO_DISCRIMINATOR
+        || extendedModel.getUnionType() == UnionType.DISCRIMINATED_UNION_NO_MAPPING;
+  }
+
+  public static boolean isInvalidUnionType(@NonNull final CodegenModel model) {
+    if (!(model instanceof ExtendedCodegenModel extendedModel)) {
+      throw new IllegalArgumentException("Did not receive instance of ExtendedCodegenModel");
+    }
+
+    return extendedModel.isInvalidUnionType();
+  }
+
+  @NonNull
+  public static Map<String, CodegenModel> modelMapListToModelClassMap(
+      @NonNull final List<ModelMap> modelMapList) {
+    return modelMapList.stream()
+        .map(ModelMap::getModel)
+        .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
+  }
+
+  @NonNull
+  public static Map<String, CodegenModel> modelNameMapToModelClassMap(
+      @NonNull final Map<String, CodegenModel> modelNameMap) {
+    return modelNameMap.values().stream()
+        .collect(Collectors.toMap(CodegenModel::getClassname, Function.identity()));
   }
 }

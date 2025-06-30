@@ -1,0 +1,14 @@
+{
+  "type": "message",
+  "role": "user",
+  "id": "item_1",
+  "status": "completed",
+  "content": [
+    {
+      "type": "input_file",
+      "filename": "test.txt",
+      "file_data": null,
+      "file_id": null
+    }
+  ]
+}

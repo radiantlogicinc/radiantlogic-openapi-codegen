@@ -5,7 +5,7 @@ import com.radiantlogic.openapi.codegen.javaclient.args.ArgsParser;
 import com.radiantlogic.openapi.codegen.javaclient.args.ProgramArgStatus;
 import com.radiantlogic.openapi.codegen.javaclient.generate.CodeGeneratorExecutor;
 import com.radiantlogic.openapi.codegen.javaclient.generate.OpenapiParser;
-import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.DataconnectorJavaClientCodegen;
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.RadiantJavaClientCodegen;
 import com.radiantlogic.openapi.codegen.javaclient.openapi.OpenapiPathValidator;
 import com.radiantlogic.openapi.codegen.javaclient.properties.Props;
 import com.radiantlogic.openapi.codegen.javaclient.properties.PropsReader;
@@ -64,8 +64,7 @@ public class Runner {
     log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
 
     final OpenapiParser openapiParser = new OpenapiParser(validatedParsedArgs);
-    final DataconnectorJavaClientCodegen codegen =
-        new DataconnectorJavaClientCodegen(validatedParsedArgs);
+    final RadiantJavaClientCodegen codegen = new RadiantJavaClientCodegen(validatedParsedArgs);
     final CodeGeneratorExecutor codeGenerator = new CodeGeneratorExecutor(codegen);
 
     log.info("Parsing and generating code");

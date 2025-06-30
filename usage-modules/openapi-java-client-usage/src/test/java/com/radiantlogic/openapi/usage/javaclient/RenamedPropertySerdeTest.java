@@ -4,7 +4,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.radiantlogic.custom.dataconnector.snykapi.model.IsPrivate;
+import com.radiantlogic.openapi.generated.snykapi.model.IsPrivate;
 import java.math.BigDecimal;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.radiantlogic.custom.dataconnector.radiantlogiccloudmanager.api.AuthApi;
-import com.radiantlogic.custom.dataconnector.radiantlogiccloudmanager.invoker.ApiClient;
+import com.radiantlogic.openapi.generated.radiantlogiccloudmanager.api.AuthApi;
+import com.radiantlogic.openapi.generated.radiantlogiccloudmanager.invoker.ApiClient;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;

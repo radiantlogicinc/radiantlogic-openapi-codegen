@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
 
 public class CodegenEnumModelUtils {
-  private static final Pattern LIST_TYPE_PATTERN = Pattern.compile("^List<(.*)>$");
-  private static final Pattern QUOTED_STRING_PATTERN = Pattern.compile("^\"(.*)\"$");
 
   @NonNull
   public static CodegenModel createEnumModelFromEnumProp(@NonNull final CodegenProperty enumProp) {
@@ -45,7 +42,7 @@ public class CodegenEnumModelUtils {
       return enumProp.datatypeWithEnum;
     }
 
-    final Matcher matcher = LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
+    final Matcher matcher = CodegenConstants.LIST_TYPE_PATTERN.matcher(enumProp.datatypeWithEnum);
     if (!matcher.matches()) {
       throw new IllegalStateException(
           "Array enum property has a name that doesn't match pattern: %s"
@@ -74,7 +71,7 @@ public class CodegenEnumModelUtils {
     final Object value = enumVar.get(CodegenConstants.VALUE_KEY);
     Object newValue;
     if (value instanceof String stringValue
-        && !QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
+        && !CodegenConstants.QUOTED_STRING_PATTERN.matcher(stringValue).matches()) {
       newValue = "\"%s\"".formatted(stringValue);
     } else {
       newValue = value;

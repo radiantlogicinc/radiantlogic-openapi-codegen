@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -128,6 +129,50 @@ public class CodegenModelUtilsTest {
       model.oneOf = null;
 
       assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();
+    }
+  }
+
+  @Nested
+  class ModelMapListToModelClassMap {
+    @Test
+    void itConvertsListToMap() {
+      final CodegenModel model1 = new CodegenModel();
+      model1.classname = "Model1";
+
+      final CodegenModel model2 = new CodegenModel();
+      model2.classname = "Model2";
+
+      final ModelMap modelMap1 = new ModelMap();
+      modelMap1.setModel(model1);
+
+      final ModelMap modelMap2 = new ModelMap();
+      modelMap2.setModel(model2);
+
+      final List<ModelMap> modelMapList = List.of(modelMap1, modelMap2);
+
+      final Map<String, CodegenModel> expected =
+          Map.ofEntries(Map.entry("Model1", model1), Map.entry("Model2", model2));
+
+      final Map<String, CodegenModel> actual =
+          CodegenModelUtils.modelMapListToModelClassMap(modelMapList);
+
+      assertThat(actual).containsExactlyInAnyOrderEntriesOf(expected).hasSize(2);
+    }
+  }
+
+  @Nested
+  class ModelNameMapToModelClassMap {
+    @Test
+    void test() {
+      throw new RuntimeException();
+    }
+  }
+
+  @Nested
+  class HasDiscriminatorNoMapping {
+    @Test
+    void test() {
+      throw new RuntimeException();
     }
   }
 }

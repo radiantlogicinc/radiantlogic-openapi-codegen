@@ -1,5 +1,6 @@
 package com.radiantlogic.openapi.codegen.javaclient.generate.codegen.support;
 
+import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.utils.CodegenConstants;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenProperty;
@@ -26,7 +26,6 @@ import org.openapitools.codegen.utils.ModelUtils;
  * solution can be built in the future.
  */
 public class CodegenUnsupportedUnionTypeSupport {
-  private static final Pattern SCHEMA_REF_PATTERN = Pattern.compile("^#/components/schemas/(.*)$");
 
   public void fixUnsupportedUnionTypes(
       @NonNull final CodegenModel codegenModel,
@@ -98,7 +97,7 @@ public class CodegenUnsupportedUnionTypeSupport {
   }
 
   private static String parseSchemaRef(final String ref) {
-    final Matcher matcher = SCHEMA_REF_PATTERN.matcher(ref);
+    final Matcher matcher = CodegenConstants.SCHEMA_REF_PATTERN.matcher(ref);
     if (!matcher.matches()) {
       throw new IllegalStateException("Invalid schema ref: %s".formatted(ref));
     }

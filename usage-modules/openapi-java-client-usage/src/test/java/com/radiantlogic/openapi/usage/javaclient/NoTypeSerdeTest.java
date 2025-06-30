@@ -4,7 +4,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.radiantlogic.custom.dataconnector.openaiapi.model.CreateCompletionRequest;
+import com.radiantlogic.openapi.generated.openaiapi.model.CreateCompletionRequest;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import lombok.SneakyThrows;

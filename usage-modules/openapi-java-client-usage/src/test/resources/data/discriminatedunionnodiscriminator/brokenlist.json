@@ -1,0 +1,14 @@
+[
+  {
+    "type": "FIRST",
+    "first": "The First"
+  },
+  {
+    "type": "SECOND",
+    "second": "The Second"
+  },
+  {
+    "type": "THIRD",
+    "third": "The Third"
+  }
+]

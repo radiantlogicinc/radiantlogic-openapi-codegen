@@ -25,7 +25,7 @@ public class PropsReaderTest {
   @SneakyThrows
   static void beforeAll() {
     final Path pomXmlPath = Path.of(System.getProperty("user.dir"), "pom.xml");
-    final Path parentPomXmlPath = Path.of(System.getProperty("user.dir"), "..", "pom.xml");
+    final Path parentPomXmlPath = Path.of(System.getProperty("user.dir"), "..", "..", "pom.xml");
 
     final DocumentBuilder docBuilder =
         DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();

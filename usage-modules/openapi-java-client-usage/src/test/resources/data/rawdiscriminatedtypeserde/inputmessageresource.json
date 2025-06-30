@@ -6,7 +6,9 @@
   "content": [
     {
       "type": "input_file",
-      "filename": "test.txt"
+      "filename": "test.txt",
+      "file_data": null,
+      "file_id": null
     }
   ]
 }

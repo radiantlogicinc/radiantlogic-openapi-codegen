@@ -34,6 +34,7 @@ public class OpenapiParser {
 
     try {
       final Path tempFile = Files.createTempFile("openapi", ".yaml");
+      log.debug("Copying or downloading OpenAPI specification to temp file: {}", tempFile);
       try (InputStream stream = args.openapiUrl().openStream()) {
         Files.copy(stream, tempFile);
       }

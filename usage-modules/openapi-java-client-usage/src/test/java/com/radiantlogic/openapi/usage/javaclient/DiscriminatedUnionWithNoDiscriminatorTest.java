@@ -19,6 +19,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
 /**
  * This test validates a specific scenario in one of the test specs. That spec contains a
@@ -41,10 +42,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     responsesApi = new ResponsesApi(apiClient);
   }
 
-  @Test
-  @SneakyThrows
-  void itRetrievesDiscriminatedUnion() {
-    final String responseId = "resp_123456789";
+  private static ResponseItemList buildResponseItemList() {
     final ResponseItemList responseItemList = new ResponseItemList();
     responseItemList.setObject(ResponseItemList.ObjectEnum.LIST);
     responseItemList.setHasMore(false);
@@ -71,7 +69,14 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
     responseItemList.addDataItem(messageItem.toItemResourceRaw());
     responseItemList.addDataItem(functionCallItem.toItemResourceRaw());
+    return responseItemList;
+  }
 
+  @Test
+  @SneakyThrows
+  void itRetrievesDiscriminatedUnion() {
+    final String responseId = "resp_123456789";
+    final ResponseItemList responseItemList = buildResponseItemList();
     final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
 
     stubFor(
@@ -89,10 +94,11 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
     assertThat(response.getData().get(0).getType()).isEqualTo(TypeEnum.MESSAGE);
     assertThat(response.getData().get(0).toImplementation(InputMessageResource.class))
-        .isEqualTo(messageItem);
+        .isEqualTo(responseItemList.getData().get(0).toImplementation(InputMessageResource.class));
     assertThat(response.getData().get(1).getType()).isEqualTo(TypeEnum.FUNCTION_CALL);
     assertThat(response.getData().get(1).toImplementation(FunctionToolCallResource.class))
-        .isEqualTo(functionCallItem);
+        .isEqualTo(
+            responseItemList.getData().get(1).toImplementation(FunctionToolCallResource.class));
 
     verify(
         getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
@@ -101,7 +107,36 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
 
   @Test
   void itRetrievesDiscriminatedUnionWithHttpInfo() {
-    throw new RuntimeException();
+    final String responseId = "resp_123456789";
+    final ResponseItemList responseItemList = buildResponseItemList();
+    final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
+
+    stubFor(
+        get(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
+            .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN)))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(jsonResponse)));
+
+    final ResponseEntity<ResponseItemList> responseEntity =
+        responsesApi.listInputItemsWithHttpInfo(responseId, null, null, null, null, null);
+    final ResponseItemList response = responseEntity.getBody();
+
+    assertThat(response).usingRecursiveComparison().isEqualTo(responseItemList);
+
+    assertThat(response.getData().get(0).getType()).isEqualTo(TypeEnum.MESSAGE);
+    assertThat(response.getData().get(0).toImplementation(InputMessageResource.class))
+        .isEqualTo(responseItemList.getData().get(0).toImplementation(InputMessageResource.class));
+    assertThat(response.getData().get(1).getType()).isEqualTo(TypeEnum.FUNCTION_CALL);
+    assertThat(response.getData().get(1).toImplementation(FunctionToolCallResource.class))
+        .isEqualTo(
+            responseItemList.getData().get(1).toImplementation(FunctionToolCallResource.class));
+
+    verify(
+        getRequestedFor(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))
+            .withHeader("Authorization", equalTo(String.format("Bearer %s", ACCESS_TOKEN))));
   }
 
   @Test

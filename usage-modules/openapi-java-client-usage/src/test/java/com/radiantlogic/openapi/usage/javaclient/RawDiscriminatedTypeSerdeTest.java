@@ -161,4 +161,26 @@ public class RawDiscriminatedTypeSerdeTest {
       assertThat(actualImpl).usingRecursiveComparison().isEqualTo(inputFileContent);
     }
   }
+
+  /**
+   * These tests validate the behavior of non-string, non-enum discriminators with some of the Raw
+   * type logic.
+   */
+  @Nested
+  class OtherTypeDiscriminators {
+    @Test
+    void itHandlesNumberDiscriminator() {
+      throw new RuntimeException();
+    }
+
+    @Test
+    void itHandlesBooleanDiscriminator() {
+      throw new RuntimeException();
+    }
+
+    @Test
+    void itHandlesCastDiscriminator() {
+      throw new RuntimeException();
+    }
+  }
 }

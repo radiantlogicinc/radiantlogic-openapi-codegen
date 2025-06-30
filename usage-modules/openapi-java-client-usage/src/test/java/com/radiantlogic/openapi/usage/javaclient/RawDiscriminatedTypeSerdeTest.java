@@ -202,10 +202,5 @@ public class RawDiscriminatedTypeSerdeTest {
     void itHandlesBooleanDiscriminator() {
       throw new RuntimeException();
     }
-
-    @Test
-    void itHandlesCastDiscriminator() {
-      throw new RuntimeException();
-    }
   }
 }

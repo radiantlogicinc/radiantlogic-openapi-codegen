@@ -169,6 +169,7 @@ public class RawDiscriminatedTypeSerdeTest {
   @Nested
   class OtherTypeDiscriminators {
     @Test
+    @SneakyThrows
     void itHandlesBigDecimalDiscriminator() {
       final BigDecimalDiscriminatorOne bigDecimalOne = new BigDecimalDiscriminatorOne();
       bigDecimalOne.setType(new BigDecimal("20"));
@@ -181,6 +182,15 @@ public class RawDiscriminatedTypeSerdeTest {
       assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
 
       assertThat(raw.getType()).isEqualTo(new BigDecimal(20));
+
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/bigdecimalone.json");
+      final BigDecimalDiscriminator.Raw raw2 =
+          objectMapper.readValue(json, BigDecimalDiscriminator.Raw.class);
+      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      final BigDecimalDiscriminatorOne actualOne =
+          raw2.toImplementation(BigDecimalDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(bigDecimalOne);
     }
 
     @Test

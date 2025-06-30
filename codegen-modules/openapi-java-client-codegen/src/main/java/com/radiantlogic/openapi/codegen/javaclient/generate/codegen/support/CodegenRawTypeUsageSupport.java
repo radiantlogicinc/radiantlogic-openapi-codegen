@@ -18,7 +18,6 @@ import org.openapitools.codegen.CodegenOperation;
  * lacking its mapping information is adjusted to use the Raw type instead.
  */
 public class CodegenRawTypeUsageSupport {
-  // TODO oneOf with no discriminator needs to be included here
   public void applyRawTypesToModelProperties(
       @NonNull final Map<String, CodegenModel> modelClassMap) {
     modelClassMap.values().stream()

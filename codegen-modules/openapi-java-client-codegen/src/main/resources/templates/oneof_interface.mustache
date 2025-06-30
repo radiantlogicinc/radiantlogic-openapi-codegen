@@ -22,6 +22,11 @@
  *                       That will at least give you a custom Map of all properties. If you know the specific
  *                       implementation type, you can also call toImplementation(ClassName.class) on the Raw
  *                       type to convert it.
+ *
+ * A NOTE ON DISCRIMINATORS
+ *
+ * If the original OpenAPI schema contains a discriminator, the Raw type will have some extra logic to help
+ * work with it. If the schema did not contain a discriminator, then that will be absent from the Raw type.
  */
 {{/isInvalidUnionType}}
 {{#discriminator}}

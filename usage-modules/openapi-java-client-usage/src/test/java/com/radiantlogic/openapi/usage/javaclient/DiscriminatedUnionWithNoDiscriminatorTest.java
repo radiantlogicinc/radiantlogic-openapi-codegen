@@ -153,7 +153,17 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   }
 
   @Test
+  void itRetrievesDiscriminatedUnionList() {
+    throw new RuntimeException();
+  }
+
+  @Test
   void itSendsDiscriminatedUnion() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itSendsDiscriminatedUnionList() {
     throw new RuntimeException();
   }
 }

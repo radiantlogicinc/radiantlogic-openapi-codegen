@@ -1,7 +1,7 @@
 {
   "object": "list",
-  "hasMore": false,
-  "firstId": "item_1",
+  "has_more": false,
+  "first_id": "item_1",
   "last_id": "item_2",
   "data": [
     {
@@ -11,7 +11,8 @@
       "status": "completed",
       "content": [
         {
-          "text": "Hello, world!"
+          "text": "Hello, world!",
+          "type": "input_text"
         }
       ]
     },

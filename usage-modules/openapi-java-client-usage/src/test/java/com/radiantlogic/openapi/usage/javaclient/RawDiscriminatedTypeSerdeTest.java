@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminator;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminatorOne;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminatorOne;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputFileContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputMessageResource;
@@ -183,7 +185,17 @@ public class RawDiscriminatedTypeSerdeTest {
 
     @Test
     void itHandlesIntDiscriminator() {
-      throw new RuntimeException();
+      final IntDiscriminatorOne intOne = new IntDiscriminatorOne();
+      intOne.setType(20);
+      intOne.setOne("Hello World");
+
+      final IntDiscriminator.Raw raw = intOne.toIntDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", 20);
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(20);
     }
 
     @Test

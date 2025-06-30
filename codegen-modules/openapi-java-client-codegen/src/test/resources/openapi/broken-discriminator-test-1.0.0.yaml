@@ -153,8 +153,8 @@ components:
     IntDiscriminator:
       type: object
       oneOf:
-        - $ref: "#/components/schemas/BigDecimalDiscriminatorOne"
-        - $ref: "#/components/schemas/BigDecimalDiscriminatorTwo"
+        - $ref: "#/components/schemas/IntDiscriminatorOne"
+        - $ref: "#/components/schemas/IntDiscriminatorTwo"
       discriminator:
         propertyName: type
 

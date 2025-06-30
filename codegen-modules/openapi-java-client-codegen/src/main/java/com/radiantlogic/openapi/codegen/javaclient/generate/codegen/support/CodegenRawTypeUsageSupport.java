@@ -8,6 +8,7 @@ import java.util.Objects;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.CodegenProperty;
 
 /**
  * The "Raw" types are automatically added to discriminated union interfaces if they lack the
@@ -25,17 +26,17 @@ public class CodegenRawTypeUsageSupport {
         .filter(prop -> Objects.nonNull(prop.complexType))
         .filter(prop -> modelClassMap.containsKey(prop.complexType))
         .filter(prop -> CodegenModelUtils.isInvalidUnionType(modelClassMap.get(prop.complexType)))
-        .forEach(
-            prop -> {
-              final String complexType = "%s.Raw".formatted(prop.complexType);
-              prop.datatypeWithEnum =
-                  prop.datatypeWithEnum.replaceAll(prop.complexType, complexType);
-              prop.complexType = complexType;
-              if (prop.items != null) {
-                prop.items.complexType = complexType;
-                prop.items.datatypeWithEnum = complexType;
-              }
-            });
+        .forEach(CodegenRawTypeUsageSupport::convertPropertyToRawType);
+  }
+
+  private static void convertPropertyToRawType(@NonNull final CodegenProperty prop) {
+    final String complexType = "%s.Raw".formatted(prop.complexType);
+    prop.datatypeWithEnum = prop.datatypeWithEnum.replaceAll(prop.complexType, complexType);
+    prop.complexType = complexType;
+    if (prop.items != null) {
+      prop.items.complexType = complexType;
+      prop.items.datatypeWithEnum = complexType;
+    }
   }
 
   public void applyRawTypesToOperationReturnTypes(

@@ -196,6 +196,7 @@ public class RawDiscriminatedTypeSerdeTest {
     }
 
     @Test
+    @SneakyThrows
     void itHandlesIntDiscriminator() {
       final IntDiscriminatorOne intOne = new IntDiscriminatorOne();
       intOne.setType(20);
@@ -208,6 +209,13 @@ public class RawDiscriminatedTypeSerdeTest {
       assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
 
       assertThat(raw.getType()).isEqualTo(20);
+
+      final String json = ResourceReader.readString("data/rawdiscriminatedtypeserde/intone.json");
+      final IntDiscriminator.Raw raw2 = objectMapper.readValue(json, IntDiscriminator.Raw.class);
+      assertThat(raw2.getType()).isEqualTo(20);
+      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      final IntDiscriminatorOne actualOne = raw2.toImplementation(IntDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(intOne);
     }
 
     @Test

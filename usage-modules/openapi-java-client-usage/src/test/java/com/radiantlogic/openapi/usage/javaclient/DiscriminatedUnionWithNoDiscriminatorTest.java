@@ -175,7 +175,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
         post(urlPathPattern).willReturn(aResponse().withStatus(204));
     stubFor(mappingBuilder);
 
-    unionSerdeApi.sendUnion(firstChild);
+    unionSerdeApi.sendUnion(firstChild.toBrokenDiscriminatedUnionRaw());
 
     final String json = objectMapper.writeValueAsString(firstChild);
     final RequestPatternBuilder requestPatternBuilder =

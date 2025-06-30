@@ -16,3 +16,5 @@ Main Build
 - Perform Validations
 - Build docker image, with pom version.
 - Push docker image
+
+DO GITHUB ACTIONS CONTAIN INPUTS FOR RELEASE VERSIONING LIKE GITLAB?

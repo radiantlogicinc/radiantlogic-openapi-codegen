@@ -12,7 +12,7 @@ public class CodegenLiteralPropertyNameSupport {
     }
 
     if (StringUtils.isNumeric(prop.name) || "true".equals(prop.name) || "false".equals(prop.name)) {
-      prop.jsonName = prop.name;
+      prop.setJsonName(prop.name);
       prop.name =
           "value%s%s"
               .formatted(String.valueOf(prop.name.charAt(0)).toUpperCase(), prop.name.substring(1));

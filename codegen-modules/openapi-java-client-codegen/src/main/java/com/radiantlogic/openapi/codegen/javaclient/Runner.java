@@ -6,7 +6,6 @@ import com.radiantlogic.openapi.codegen.javaclient.args.ProgramArgStatus;
 import com.radiantlogic.openapi.codegen.javaclient.generate.CodeGeneratorExecutor;
 import com.radiantlogic.openapi.codegen.javaclient.generate.OpenapiParser;
 import com.radiantlogic.openapi.codegen.javaclient.generate.codegen.RadiantJavaClientCodegen;
-import com.radiantlogic.openapi.codegen.javaclient.openapi.OpenapiPathValidator;
 import com.radiantlogic.openapi.codegen.javaclient.properties.Props;
 import com.radiantlogic.openapi.codegen.javaclient.properties.PropsReader;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -56,15 +55,10 @@ public class Runner {
       return;
     }
 
-    // TODO this whole thing is more than a bit of a mess here...
-    final OpenapiPathValidator openapiPathValidator = new OpenapiPathValidator();
-    final String parsedPath = openapiPathValidator.parseAndValidate(parsedArgs.openapiPath());
-    // TODO if a URL, need to pull file down
-    final Args validatedParsedArgs = parsedArgs.withOpenapiPath(parsedPath);
-    log.info("Path to OpenAPI specification: {}", validatedParsedArgs.openapiPath());
+    log.info("Path to OpenAPI specification: {}", parsedArgs.openapiUrl());
 
-    final OpenapiParser openapiParser = new OpenapiParser(validatedParsedArgs);
-    final RadiantJavaClientCodegen codegen = new RadiantJavaClientCodegen(validatedParsedArgs);
+    final OpenapiParser openapiParser = new OpenapiParser(parsedArgs);
+    final RadiantJavaClientCodegen codegen = new RadiantJavaClientCodegen(parsedArgs);
     final CodeGeneratorExecutor codeGenerator = new CodeGeneratorExecutor(codegen);
 
     log.info("Parsing and generating code");

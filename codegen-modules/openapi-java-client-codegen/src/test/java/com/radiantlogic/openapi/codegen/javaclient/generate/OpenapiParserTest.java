@@ -11,9 +11,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,10 +26,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class OpenapiParserTest {
   @Mock private OpenAPIParser internalParser;
 
+  @TempDir private Path tempDir;
+
   @Test
+  @SneakyThrows
   void itParsesOpenapi() {
-    final Args args = new Args(ProgramArgStatus.PROCEED, "/foo/bar.yaml", "");
-    final OpenapiParser parser = new OpenapiParser(args, internalParser);
+    final Path tempFile = tempDir.resolve("openapi.yaml");
+    Files.createFile(tempFile);
+    final Args args = new Args(ProgramArgStatus.PROCEED, tempFile.toUri().toURL(), "");
+    final OpenapiParser parser =
+        new OpenapiParser(args, internalParser, () -> Files.createTempFile("openapi", ".yaml"));
 
     final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
     final ArgumentCaptor<ParseOptions> parseOptionsArgumentCaptor =
@@ -40,13 +50,11 @@ public class OpenapiParserTest {
     result.setOpenAPI(openAPI);
 
     when(internalParser.readLocation(
-            pathCaptor.capture(), isA(List.class), parseOptionsArgumentCaptor.capture()))
+            isA(String.class), isA(List.class), parseOptionsArgumentCaptor.capture()))
         .thenReturn(result);
 
     final OpenAPI actual = parser.parse();
     assertThat(actual).isEqualTo(openAPI);
-
-    assertThat(pathCaptor.getValue()).isEqualTo(args.openapiPath());
 
     final ParseOptions parseOptions = new ParseOptions();
     parseOptions.setResolve(true);

@@ -39,4 +39,9 @@ public class ExtendedCodegenModel extends CodegenModel {
 
     return UnionType.NO_UNION;
   }
+
+  @Override
+  public boolean getHasDiscriminatorWithNonEmptyMapping() {
+    return getUnionType() == UnionType.DISCRIMINATED_UNION_WITH_MAPPING;
+  }
 }

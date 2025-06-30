@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminator;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminatorOne;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BooleanDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BooleanDiscriminatorOne;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminator;
 import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminatorOne;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputContent;
@@ -219,8 +221,28 @@ public class RawDiscriminatedTypeSerdeTest {
     }
 
     @Test
+    @SneakyThrows
     void itHandlesBooleanDiscriminator() {
-      throw new RuntimeException();
+      final BooleanDiscriminatorOne booleanOne = new BooleanDiscriminatorOne();
+      booleanOne.setType(true);
+      booleanOne.setOne("Hello World");
+
+      final BooleanDiscriminator.Raw raw = booleanOne.toBooleanDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", true);
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(true);
+
+      final String json = ResourceReader.readString("data/rawdiscriminatedtypeserde/intone.json");
+      final BooleanDiscriminator.Raw raw2 =
+          objectMapper.readValue(json, BooleanDiscriminator.Raw.class);
+      assertThat(raw2.getType()).isEqualTo(true);
+      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      final BooleanDiscriminatorOne actualOne =
+          raw2.toImplementation(BooleanDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(booleanOne);
     }
   }
 }

@@ -106,6 +106,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   }
 
   @Test
+  @SneakyThrows
   void itRetrievesDiscriminatedUnionWithHttpInfo() {
     final String responseId = "resp_123456789";
     final ResponseItemList responseItemList = buildResponseItemList();

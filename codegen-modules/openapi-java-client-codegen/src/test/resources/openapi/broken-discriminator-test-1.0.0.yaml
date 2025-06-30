@@ -10,6 +10,8 @@ info:
 tags:
   - name: union-serde
     description: Endpoints to test serialization/de-serialization of broken discriminated unions during API calls.
+  - name: property-type
+    description: Endpoints to test different types of discriminators in a broken discriminated union.
 paths:
   /union-serde/send-union:
     post:
@@ -109,4 +111,27 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/BrokenDiscriminatedUnion"
+    NumberDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: number
+        one:
+          type: string
+      required:
+        - type
+    NumberDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: number
+        two:
+          type: string
+    NumberDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/NumberDiscriminatorOne"
+        - $ref: "#/components/schemas/NumberDiscriminatorTwo"
+      discriminator:
+        propertyName: type
 

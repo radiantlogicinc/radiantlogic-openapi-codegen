@@ -174,9 +174,11 @@ public class RawDiscriminatedTypeSerdeTest {
 
       final NumberDiscriminator.Raw raw = numberDiscriminatorOne.toNumberDiscriminatorRaw();
       final Map<String, Object> expectedRaw = new HashMap<>();
-      expectedRaw.put("type", 20);
+      expectedRaw.put("type", new BigDecimal(20));
       expectedRaw.put("one", "Hello World");
       assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(new BigDecimal(20));
     }
 
     @Test

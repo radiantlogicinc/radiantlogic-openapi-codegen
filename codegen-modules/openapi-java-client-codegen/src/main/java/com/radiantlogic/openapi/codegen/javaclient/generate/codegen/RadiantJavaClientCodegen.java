@@ -206,6 +206,23 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
     return result;
   }
 
+  // TODO delete this
+  private ModelsMap enumModelToModelsMap(
+      @NonNull final CodegenModel enumModel,
+      @NonNull final ModelsMap base,
+      @NonNull final List<Map<String, String>> importsForEnums) {
+    final ModelsMap modelsMap = new ModelsMap();
+    modelsMap.putAll(base);
+    modelsMap.setImports(importsForEnums);
+
+    final String importPath = toModelImport(enumModel.classname);
+    final ModelMap modelMap = new ModelMap();
+    modelMap.setModel(enumModel);
+    modelMap.put("importPath", importPath);
+    modelsMap.setModels(List.of(modelMap));
+    return modelsMap;
+  }
+
   @Override
   public Map<String, ModelsMap> postProcessAllModels(
       @NonNull final Map<String, ModelsMap> allModelMaps) {

@@ -105,7 +105,7 @@ public class ArgsParser {
           return new URI("%s%s".formatted(FILE_PROTOCOL, absoluteFilePath)).toURL();
         }
 
-        final Path relativePath = Paths.get(System.getProperty("user.dir"), openapiPath);
+        final Path relativePath = Paths.get(System.getProperty("user.dir"), "input", openapiPath);
         if (Files.exists(relativePath)) {
           return new URI("%s%s".formatted(FILE_PROTOCOL, relativePath)).toURL();
         }
@@ -132,7 +132,7 @@ public class ArgsParser {
             .stripIndent();
 
     helpFormatter.printHelp(
-        "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
+        "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "", true);
     try {
       return new Args(ProgramArgStatus.EXIT, new URI("http://localhost").toURL(), "");
     } catch (final Exception ex) {

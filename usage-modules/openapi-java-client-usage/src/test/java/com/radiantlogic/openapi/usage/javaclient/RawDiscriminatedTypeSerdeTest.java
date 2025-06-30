@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.NumberDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.NumberDiscriminatorOne;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputFileContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputMessageResource;
@@ -12,7 +14,9 @@ import com.radiantlogic.openapi.generated.openaiapi.model.Item;
 import com.radiantlogic.openapi.generated.openaiapi.model.RoleEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.StatusEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.TypeEnum;
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
@@ -164,7 +168,15 @@ public class RawDiscriminatedTypeSerdeTest {
   class OtherTypeDiscriminators {
     @Test
     void itHandlesNumberDiscriminator() {
-      throw new RuntimeException();
+      final NumberDiscriminatorOne numberDiscriminatorOne = new NumberDiscriminatorOne();
+      numberDiscriminatorOne.setType(new BigDecimal("20"));
+      numberDiscriminatorOne.setOne("Hello World");
+
+      final NumberDiscriminator.Raw raw = numberDiscriminatorOne.toNumberDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", 20);
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
     }
 
     @Test

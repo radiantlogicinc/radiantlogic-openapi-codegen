@@ -8,6 +8,7 @@ import io.swagger.v3.parser.core.models.ParseOptions;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class OpenapiParser {
       final Path tempFile = Files.createTempFile("openapi", ".yaml");
       log.debug("Copying or downloading OpenAPI specification to temp file: {}", tempFile);
       try (InputStream stream = args.openapiUrl().openStream()) {
-        Files.copy(stream, tempFile);
+        Files.copy(stream, tempFile, StandardCopyOption.REPLACE_EXISTING);
       }
 
       final OpenAPI openAPI =

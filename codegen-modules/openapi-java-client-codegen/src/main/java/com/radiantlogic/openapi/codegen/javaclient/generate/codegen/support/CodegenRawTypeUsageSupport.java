@@ -38,33 +38,36 @@ public class CodegenRawTypeUsageSupport {
             });
   }
 
-  // TODO refactor this further
   public void applyRawTypesToOperationReturnTypes(
       @NonNull final List<CodegenOperation> operations,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
+    // Transform return types to Raw types where necessary
     operations.stream()
-        .map(
-            operation -> {
-              final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
-              return new OperationWithReturnType(operation, returnType);
-            })
-        .filter(
-            opAndType ->
-                opAndType.returnType() != null
-                    && CodegenModelUtils.isInvalidUnionType(opAndType.returnType()))
-        .forEach(
-            opAndType -> {
-              final String returnBaseType =
-                  "%s.Raw".formatted(opAndType.operation().returnBaseType);
-              opAndType.operation().returnBaseType = returnBaseType;
-              if (CodegenConstants.LIST_TYPE_PATTERN
-                  .matcher(opAndType.operation().returnType)
-                  .matches()) {
-                opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
-              } else {
-                opAndType.operation().returnType = returnBaseType;
-              }
-            });
+        .map(operation -> toOperationWithReturnType(operation, allModelsClassMap))
+        .filter(CodegenRawTypeUsageSupport::isInvalidUnionType)
+        .forEach(CodegenRawTypeUsageSupport::convertToRawReturnType);
+  }
+
+  private static void convertToRawReturnType(@NonNull final OperationWithReturnType opAndType) {
+    final String returnBaseType = "%s.Raw".formatted(opAndType.operation().returnBaseType);
+    opAndType.operation().returnBaseType = returnBaseType;
+    if (CodegenConstants.LIST_TYPE_PATTERN.matcher(opAndType.operation().returnType).matches()) {
+      opAndType.operation().returnType = "List<%s>".formatted(returnBaseType);
+    } else {
+      opAndType.operation().returnType = returnBaseType;
+    }
+  }
+
+  private static boolean isInvalidUnionType(@NonNull final OperationWithReturnType opAndType) {
+    return opAndType.returnType() != null
+        && CodegenModelUtils.isInvalidUnionType(opAndType.returnType());
+  }
+
+  private static OperationWithReturnType toOperationWithReturnType(
+      @NonNull final CodegenOperation operation,
+      @NonNull final Map<String, CodegenModel> allModelsClassMap) {
+    final CodegenModel returnType = allModelsClassMap.get(operation.returnBaseType);
+    return new OperationWithReturnType(operation, returnType);
   }
 
   private record OperationWithReturnType(

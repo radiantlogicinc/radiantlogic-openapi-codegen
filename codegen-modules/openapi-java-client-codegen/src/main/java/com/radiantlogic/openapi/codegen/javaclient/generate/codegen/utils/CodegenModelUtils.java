@@ -64,7 +64,7 @@ public class CodegenModelUtils {
       throw new IllegalArgumentException("Did not receive instance of ExtendedCodegenModel");
     }
 
-    return !extendedModel.getUnionType().isValid();
+    return extendedModel.isInvalidUnionType();
   }
 
   @NonNull

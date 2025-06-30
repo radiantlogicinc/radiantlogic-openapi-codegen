@@ -1,5 +1,4 @@
-{{#discriminator}}
-{{^hasDiscriminatorWithNonEmptyMapping}}
+{{#isInvalidUnionType}}
 /**
  * This interface was defined by a discriminated union schema in an OpenAPI specification, however the
  * specification lacked the mapping for the discriminator. The result is that this interface on its own
@@ -16,7 +15,8 @@
  *                       implementation type, you can also call toImplementation(ClassName.class) on the Raw
  *                       type to convert it.
  */
-{{/hasDiscriminatorWithNonEmptyMapping}}
+{{/isInvalidUnionType}}
+{{#discriminator}}
 {{#hasDiscriminatorWithNonEmptyMapping}}
 {{>additionalOneOfTypeAnnotations}}{{>generatedAnnotation}}{{>typeInfoAnnotation}}{{>xmlAnnotation}}
 {{/hasDiscriminatorWithNonEmptyMapping}}
@@ -24,49 +24,48 @@
 public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
     {{#discriminator}}
     {{propertyType}} {{propertyGetter}}();
-
-    {{^hasDiscriminatorWithNonEmptyMapping}}
-
-    /**
-     * Convert the instance of this interface into the Raw type. The Raw type will be modified during the conversion
-     * so that issues due to the missing discriminator mapping are resolved. When attempting to serialize implementations
-     * of this interface
-     *
-     * This method contains the classname in it because multiple interfaces like this may be implemented by a single class
-     * thus the need to avoid naming collisions. The Raw type produced by any toClassnameRaw() method on an implementation of
-     * this interface will always be serializable to the same output.
-     */
-    default Raw to{{classname}}Raw() {
-        final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
-        final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
-        // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
-        raw.put("{{propertyName}}", discriminatorValue);
-        return raw;
-    }
-
-    /**
-     * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
-     * despite not having proper openapi discriminator mapping information.
-     */
-    class Raw extends HashMap<String, Object> {
-        public {{propertyType}} {{propertyGetter}}() {
-            {{#isEnum}}
-            return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
-            {{/isEnum}}
-            {{#useConstructor}}
-            return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
-            {{/useConstructor}}
-            {{#useCast}}
-            return ({{propertyType}}) get("{{propertyName}}");
-            {{/useCast}}
-        }
-
-        public <T extends {{classname}}> T toImplementation(final Class<T> type) {
-            return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
-        }
-    }
-    {{/hasDiscriminatorWithNonEmptyMapping}}
     {{/discriminator}}
+
+    {{#isInvalidUnionType}}
+    /**
+    * Convert the instance of this interface into the Raw type. The Raw type will be modified during the conversion
+    * so that issues due to the missing discriminator mapping are resolved. When attempting to serialize implementations
+    * of this interface
+    *
+    * This method contains the classname in it because multiple interfaces like this may be implemented by a single class
+    * thus the need to avoid naming collisions. The Raw type produced by any toClassnameRaw() method on an implementation of
+    * this interface will always be serializable to the same output.
+    */
+    default Raw to{{classname}}Raw() {
+    final Raw raw = JacksonConfig.OBJECT_MAPPER.convertValue(this, Raw.class);
+    final Object discriminatorValue = JacksonConfig.OBJECT_MAPPER.convertValue({{propertyGetter}}(), Object.class);
+    // The lack of a property discriminator mapping screws up the discriminator value during serialization, this fixes it
+    raw.put("{{propertyName}}", discriminatorValue);
+    return raw;
+    }
+
+    /**
+    * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
+    * despite not having proper openapi discriminator mapping information.
+    */
+    class Raw extends HashMap<String, Object> {
+    public {{propertyType}} {{propertyGetter}}() {
+    {{#isEnum}}
+        return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
+    {{/isEnum}}
+    {{#useConstructor}}
+        return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
+    {{/useConstructor}}
+    {{#useCast}}
+        return ({{propertyType}}) get("{{propertyName}}");
+    {{/useCast}}
+    }
+
+    public <T extends {{classname}}> T toImplementation(final Class<T> type) {
+        return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
+        }
+    }
+    {{/isInvalidUnionType}}
 
 {{#vars}}
     {{#isEnum}}

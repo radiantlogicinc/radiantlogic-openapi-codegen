@@ -49,6 +49,8 @@ public class CodegenRawTypeUsageSupport {
         .filter(opAndType -> CodegenModelUtils.isInvalidUnionType(opAndType.returnType()))
         .forEach(CodegenRawTypeUsageSupport::convertToRawReturnType);
 
+    // TODO need to get the bodyParams and allParams lists to be adjusted
+
     // Transform request bodies to Raw types where necessary
     operations.stream()
         .filter(operation -> operation.getHasBodyParam() && operation.bodyParam.baseType != null)

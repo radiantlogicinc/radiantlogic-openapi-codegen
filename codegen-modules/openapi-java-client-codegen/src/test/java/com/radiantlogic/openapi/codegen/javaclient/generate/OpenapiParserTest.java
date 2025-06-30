@@ -34,7 +34,8 @@ public class OpenapiParserTest {
     final Path tempFile = tempDir.resolve("openapi.yaml");
     Files.createFile(tempFile);
     final Args args = new Args(ProgramArgStatus.PROCEED, tempFile.toUri().toURL(), "");
-    final OpenapiParser parser = new OpenapiParser(args, internalParser);
+    final OpenapiParser parser =
+        new OpenapiParser(args, internalParser, () -> Files.createTempFile("openapi", ".yaml"));
 
     final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
     final ArgumentCaptor<ParseOptions> parseOptionsArgumentCaptor =

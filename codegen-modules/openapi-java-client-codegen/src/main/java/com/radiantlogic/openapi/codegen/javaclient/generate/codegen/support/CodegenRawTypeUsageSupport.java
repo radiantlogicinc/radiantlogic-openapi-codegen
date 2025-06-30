@@ -44,9 +44,29 @@ public class CodegenRawTypeUsageSupport {
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
     // Transform return types to Raw types where necessary
     operations.stream()
+        .filter(operation -> operation.returnBaseType != null)
         .map(operation -> toOperationWithReturnType(operation, allModelsClassMap))
-        .filter(CodegenRawTypeUsageSupport::isInvalidUnionType)
+        .filter(opAndType -> CodegenModelUtils.isInvalidUnionType(opAndType.returnType()))
         .forEach(CodegenRawTypeUsageSupport::convertToRawReturnType);
+
+    // Transform request bodies to Raw types where necessary
+    operations.stream()
+        .filter(operation -> operation.getHasBodyParam() && operation.bodyParam.baseType != null)
+        .map(operation -> toOperationWithBodyParam(operation, allModelsClassMap))
+        .filter(opAndType -> CodegenModelUtils.isInvalidUnionType(opAndType.bodyParam()))
+        .forEach(CodegenRawTypeUsageSupport::convertToRawBodyParam);
+  }
+
+  private static void convertToRawBodyParam(@NonNull final OperationWithBodyParam opAndType) {
+    final String bodyParamBaseType = "%s.Raw".formatted(opAndType.operation().bodyParam.baseType);
+    opAndType.operation().bodyParam.baseType = bodyParamBaseType;
+    if (CodegenConstants.LIST_TYPE_PATTERN
+        .matcher(opAndType.operation().bodyParam.dataType)
+        .matches()) {
+      opAndType.operation().bodyParam.dataType = "List<%s>".formatted(bodyParamBaseType);
+    } else {
+      opAndType.operation().bodyParam.dataType = bodyParamBaseType;
+    }
   }
 
   private static void convertToRawReturnType(@NonNull final OperationWithReturnType opAndType) {
@@ -59,11 +79,6 @@ public class CodegenRawTypeUsageSupport {
     }
   }
 
-  private static boolean isInvalidUnionType(@NonNull final OperationWithReturnType opAndType) {
-    return opAndType.returnType() != null
-        && CodegenModelUtils.isInvalidUnionType(opAndType.returnType());
-  }
-
   private static OperationWithReturnType toOperationWithReturnType(
       @NonNull final CodegenOperation operation,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
@@ -71,6 +86,16 @@ public class CodegenRawTypeUsageSupport {
     return new OperationWithReturnType(operation, returnType);
   }
 
+  private static OperationWithBodyParam toOperationWithBodyParam(
+      @NonNull final CodegenOperation operation,
+      @NonNull final Map<String, CodegenModel> allModelsClassMap) {
+    final CodegenModel bodyParam = allModelsClassMap.get(operation.bodyParam.baseType);
+    return new OperationWithBodyParam(operation, bodyParam);
+  }
+
   private record OperationWithReturnType(
-      @NonNull CodegenOperation operation, CodegenModel returnType) {}
+      @NonNull CodegenOperation operation, @NonNull CodegenModel returnType) {}
+
+  private record OperationWithBodyParam(
+      @NonNull CodegenOperation operation, @NonNull CodegenModel bodyParam) {}
 }

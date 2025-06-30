@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.radiantlogic.openapi.codegen.javaclient.exceptions.ModelNotFoundException;
+import com.radiantlogic.openapi.codegen.javaclient.generate.models.ExtendedCodegenModel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +105,7 @@ public class CodegenModelUtilsTest {
   class HasNonDiscriminatorChildren {
     @Test
     void itHasOneOfChildrenWithUnmappedDiscriminator() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = Set.of("Child1", "Child2");
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(null);
@@ -114,7 +115,7 @@ public class CodegenModelUtilsTest {
 
     @Test
     void itHasOneOfChildrenWithMappedDiscriminator() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = Set.of("Child1", "Child2");
       model.discriminator = new CodegenDiscriminator();
       model.discriminator.setMappedModels(
@@ -125,7 +126,7 @@ public class CodegenModelUtilsTest {
 
     @Test
     void itHasNoOneOfChildren() {
-      final CodegenModel model = new CodegenModel();
+      final ExtendedCodegenModel model = new ExtendedCodegenModel();
       model.oneOf = null;
 
       assertThat(CodegenModelUtils.hasNonDiscriminatorChildren(model)).isFalse();

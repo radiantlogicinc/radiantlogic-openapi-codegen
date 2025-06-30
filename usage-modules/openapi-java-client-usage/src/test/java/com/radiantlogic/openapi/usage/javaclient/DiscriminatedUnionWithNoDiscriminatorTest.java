@@ -97,7 +97,9 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
   void itRetrievesDiscriminatedUnion() {
     final String responseId = "resp_123456789";
     final ResponseItemList responseItemList = buildResponseItemList();
-    final String jsonResponse = objectMapper.writeValueAsString(responseItemList);
+
+    final String jsonResponse =
+        ResourceReader.readString("data/discriminatedunionnodiscriminator/responseitemlist.json");
 
     stubFor(
         get(urlPathEqualTo(String.format("/responses/%s/input_items", responseId)))

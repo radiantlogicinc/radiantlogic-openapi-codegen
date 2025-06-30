@@ -11,7 +11,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import java.net.URI;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,8 +25,9 @@ public class OpenapiParserTest {
   @Mock private OpenAPIParser internalParser;
 
   @Test
+  @SneakyThrows
   void itParsesOpenapi() {
-    final Args args = new Args(ProgramArgStatus.PROCEED, "/foo/bar.yaml", "");
+    final Args args = new Args(ProgramArgStatus.PROCEED, new URI("file:/foo/bar.yaml").toURL(), "");
     final OpenapiParser parser = new OpenapiParser(args, internalParser);
 
     final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
@@ -46,7 +49,7 @@ public class OpenapiParserTest {
     final OpenAPI actual = parser.parse();
     assertThat(actual).isEqualTo(openAPI);
 
-    assertThat(pathCaptor.getValue()).isEqualTo(args.openapiPath());
+    assertThat(pathCaptor.getValue()).isEqualTo(args.openapiUrl());
 
     final ParseOptions parseOptions = new ParseOptions();
     parseOptions.setResolve(true);

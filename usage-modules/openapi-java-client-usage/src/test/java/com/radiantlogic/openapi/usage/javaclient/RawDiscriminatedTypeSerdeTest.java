@@ -235,7 +235,8 @@ public class RawDiscriminatedTypeSerdeTest {
 
       assertThat(raw.getType()).isEqualTo(true);
 
-      final String json = ResourceReader.readString("data/rawdiscriminatedtypeserde/intone.json");
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/booleanone.json");
       final BooleanDiscriminator.Raw raw2 =
           objectMapper.readValue(json, BooleanDiscriminator.Raw.class);
       assertThat(raw2.getType()).isEqualTo(true);

@@ -45,24 +45,24 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
     }
 
     /**
-    * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
-    * despite not having proper openapi discriminator mapping information.
-    */
+     * This represents the raw JSON data associated with this type. It allows for safely de-serializing JSON
+     * despite not having proper openapi discriminator mapping information.
+     */
     class Raw extends HashMap<String, Object> {
-    public {{propertyType}} {{propertyGetter}}() {
-    {{#isEnum}}
-        return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
-    {{/isEnum}}
-    {{#useConstructor}}
-        return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
-    {{/useConstructor}}
-    {{#useCast}}
-        return ({{propertyType}}) get("{{propertyName}}");
-    {{/useCast}}
-    }
+        public {{propertyType}} {{propertyGetter}}() {
+            {{#isEnum}}
+            return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
+            {{/isEnum}}
+            {{#useConstructor}}
+                return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
+            {{/useConstructor}}
+            {{#useCast}}
+                return ({{propertyType}}) get("{{propertyName}}");
+            {{/useCast}}
+        }
 
-    public <T extends {{classname}}> T toImplementation(final Class<T> type) {
-        return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
+        public <T extends {{classname}}> T toImplementation(final Class<T> type) {
+            return JacksonConfig.OBJECT_MAPPER.convertValue(this, type);
         }
     }
     {{/isInvalidUnionType}}

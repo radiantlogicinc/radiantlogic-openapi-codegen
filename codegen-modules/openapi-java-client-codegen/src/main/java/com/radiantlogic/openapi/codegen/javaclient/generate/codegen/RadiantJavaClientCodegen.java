@@ -172,7 +172,7 @@ public class RadiantJavaClientCodegen extends JavaClientCodegen implements Exten
         CodegenModelUtils.modelMapListToModelClassMap(allModels);
     final List<CodegenOperation> operations =
         CodegenOperationUtils.operationsMapToList(operationsMap);
-    codegenRawTypeUsageSupport.applyRawTypesToOperationReturnTypes(operations, allModelsClassMap);
+    codegenRawTypeUsageSupport.applyRawTypesToOperationTypes(operations, allModelsClassMap);
 
     return super.postProcessOperationsWithModels(operationsMap, allModels);
   }

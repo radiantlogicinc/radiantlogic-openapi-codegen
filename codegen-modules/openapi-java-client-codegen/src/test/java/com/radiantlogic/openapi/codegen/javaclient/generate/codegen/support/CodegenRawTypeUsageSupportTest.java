@@ -4,7 +4,12 @@ import org.junit.jupiter.api.Test;
 
 public class CodegenRawTypeUsageSupportTest {
   @Test
-  void test() {
+  void itAppliesRawTypesToModelProperties() {
+    throw new RuntimeException();
+  }
+
+  @Test
+  void itAppliesRawTypesToOperationTypes() {
     throw new RuntimeException();
   }
 }

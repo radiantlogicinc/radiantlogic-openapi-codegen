@@ -40,7 +40,7 @@ public class CodegenRawTypeUsageSupport {
     }
   }
 
-  public void applyRawTypesToOperationReturnTypes(
+  public void applyRawTypesToOperationTypes(
       @NonNull final List<CodegenOperation> operations,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
     // Transform return types to Raw types where necessary

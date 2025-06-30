@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.NumberDiscriminator;
-import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.NumberDiscriminatorOne;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminatorOne;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputFileContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputMessageResource;
@@ -168,11 +168,11 @@ public class RawDiscriminatedTypeSerdeTest {
   class OtherTypeDiscriminators {
     @Test
     void itHandlesBigDecimalDiscriminator() {
-      final NumberDiscriminatorOne numberDiscriminatorOne = new NumberDiscriminatorOne();
-      numberDiscriminatorOne.setType(new BigDecimal("20"));
-      numberDiscriminatorOne.setOne("Hello World");
+      final BigDecimalDiscriminatorOne bigDecimalOne = new BigDecimalDiscriminatorOne();
+      bigDecimalOne.setType(new BigDecimal("20"));
+      bigDecimalOne.setOne("Hello World");
 
-      final NumberDiscriminator.Raw raw = numberDiscriminatorOne.toNumberDiscriminatorRaw();
+      final BigDecimalDiscriminator.Raw raw = bigDecimalOne.toBigDecimalDiscriminatorRaw();
       final Map<String, Object> expectedRaw = new HashMap<>();
       expectedRaw.put("type", new BigDecimal(20));
       expectedRaw.put("one", "Hello World");

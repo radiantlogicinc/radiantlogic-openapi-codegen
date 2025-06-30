@@ -7,11 +7,21 @@ import com.radiantlogic.openapi.codegen.javaclient.args.ProgramArgStatus;
 import com.radiantlogic.openapi.codegen.javaclient.io.CodegenPaths;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import java.net.URI;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CodegenMetadataSupportTest {
   private final CodegenMetadataSupport codegenMetadataSupport = new CodegenMetadataSupport();
-  private final Args args = new Args(ProgramArgStatus.PROCEED, "/foo/bar.yaml", "com.something");
+  private Args args;
+
+  @BeforeEach
+  @SneakyThrows
+  void beforeEach() {
+    args =
+        new Args(ProgramArgStatus.PROCEED, new URI("file:/foo/bar.yaml").toURL(), "com.something");
+  }
 
   @Test
   void itGetsSimpleMetadata() {

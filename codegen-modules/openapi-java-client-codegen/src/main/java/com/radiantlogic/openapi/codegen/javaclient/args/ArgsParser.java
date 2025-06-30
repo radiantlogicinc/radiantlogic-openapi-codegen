@@ -132,7 +132,7 @@ public class ArgsParser {
             .stripIndent();
 
     helpFormatter.printHelp(
-        "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
+        "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "", true);
     try {
       return new Args(ProgramArgStatus.EXIT, new URI("http://localhost").toURL(), "");
     } catch (final Exception ex) {

@@ -84,7 +84,7 @@ public class DiscriminatedUnionWithNoDiscriminatorTest {
     functionCallItem.setId("item_2");
     functionCallItem.setCallId("call_123");
     functionCallItem.setName("get_weather");
-    functionCallItem.setArguments("{\"location\": \"San Francisco\", \"unit\": \"celsius\"}");
+    functionCallItem.setArguments("args");
     functionCallItem.setStatus(StatusEnum.COMPLETED);
 
     responseItemList.addDataItem(messageItem.toItemResourceRaw());

@@ -1,0 +1,27 @@
+{
+  "object": "list",
+  "hasMore": false,
+  "firstId": "item_1",
+  "last_id": "item_2",
+  "data": [
+    {
+      "type": "message",
+      "role": "user",
+      "id": "item_1",
+      "status": "completed",
+      "content": [
+        {
+          "text": "Hello, world!"
+        }
+      ]
+    },
+    {
+      "type": "function_call",
+      "id": "item_2",
+      "call_id":"call_123",
+      "name": "get_weather",
+      "arguments": "args",
+      "status": "completed"
+    }
+  ]
+}

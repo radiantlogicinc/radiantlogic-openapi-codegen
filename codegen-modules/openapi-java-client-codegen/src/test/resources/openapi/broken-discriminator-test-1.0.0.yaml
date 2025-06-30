@@ -10,6 +10,21 @@ info:
 servers:
   - url: http://localhost:8080/v1
 paths:
+  /send-union:
+    post:
+      operationId: send-union
+      summary: Send a discriminated union
+      description: >-
+        Make a post request where the body is a broken discriminated union type to ensure 
+        that serialization works correctly.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokenDiscriminatedUnion"
+      responses:
+        204:
+          description: The operation was a success
 components:
   schemas:
     Discriminator:

@@ -50,7 +50,12 @@ public class RawDiscriminatedTypeSerdeTest {
       messageItem.setType(TypeEnum.MESSAGE);
       messageItem.setId("item_1");
       messageItem.setStatus(StatusEnum.COMPLETED);
-      messageItem.setContent(Collections.emptyList());
+
+      final InputFileContent inputFileContent = new InputFileContent();
+      inputFileContent.setType(TypeEnum.INPUT_FILE);
+      inputFileContent.setFilename("test.txt");
+
+      messageItem.setContent(Collections.singletonList(inputFileContent.toInputContentRaw()));
       messageItem.setRole(RoleEnum.USER);
 
       final Item.Raw raw = messageItem.toItemRaw();

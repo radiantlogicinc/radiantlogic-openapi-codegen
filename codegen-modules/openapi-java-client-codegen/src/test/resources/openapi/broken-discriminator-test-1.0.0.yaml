@@ -111,7 +111,7 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/BrokenDiscriminatedUnion"
-    NumberDiscriminatorOne:
+    BigDecimalDiscriminatorOne:
       type: object
       properties:
         type:
@@ -120,18 +120,41 @@ components:
           type: string
       required:
         - type
-    NumberDiscriminatorTwo:
+    BigDecimalDiscriminatorTwo:
       type: object
       properties:
         type:
           type: number
         two:
           type: string
-    NumberDiscriminator:
+    BigDecimalDiscriminator:
       type: object
       oneOf:
-        - $ref: "#/components/schemas/NumberDiscriminatorOne"
-        - $ref: "#/components/schemas/NumberDiscriminatorTwo"
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorOne"
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorTwo"
+      discriminator:
+        propertyName: type
+    IntDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: integer
+        one:
+          type: string
+      required:
+        - type
+    IntDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: integer
+        two:
+          type: string
+    IntDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorOne"
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorTwo"
       discriminator:
         propertyName: type
 

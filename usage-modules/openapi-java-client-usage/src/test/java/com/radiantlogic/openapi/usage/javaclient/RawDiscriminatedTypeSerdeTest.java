@@ -167,7 +167,7 @@ public class RawDiscriminatedTypeSerdeTest {
   @Nested
   class OtherTypeDiscriminators {
     @Test
-    void itHandlesNumberDiscriminator() {
+    void itHandlesBigDecimalDiscriminator() {
       final NumberDiscriminatorOne numberDiscriminatorOne = new NumberDiscriminatorOne();
       numberDiscriminatorOne.setType(new BigDecimal("20"));
       numberDiscriminatorOne.setOne("Hello World");
@@ -179,6 +179,11 @@ public class RawDiscriminatedTypeSerdeTest {
       assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
 
       assertThat(raw.getType()).isEqualTo(new BigDecimal(20));
+    }
+
+    @Test
+    void itHandlesIntDiscriminator() {
+      throw new RuntimeException();
     }
 
     @Test

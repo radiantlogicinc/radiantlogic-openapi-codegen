@@ -134,7 +134,7 @@ public class ArgsParser {
     helpFormatter.printHelp(
         "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
     try {
-      return new Args(ProgramArgStatus.EXIT, new URL("http://localhost"), "");
+      return new Args(ProgramArgStatus.EXIT, new URI("http://localhost").toURL(), "");
     } catch (final Exception ex) {
       throw new IllegalStateException("Should not be possible for this exception to be thrown");
     }

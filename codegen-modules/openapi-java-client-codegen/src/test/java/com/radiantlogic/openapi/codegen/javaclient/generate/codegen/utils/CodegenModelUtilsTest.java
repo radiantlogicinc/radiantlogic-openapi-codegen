@@ -164,8 +164,31 @@ public class CodegenModelUtilsTest {
   @Nested
   class ModelNameMapToModelClassMap {
     @Test
-    void test() {
-      throw new RuntimeException();
+    void itConvertsModelNameMapToModelClassMap() {
+      // Given
+      final CodegenModel model1 = new CodegenModel();
+      model1.name = "ModelName1";
+      model1.classname = "ModelClass1";
+
+      final CodegenModel model2 = new CodegenModel();
+      model2.name = "ModelName2";
+      model2.classname = "ModelClass2";
+
+      final Map<String, CodegenModel> modelNameMap =
+          Map.of(
+              "ModelName1", model1,
+              "ModelName2", model2);
+
+      // When
+      final Map<String, CodegenModel> result =
+          CodegenModelUtils.modelNameMapToModelClassMap(modelNameMap);
+
+      // Then
+      final Map<String, CodegenModel> expected =
+          Map.of(
+              "ModelClass1", model1,
+              "ModelClass2", model2);
+      assertThat(result).containsExactlyInAnyOrderEntriesOf(expected).hasSize(2);
     }
   }
 }

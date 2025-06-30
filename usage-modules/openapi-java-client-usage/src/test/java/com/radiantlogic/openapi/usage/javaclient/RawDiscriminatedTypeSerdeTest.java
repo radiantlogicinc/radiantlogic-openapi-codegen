@@ -5,6 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BigDecimalDiscriminatorOne;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BooleanDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.BooleanDiscriminatorOne;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminator;
+import com.radiantlogic.openapi.generated.brokendiscriminatortest.model.IntDiscriminatorOne;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputFileContent;
 import com.radiantlogic.openapi.generated.openaiapi.model.InputMessageResource;
@@ -12,7 +18,9 @@ import com.radiantlogic.openapi.generated.openaiapi.model.Item;
 import com.radiantlogic.openapi.generated.openaiapi.model.RoleEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.StatusEnum;
 import com.radiantlogic.openapi.generated.openaiapi.model.TypeEnum;
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
@@ -102,12 +110,6 @@ public class RawDiscriminatedTypeSerdeTest {
           actualImpl.getContent().get(0).toImplementation(InputFileContent.class);
       assertThat(actualContentImpl).usingRecursiveComparison().isEqualTo(inputFileContent);
     }
-
-    @Test
-    void itCanGetRawDiscriminatorNonEnumType() {
-      // TODO what about String? BigDecimal? Int? Double?
-      throw new RuntimeException();
-    }
   }
 
   /** InputContent has a oneOf mapping and nothing else. */
@@ -159,6 +161,89 @@ public class RawDiscriminatedTypeSerdeTest {
 
       final InputFileContent actualImpl = raw.toImplementation(InputFileContent.class);
       assertThat(actualImpl).usingRecursiveComparison().isEqualTo(inputFileContent);
+    }
+  }
+
+  /**
+   * These tests validate the behavior of non-string, non-enum discriminators with some of the Raw
+   * type logic.
+   */
+  @Nested
+  class OtherTypeDiscriminators {
+    @Test
+    @SneakyThrows
+    void itHandlesBigDecimalDiscriminator() {
+      final BigDecimalDiscriminatorOne bigDecimalOne = new BigDecimalDiscriminatorOne();
+      bigDecimalOne.setType(new BigDecimal("20"));
+      bigDecimalOne.setOne("Hello World");
+
+      final BigDecimalDiscriminator.Raw raw = bigDecimalOne.toBigDecimalDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", new BigDecimal(20));
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(new BigDecimal(20));
+
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/bigdecimalone.json");
+      final BigDecimalDiscriminator.Raw raw2 =
+          objectMapper.readValue(json, BigDecimalDiscriminator.Raw.class);
+      assertThat(raw2.getType()).isEqualTo(new BigDecimal(20));
+      // Cannot directly compare raw and raw2 because raw2.type will be an Integer, not a BigDecimal
+      // Other methods successfully convert it though where necessary
+      final BigDecimalDiscriminatorOne actualOne =
+          raw2.toImplementation(BigDecimalDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(bigDecimalOne);
+    }
+
+    @Test
+    @SneakyThrows
+    void itHandlesIntDiscriminator() {
+      final IntDiscriminatorOne intOne = new IntDiscriminatorOne();
+      intOne.setType(20);
+      intOne.setOne("Hello World");
+
+      final IntDiscriminator.Raw raw = intOne.toIntDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", 20);
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(20);
+
+      final String json = ResourceReader.readString("data/rawdiscriminatedtypeserde/intone.json");
+      final IntDiscriminator.Raw raw2 = objectMapper.readValue(json, IntDiscriminator.Raw.class);
+      assertThat(raw2.getType()).isEqualTo(20);
+      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      final IntDiscriminatorOne actualOne = raw2.toImplementation(IntDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(intOne);
+    }
+
+    @Test
+    @SneakyThrows
+    void itHandlesBooleanDiscriminator() {
+      final BooleanDiscriminatorOne booleanOne = new BooleanDiscriminatorOne();
+      booleanOne.setType(true);
+      booleanOne.setOne("Hello World");
+
+      final BooleanDiscriminator.Raw raw = booleanOne.toBooleanDiscriminatorRaw();
+      final Map<String, Object> expectedRaw = new HashMap<>();
+      expectedRaw.put("type", true);
+      expectedRaw.put("one", "Hello World");
+      assertThat(raw).usingRecursiveComparison().isEqualTo(expectedRaw);
+
+      assertThat(raw.getType()).isEqualTo(true);
+
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/booleanone.json");
+      final BooleanDiscriminator.Raw raw2 =
+          objectMapper.readValue(json, BooleanDiscriminator.Raw.class);
+      assertThat(raw2.getType()).isEqualTo(true);
+      assertThat(raw2).usingRecursiveComparison().isEqualTo(raw);
+      final BooleanDiscriminatorOne actualOne =
+          raw2.toImplementation(BooleanDiscriminatorOne.class);
+      assertThat(actualOne).usingRecursiveComparison().isEqualTo(booleanOne);
     }
   }
 }

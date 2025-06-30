@@ -70,7 +70,7 @@ public interface {{classname}} {{#vendorExtensions.x-implements}}{{#-first}}exte
                 return {{propertyType}}.fromValue((String) get("{{propertyName}}"));
             {{/isEnum}}
             {{#useConstructor}}
-                return {{propertyType}}(String.valueOf(get("{{propertyName}}")));
+                return new {{propertyType}}(String.valueOf(get("{{propertyName}}")));
             {{/useConstructor}}
             {{#useCast}}
                 return ({{propertyType}}) get("{{propertyName}}");

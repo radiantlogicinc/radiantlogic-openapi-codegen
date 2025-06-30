@@ -10,6 +10,8 @@ info:
 tags:
   - name: union-serde
     description: Endpoints to test serialization/de-serialization of broken discriminated unions during API calls.
+  - name: property-type
+    description: Endpoints to test different types of discriminators in a broken discriminated union.
 paths:
   /union-serde/send-union:
     post:
@@ -109,4 +111,73 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/BrokenDiscriminatedUnion"
+    BigDecimalDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: number
+        one:
+          type: string
+      required:
+        - type
+    BigDecimalDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: number
+        two:
+          type: string
+    BigDecimalDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorOne"
+        - $ref: "#/components/schemas/BigDecimalDiscriminatorTwo"
+      discriminator:
+        propertyName: type
+    IntDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: integer
+        one:
+          type: string
+      required:
+        - type
+    IntDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: integer
+        two:
+          type: string
+    IntDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/IntDiscriminatorOne"
+        - $ref: "#/components/schemas/IntDiscriminatorTwo"
+      discriminator:
+        propertyName: type
+    BooleanDiscriminatorOne:
+      type: object
+      properties:
+        type:
+          type: boolean
+        one:
+          type: string
+      required:
+        - type
+    BooleanDiscriminatorTwo:
+      type: object
+      properties:
+        type:
+          type: boolean
+        two:
+          type: string
+    BooleanDiscriminator:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/BooleanDiscriminatorOne"
+        - $ref: "#/components/schemas/BooleanDiscriminatorTwo"
+      discriminator:
+        propertyName: type
 

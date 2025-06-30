@@ -11,7 +11,6 @@ import com.radiantlogic.custom.dataconnector.openaiapi.model.Item;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.RoleEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.StatusEnum;
 import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -83,7 +82,7 @@ public class RawDiscriminatedTypeSerdeTest {
       inputFileContent.setType(TypeEnum.INPUT_FILE);
       inputFileContent.setFilename("test.txt");
 
-      messageItem.setContent(Arrays.asList(inputFileContent));
+      messageItem.setContent(Collections.singletonList(inputFileContent));
       messageItem.setRole(RoleEnum.USER);
 
       final String json =

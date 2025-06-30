@@ -50,9 +50,13 @@ public class CodegenModelUtils {
     return modelsMap;
   }
 
-  public static boolean hasNonDiscriminatorChildren(@NonNull final ExtendedCodegenModel model) {
-    return model.getUnionType() == UnionType.UNION_NO_DISCRIMINATOR
-        || model.getUnionType() == UnionType.DISCRIMINATED_UNION_NO_MAPPING;
+  public static boolean hasNonDiscriminatorChildren(@NonNull final CodegenModel model) {
+    if (!(model instanceof ExtendedCodegenModel extendedModel)) {
+      throw new IllegalArgumentException("Did not recieve instance of ExtendedCodegenModel");
+    }
+
+    return extendedModel.getUnionType() == UnionType.UNION_NO_DISCRIMINATOR
+        || extendedModel.getUnionType() == UnionType.DISCRIMINATED_UNION_NO_MAPPING;
   }
 
   public static boolean hasOneOfDiscriminatorWithoutMapping(@NonNull final CodegenModel model) {

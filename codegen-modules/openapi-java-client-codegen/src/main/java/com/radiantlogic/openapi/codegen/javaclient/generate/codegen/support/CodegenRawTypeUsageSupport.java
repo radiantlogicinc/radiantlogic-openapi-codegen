@@ -25,10 +25,7 @@ public class CodegenRawTypeUsageSupport {
         .flatMap(model -> model.vars.stream())
         .filter(prop -> Objects.nonNull(prop.complexType))
         .filter(prop -> modelClassMap.containsKey(prop.complexType))
-        .filter(
-            prop ->
-                CodegenModelUtils.hasOneOfDiscriminatorWithoutMapping(
-                    modelClassMap.get(prop.complexType)))
+        .filter(prop -> CodegenModelUtils.isInvalidUnionType(modelClassMap.get(prop.complexType)))
         .forEach(
             prop -> {
               final String complexType = "%s.Raw".formatted(prop.complexType);

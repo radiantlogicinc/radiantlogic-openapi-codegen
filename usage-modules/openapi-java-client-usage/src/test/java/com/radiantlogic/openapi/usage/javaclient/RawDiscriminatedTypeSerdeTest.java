@@ -13,6 +13,7 @@ import com.radiantlogic.custom.dataconnector.openaiapi.model.TypeEnum;
 import java.util.Collections;
 import java.util.Map;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -22,68 +23,100 @@ import org.junit.jupiter.api.Test;
 public class RawDiscriminatedTypeSerdeTest {
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  @Test
-  @SneakyThrows
-  void itDeserializedRawDiscriminatedType() {
-    final String json =
-        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
-    final Map<String, Object> map =
-        objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+  /** InputMessage has a oneOf mapping, a discriminator, but no discriminator mapping */
+  @Nested
+  class InputMessage {
+    @Test
+    @SneakyThrows
+    void itDeserializedRawDiscriminatedType() {
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+      final Map<String, Object> map =
+          objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
 
-    final Item.Raw expectedRaw = new Item.Raw();
-    expectedRaw.putAll(map);
+      final Item.Raw expectedRaw = new Item.Raw();
+      expectedRaw.putAll(map);
 
-    final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
-    assertThat(raw).isEqualTo(expectedRaw);
+      final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
+      assertThat(raw).isEqualTo(expectedRaw);
+    }
+
+    @Test
+    @SneakyThrows
+    void itSerializesRawDiscriminatedType() {
+      final InputMessageResource messageItem = new InputMessageResource();
+      messageItem.setType(TypeEnum.MESSAGE);
+      messageItem.setId("item_1");
+      messageItem.setStatus(StatusEnum.COMPLETED);
+      messageItem.setContent(Collections.emptyList());
+      messageItem.setRole(RoleEnum.USER);
+
+      final Item.Raw raw = messageItem.toItemRaw();
+      assertThat(raw.get("type")).isEqualTo("message");
+
+      final String json = objectMapper.writeValueAsString(raw);
+      final String expectedJson =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+      assertThatJson(json).isEqualTo(expectedJson);
+    }
+
+    @Test
+    @SneakyThrows
+    void itCanGetRawDiscriminatorAnyType() {
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+      final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
+      assertThat(raw.getType()).isEqualTo(TypeEnum.MESSAGE);
+    }
+
+    @Test
+    @SneakyThrows
+    void itCanConvertRawToImpl() {
+      final InputMessageResource messageItem = new InputMessageResource();
+      messageItem.setType(TypeEnum.MESSAGE);
+      messageItem.setId("item_1");
+      messageItem.setStatus(StatusEnum.COMPLETED);
+      messageItem.setContent(Collections.emptyList());
+      messageItem.setRole(RoleEnum.USER);
+
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
+      final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
+      assertThat(raw.toImplementation(InputMessageResource.class)).isEqualTo(messageItem);
+    }
+
+    @Test
+    void itCanGetRawDiscriminatorNonEnumType() {
+      // TODO what about String? BigDecimal? Int? Double?
+      throw new RuntimeException();
+    }
   }
 
-  @Test
-  @SneakyThrows
-  void itSerializesRawDiscriminatedType() {
-    final InputMessageResource messageItem = new InputMessageResource();
-    messageItem.setType(TypeEnum.MESSAGE);
-    messageItem.setId("item_1");
-    messageItem.setStatus(StatusEnum.COMPLETED);
-    messageItem.setContent(Collections.emptyList());
-    messageItem.setRole(RoleEnum.USER);
+  /** InputContent has a oneOf mapping and nothing else. */
+  @Nested
+  class InputContent {
+    @Test
+    @SneakyThrows
+    void itDeserializedRawDiscriminatedType() {
+      throw new RuntimeException();
+    }
 
-    final Item.Raw raw = messageItem.toItemRaw();
-    assertThat(raw.get("type")).isEqualTo("message");
+    @Test
+    @SneakyThrows
+    void itSerializesRawDiscriminatedType() {
+      throw new RuntimeException();
+    }
 
-    final String json = objectMapper.writeValueAsString(raw);
-    final String expectedJson =
-        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
-    assertThatJson(json).isEqualTo(expectedJson);
-  }
+    @Test
+    @SneakyThrows
+    void itCanGetRawDiscriminatorAnyType() {
+      throw new RuntimeException();
+    }
 
-  @Test
-  @SneakyThrows
-  void itCanGetRawDiscriminatorAnyType() {
-    final String json =
-        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
-    final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
-    assertThat(raw.getType()).isEqualTo(TypeEnum.MESSAGE);
-  }
-
-  @Test
-  @SneakyThrows
-  void itCanConvertRawToImpl() {
-    final InputMessageResource messageItem = new InputMessageResource();
-    messageItem.setType(TypeEnum.MESSAGE);
-    messageItem.setId("item_1");
-    messageItem.setStatus(StatusEnum.COMPLETED);
-    messageItem.setContent(Collections.emptyList());
-    messageItem.setRole(RoleEnum.USER);
-
-    final String json =
-        ResourceReader.readString("data/rawdiscriminatedtypeserde/inputmessageresource.json");
-    final Item.Raw raw = objectMapper.readValue(json, Item.Raw.class);
-    assertThat(raw.toImplementation(InputMessageResource.class)).isEqualTo(messageItem);
-  }
-
-  @Test
-  void itCanGetRawDiscriminatorNonEnumType() {
-    // TODO what about String? BigDecimal? Int? Double?
-    throw new RuntimeException();
+    @Test
+    @SneakyThrows
+    void itCanConvertRawToImpl() {
+      throw new RuntimeException();
+    }
   }
 }

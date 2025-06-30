@@ -1,0 +1,18 @@
+CI/CD Plan
+
+Validations
+- Run codegen unit tests
+- Run codegen integration tests
+- Run usage unit tests
+- Run spotless check
+- Run PMD check
+
+PRs
+- Build the codegen artifact
+- Perform Validations
+
+Main Build
+- Build the codegen artifact
+- Perform Validations
+- Build docker image, with pom version.
+- Push docker image

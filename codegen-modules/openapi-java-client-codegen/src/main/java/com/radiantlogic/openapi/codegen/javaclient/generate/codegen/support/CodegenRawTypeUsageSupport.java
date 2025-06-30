@@ -8,6 +8,7 @@ import java.util.Objects;
 import lombok.NonNull;
 import org.openapitools.codegen.CodegenModel;
 import org.openapitools.codegen.CodegenOperation;
+import org.openapitools.codegen.CodegenParameter;
 import org.openapitools.codegen.CodegenProperty;
 
 /**
@@ -51,6 +52,14 @@ public class CodegenRawTypeUsageSupport {
 
     // TODO need to get the bodyParams and allParams lists to be adjusted
 
+    operations.stream()
+        .filter(operation -> operation.allParams != null && !operation.allParams.isEmpty())
+        .flatMap(operation -> operation.allParams.stream())
+        .filter(param -> allModelsClassMap.containsKey(param.baseType))
+        .map(param -> toParamWithType(param, allModelsClassMap))
+        .filter(paramAndType -> CodegenModelUtils.isInvalidUnionType(paramAndType.type()))
+        .forEach(CodegenRawTypeUsageSupport::convertToRawParamType);
+
     // Transform request bodies to Raw types where necessary
     operations.stream()
         .filter(operation -> operation.getHasBodyParam() && operation.bodyParam.baseType != null)
@@ -59,6 +68,17 @@ public class CodegenRawTypeUsageSupport {
         .forEach(CodegenRawTypeUsageSupport::convertToRawBodyParam);
   }
 
+  private static void convertToRawParamType(@NonNull final ParamWithType paramAndType) {
+    final String bodyParamBaseType = "%s.Raw".formatted(paramAndType.param().baseType);
+    paramAndType.param().baseType = bodyParamBaseType;
+    if (CodegenConstants.LIST_TYPE_PATTERN.matcher(paramAndType.param().dataType).matches()) {
+      paramAndType.param().dataType = "List<%s>".formatted(bodyParamBaseType);
+    } else {
+      paramAndType.param().dataType = bodyParamBaseType;
+    }
+  }
+
+  // TODO
   private static void convertToRawBodyParam(@NonNull final OperationWithBodyParam opAndType) {
     final String bodyParamBaseType = "%s.Raw".formatted(opAndType.operation().bodyParam.baseType);
     opAndType.operation().bodyParam.baseType = bodyParamBaseType;
@@ -88,6 +108,7 @@ public class CodegenRawTypeUsageSupport {
     return new OperationWithReturnType(operation, returnType);
   }
 
+  // TODO delete if unused
   private static OperationWithBodyParam toOperationWithBodyParam(
       @NonNull final CodegenOperation operation,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
@@ -95,9 +116,19 @@ public class CodegenRawTypeUsageSupport {
     return new OperationWithBodyParam(operation, bodyParam);
   }
 
+  private static ParamWithType toParamWithType(
+      @NonNull final CodegenParameter param,
+      @NonNull final Map<String, CodegenModel> allModelsClassMap) {
+    final CodegenModel type = allModelsClassMap.get(param.baseType);
+    return new ParamWithType(param, type);
+  }
+
   private record OperationWithReturnType(
       @NonNull CodegenOperation operation, @NonNull CodegenModel returnType) {}
 
+  // TODO delete if unused
   private record OperationWithBodyParam(
       @NonNull CodegenOperation operation, @NonNull CodegenModel bodyParam) {}
+
+  private record ParamWithType(@NonNull CodegenParameter param, @NonNull CodegenModel type) {}
 }

@@ -7,13 +7,9 @@ info:
     necessary, however they don't provide enough opportunities to exercise all possible implications
     of the code change.
   version: "1.0.0"
-tags:
-  - name: request-body
 paths:
-  /send-union:
+  /union-serde/send-union:
     post:
-      tags:
-        - request-body
       operationId: send-union
       summary: Send a discriminated union
       description: >-
@@ -27,6 +23,35 @@ paths:
       responses:
         204:
           description: The operation was a success
+  /union-serde/send-union-list:
+    post:
+      operationId: send-union-list
+      summary: Send a discriminated union list
+      description: >-
+        Make a post request where the body is a list of broken discriminated union types
+        to ensure that serialization works correctly.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokenDiscriminatedUnionList"
+      responses:
+        204:
+          description: The operation was a success.
+  /union-serde/get-union-list:
+    get:
+      operationId: get-union-list
+      summary: Get a discriminated union list
+      description: >-
+        Make a get request where the body is a list of broken discriminated union types
+        to make sure that de-serialization works correctly.
+      responses:
+        200:
+          description: The operation was a success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrokenDiscriminatedUnionList"
 components:
   schemas:
     Discriminator:
@@ -71,4 +96,8 @@ components:
         - $ref: "#/components/schemas/ThirdChild"
       discriminator:
         propertyName: type
+    BrokenDiscriminatedUnionList:
+      type: array
+      items:
+        $ref: "#/components/schemas/BrokenDiscriminatedUnion"
 

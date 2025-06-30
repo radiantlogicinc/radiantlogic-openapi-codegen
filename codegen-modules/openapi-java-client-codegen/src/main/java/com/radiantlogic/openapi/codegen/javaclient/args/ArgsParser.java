@@ -1,6 +1,14 @@
 package com.radiantlogic.openapi.codegen.javaclient.args;
 
 import com.radiantlogic.openapi.codegen.javaclient.properties.Props;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class ArgsParser {
+  public static final String FILE_PROTOCOL = "file:";
   public static final String DEFAULT_GROUP_ID = "com.radiantlogic.openapi.generated";
 
   private static final Option PATH_OPTION =
@@ -53,7 +62,8 @@ public class ArgsParser {
 
   @NonNull private final Props props;
 
-  public Args parse(final String[] args) {
+  @NonNull
+  public Args parse(@NonNull final String[] args) {
     if (args.length < 1) {
       throw new IllegalArgumentException(
           "Missing required arguments. Please run with -h for more information.");
@@ -76,13 +86,40 @@ public class ArgsParser {
       }
 
       final String groupId = commandLine.getOptionValue(GROUP_ID_OPTION.getOpt(), DEFAULT_GROUP_ID);
-      return new Args(ProgramArgStatus.PROCEED, openapiPath, groupId);
+      final URL openapiUrl = parseOpenapiPath(openapiPath);
+      return new Args(ProgramArgStatus.PROCEED, openapiUrl, groupId);
     } catch (final ParseException ex) {
-      throw new IllegalStateException(
+      throw new IllegalArgumentException(
           "Failed to parse command line arguments, cannot proceed.", ex);
     }
   }
 
+  @NonNull
+  private URL parseOpenapiPath(@NonNull final String openapiPath) {
+    try {
+      return new URI(openapiPath).toURL();
+    } catch (final MalformedURLException | URISyntaxException ex) {
+      try {
+        final Path absoluteFilePath = Paths.get(openapiPath);
+        if (Files.exists(absoluteFilePath)) {
+          return new URI("%s%s".formatted(FILE_PROTOCOL, absoluteFilePath)).toURL();
+        }
+
+        final Path relativePath = Paths.get(System.getProperty("user.dir"), openapiPath);
+        if (Files.exists(relativePath)) {
+          return new URI("%s%s".formatted(FILE_PROTOCOL, relativePath)).toURL();
+        }
+        throw new FileNotFoundException(
+            "Cannot find path on filesystem: %s".formatted(openapiPath));
+      } catch (final MalformedURLException | URISyntaxException | FileNotFoundException ex2) {
+        ex2.addSuppressed(ex);
+        throw new IllegalArgumentException(
+            "Cannot parse OpenAPI path as either URL or file: %s".formatted(openapiPath), ex2);
+      }
+    }
+  }
+
+  @NonNull
   private Args handleHelp() {
     final HelpFormatter helpFormatter = new HelpFormatter();
 
@@ -96,6 +133,10 @@ public class ArgsParser {
 
     helpFormatter.printHelp(
         "%s %s".formatted(props.artifactId(), props.version()), header, OPTIONS, "Footer", true);
-    return new Args(ProgramArgStatus.EXIT, "", "");
+    try {
+      return new Args(ProgramArgStatus.EXIT, new URL("http://localhost"), "");
+    } catch (final Exception ex) {
+      throw new IllegalStateException("Should not be possible for this exception to be thrown");
+    }
   }
 }

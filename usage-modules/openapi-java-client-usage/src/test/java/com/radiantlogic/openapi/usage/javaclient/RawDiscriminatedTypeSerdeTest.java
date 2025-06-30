@@ -126,19 +126,34 @@ public class RawDiscriminatedTypeSerdeTest {
     @Test
     @SneakyThrows
     void itSerializesRawDiscriminatedType() {
-      throw new RuntimeException();
-    }
+      final InputFileContent inputFileContent = new InputFileContent();
+      inputFileContent.setType(TypeEnum.INPUT_FILE);
+      inputFileContent.setFilename("test.txt");
+      inputFileContent.setFileData("The data");
 
-    @Test
-    @SneakyThrows
-    void itCanGetRawDiscriminatorAnyType() {
-      throw new RuntimeException();
+      final InputContent.Raw raw = inputFileContent.toInputContentRaw();
+      assertThat(raw.get("type")).isEqualTo("input_file");
+
+      final String json = objectMapper.writeValueAsString(raw);
+      final String expectedJson =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/fileinputcontent.json");
+      assertThatJson(json).isEqualTo(expectedJson);
     }
 
     @Test
     @SneakyThrows
     void itCanConvertRawToImpl() {
-      throw new RuntimeException();
+      final InputFileContent inputFileContent = new InputFileContent();
+      inputFileContent.setType(TypeEnum.INPUT_FILE);
+      inputFileContent.setFilename("test.txt");
+      inputFileContent.setFileData("The data");
+
+      final String json =
+          ResourceReader.readString("data/rawdiscriminatedtypeserde/fileinputcontent.json");
+      final InputContent.Raw raw = objectMapper.readValue(json, InputContent.Raw.class);
+
+      final InputFileContent actualImpl = raw.toImplementation(InputFileContent.class);
+      assertThat(actualImpl).usingRecursiveComparison().isEqualTo(inputFileContent);
     }
   }
 }

@@ -46,12 +46,12 @@ public class CodegenRawTypeUsageSupport {
     // Transform return types to Raw types where necessary
     operations.stream()
         .filter(operation -> operation.returnBaseType != null)
+        .filter(operation -> allModelsClassMap.containsKey(operation.returnBaseType))
         .map(operation -> toOperationWithReturnType(operation, allModelsClassMap))
         .filter(opAndType -> CodegenModelUtils.isInvalidUnionType(opAndType.returnType()))
         .forEach(CodegenRawTypeUsageSupport::convertToRawReturnType);
 
-    // TODO need to get the bodyParams and allParams lists to be adjusted
-
+    // Transform all params to Raw types where necessary
     operations.stream()
         .filter(operation -> operation.allParams != null && !operation.allParams.isEmpty())
         .flatMap(operation -> operation.allParams.stream())
@@ -59,13 +59,6 @@ public class CodegenRawTypeUsageSupport {
         .map(param -> toParamWithType(param, allModelsClassMap))
         .filter(paramAndType -> CodegenModelUtils.isInvalidUnionType(paramAndType.type()))
         .forEach(CodegenRawTypeUsageSupport::convertToRawParamType);
-
-    // Transform request bodies to Raw types where necessary
-    operations.stream()
-        .filter(operation -> operation.getHasBodyParam() && operation.bodyParam.baseType != null)
-        .map(operation -> toOperationWithBodyParam(operation, allModelsClassMap))
-        .filter(opAndType -> CodegenModelUtils.isInvalidUnionType(opAndType.bodyParam()))
-        .forEach(CodegenRawTypeUsageSupport::convertToRawBodyParam);
   }
 
   private static void convertToRawParamType(@NonNull final ParamWithType paramAndType) {
@@ -75,19 +68,6 @@ public class CodegenRawTypeUsageSupport {
       paramAndType.param().dataType = "List<%s>".formatted(bodyParamBaseType);
     } else {
       paramAndType.param().dataType = bodyParamBaseType;
-    }
-  }
-
-  // TODO delete if unused
-  private static void convertToRawBodyParam(@NonNull final OperationWithBodyParam opAndType) {
-    final String bodyParamBaseType = "%s.Raw".formatted(opAndType.operation().bodyParam.baseType);
-    opAndType.operation().bodyParam.baseType = bodyParamBaseType;
-    if (CodegenConstants.LIST_TYPE_PATTERN
-        .matcher(opAndType.operation().bodyParam.dataType)
-        .matches()) {
-      opAndType.operation().bodyParam.dataType = "List<%s>".formatted(bodyParamBaseType);
-    } else {
-      opAndType.operation().bodyParam.dataType = bodyParamBaseType;
     }
   }
 
@@ -108,14 +88,6 @@ public class CodegenRawTypeUsageSupport {
     return new OperationWithReturnType(operation, returnType);
   }
 
-  // TODO delete if unused
-  private static OperationWithBodyParam toOperationWithBodyParam(
-      @NonNull final CodegenOperation operation,
-      @NonNull final Map<String, CodegenModel> allModelsClassMap) {
-    final CodegenModel bodyParam = allModelsClassMap.get(operation.bodyParam.baseType);
-    return new OperationWithBodyParam(operation, bodyParam);
-  }
-
   private static ParamWithType toParamWithType(
       @NonNull final CodegenParameter param,
       @NonNull final Map<String, CodegenModel> allModelsClassMap) {
@@ -125,10 +97,6 @@ public class CodegenRawTypeUsageSupport {
 
   private record OperationWithReturnType(
       @NonNull CodegenOperation operation, @NonNull CodegenModel returnType) {}
-
-  // TODO delete if unused
-  private record OperationWithBodyParam(
-      @NonNull CodegenOperation operation, @NonNull CodegenModel bodyParam) {}
 
   private record ParamWithType(@NonNull CodegenParameter param, @NonNull CodegenModel type) {}
 }

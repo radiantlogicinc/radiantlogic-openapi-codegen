@@ -8,8 +8,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.radiantlogic.custom.dataconnector.radiantonev8api.api.AuthTokenApiApi;
-import com.radiantlogic.custom.dataconnector.radiantonev8api.model.PostLogin200Response;
+import com.radiantlogic.openapi.generated.radiantonev8api.api.AuthTokenApiApi;
+import com.radiantlogic.openapi.generated.radiantonev8api.model.PostLogin200Response;
 import java.util.Base64;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class ApiClientSupport {
   public static final String GITLAB_PRIVATE_TOKEN = "gitlab_private_token";
 
   @SneakyThrows
-  public static com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient
+  public static com.radiantlogic.openapi.generated.radiantonev8api.invoker.ApiClient
       createAndAuthenticateRadiantoneApi() {
     final String basicAuth = String.format("%s:%s", USERNAME, PASSWORD);
     final String base64EncodedAuth = Base64.getEncoder().encodeToString(basicAuth.getBytes());
@@ -46,8 +46,8 @@ public class ApiClientSupport {
             .willReturn(response);
     stubFor(mapping);
 
-    final com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient apiClient =
-        new com.radiantlogic.custom.dataconnector.radiantonev8api.invoker.ApiClient();
+    final com.radiantlogic.openapi.generated.radiantonev8api.invoker.ApiClient apiClient =
+        new com.radiantlogic.openapi.generated.radiantonev8api.invoker.ApiClient();
     apiClient.setDebugging(true);
     apiClient.setBasePath(BASE_URL);
 
@@ -61,10 +61,10 @@ public class ApiClientSupport {
   }
 
   @SneakyThrows
-  public static com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient
+  public static com.radiantlogic.openapi.generated.gitlabapi.invoker.ApiClient
       createAndAuthenticateGitlabApi() {
-    final com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient apiClient =
-        new com.radiantlogic.custom.dataconnector.gitlabapi.invoker.ApiClient();
+    final com.radiantlogic.openapi.generated.gitlabapi.invoker.ApiClient apiClient =
+        new com.radiantlogic.openapi.generated.gitlabapi.invoker.ApiClient();
     apiClient.setDebugging(true);
     apiClient.setBasePath(BASE_URL);
 
@@ -74,10 +74,10 @@ public class ApiClientSupport {
     return apiClient;
   }
 
-  public static com.radiantlogic.custom.dataconnector.openaiapi.invoker.ApiClient
+  public static com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient
       createAndAuthenticateOpenAIApiClient() {
-    final com.radiantlogic.custom.dataconnector.openaiapi.invoker.ApiClient apiClient =
-        new com.radiantlogic.custom.dataconnector.openaiapi.invoker.ApiClient();
+    final com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient apiClient =
+        new com.radiantlogic.openapi.generated.openaiapi.invoker.ApiClient();
     apiClient.setDebugging(true);
     apiClient.setBasePath(ApiClientSupport.BASE_URL);
 
@@ -86,11 +86,10 @@ public class ApiClientSupport {
     return apiClient;
   }
 
-  public static com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient
+  public static com.radiantlogic.openapi.generated.brokendiscriminatortest.invoker.ApiClient
       createBrokenDiscriminatorApiClient() {
-    final com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient
-        apiClient =
-            new com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient();
+    final com.radiantlogic.openapi.generated.brokendiscriminatortest.invoker.ApiClient apiClient =
+        new com.radiantlogic.openapi.generated.brokendiscriminatortest.invoker.ApiClient();
     apiClient.setDebugging(true);
     apiClient.setBasePath(ApiClientSupport.BASE_URL);
     return apiClient;

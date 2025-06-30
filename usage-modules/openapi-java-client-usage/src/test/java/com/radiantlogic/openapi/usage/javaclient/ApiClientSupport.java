@@ -86,5 +86,13 @@ public class ApiClientSupport {
     return apiClient;
   }
 
-  public static com.radiantlogic.custom.dataconnector.snykapi.invoker.ApiClient foo() {}
+  public static com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient
+      createBrokenDiscriminatorApiClient() {
+    final com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient
+        apiClient =
+            new com.radiantlogic.custom.dataconnector.brokendiscriminatortest.invoker.ApiClient();
+    apiClient.setDebugging(true);
+    apiClient.setBasePath(ApiClientSupport.BASE_URL);
+    return apiClient;
+  }
 }

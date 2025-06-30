@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class ArgsParser {
-  public static final String DEFAULT_GROUP_ID = "com.radiantlogic.custom.dataconnector";
+  public static final String DEFAULT_GROUP_ID = "com.radiantlogic.openapi.generated";
 
   private static final Option PATH_OPTION =
       Option.builder("p")

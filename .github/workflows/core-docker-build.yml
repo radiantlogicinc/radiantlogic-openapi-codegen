@@ -25,7 +25,6 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          # TODO document these in the readme
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Setup QEMU
@@ -35,7 +34,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          push: false # TODO make this true in the real thing
-          tags: rlidev/${{ inputs.image_name }}:${{ inputs.image_tag }} # TODO make this the real repo/tag
+          push: true
+          tags: rlidev/${{ inputs.image_name }}:${{ inputs.image_tag }}
           context: .
           platforms: linux/amd64,linux/arm64

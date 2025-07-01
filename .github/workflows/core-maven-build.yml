@@ -95,10 +95,11 @@ jobs:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
       - name: Run Integration Tests
         run: mvn integration-test -Dskip.surefire.tests
-      - uses: actions/upload-artifact@v4
+      - name: Upload Integration Test Artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: integration_test_artifacts
-          path: ~/.m2/repository/com/radiantlogic/openapi/generated
+          path: ~/.m2/repository/com/radiantlogic/openapi/generated/**/*
 
   run_usage_tests:
     runs-on: ubuntu-latest
@@ -109,5 +110,10 @@ jobs:
         uses: ./.github/actions/setup-java
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
+      - name: Download Integration Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: integration_test_artifacts
+          path: ~/.m2/repository/com/radiantlogic/openapi/generated
       - name: Run Usage Tests
         run: mvn -P usage test

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
@@ -167,7 +168,7 @@ public class CodegenIT {
             .inheritIO()
             .start();
 
-    final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD);
+    final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD.toMillis(), TimeUnit.MILLISECONDS);
     assertThat(waitSuccess).withFailMessage("Wait for build of generated code timed out.").isTrue();
 
     final int exitValue = process.exitValue();

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,24 @@ import org.junit.jupiter.api.Test;
 public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
+
+  // TODO delete this
+  @BeforeAll
+  static void beforeAll() {
+    new Thread(
+            () -> {
+              while (true) {
+                final long amount =
+                    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.out.println("Memory used: %,d".formatted(amount));
+                try {
+                  Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+              }
+            })
+        .start();
+  }
 
   @Test
   void oktaIdpMinimal() {

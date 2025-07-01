@@ -18,13 +18,13 @@ runs:
       with:
         name: ${{ inputs.pom_artifact_name }}
         path: .
+    - name: Write Run ID For Cache Key
+      shell: bash
+      run: echo "run_id=${{ github.run_id }}" | tee run_id.txt
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         java-version: 24
         distribution: temurin
         cache: maven
-    # TODO delete this
-    - name: Print M2
-      shell: bash
-      run: find ~/.m2/repository -type d
+        cache-dependency-path: run_id.txt

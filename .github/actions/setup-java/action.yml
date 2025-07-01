@@ -27,5 +27,4 @@ runs:
     # TODO delete this
     - name: Print M2
       shell: bash
-      run: |
-        ls -l ~/.m2/repository
+      run: find ~/.m2/repository -type d

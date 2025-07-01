@@ -94,7 +94,7 @@ jobs:
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
       - name: Run Integration Tests
-        run: MAVEN_OPTS="-Xmx2g" mvn integration-test -Dskip.surefire.tests
+        run: MAVEN_OPTS="-Xmx6g" mvn integration-test -Dskip.surefire.tests
       - name: Upload Integration Test Artifacts
         uses: actions/upload-artifact@v4
         with:

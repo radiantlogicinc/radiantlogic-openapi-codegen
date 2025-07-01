@@ -28,3 +28,6 @@ runs:
         distribution: temurin
         cache: maven
         cache-dependency-path: run_id.txt
+    - name: Resolve Dependencies
+      shell: bash
+      run: mvn dependency:go-offline

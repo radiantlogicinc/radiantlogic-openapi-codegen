@@ -156,6 +156,7 @@ public class CodegenIT {
 
     final URL url = getClass().getClassLoader().getResource("openapi/%s".formatted(yamlFilename));
     final Path yamlPath = Paths.get(url.toURI());
+    System.out.println("Running test for spec file %s".formatted(yamlPath));
     final Runner runner = new Runner();
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};
     runner.run(args);

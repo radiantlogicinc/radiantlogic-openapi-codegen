@@ -25,7 +25,12 @@ public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
 
-  // TODO delete this
+  private static long peakMemory = 0;
+
+  /**
+   * This prints the memory being used on an ongoing basis. This is useful information due to the
+   * sheer absurd size of some of the specs
+   */
   @BeforeAll
   static void beforeAll() {
     new Thread(
@@ -33,9 +38,12 @@ public class CodegenIT {
               while (true) {
                 final long amount =
                     Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-                System.out.println("Memory used: %,d".formatted(amount));
+                if (amount > peakMemory) {
+                  peakMemory = amount;
+                }
+                System.out.printf("Memory Current: %,d Peak: %,d%n", amount, peakMemory);
                 try {
-                  Thread.sleep(1000);
+                  Thread.sleep(3000);
                 } catch (InterruptedException e) {
                 }
               }

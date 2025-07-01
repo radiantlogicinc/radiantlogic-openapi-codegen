@@ -29,7 +29,7 @@ public class CodegenIT {
 
   /**
    * This prints the memory being used on an ongoing basis. This is useful information due to the
-   * sheer absurd size of some of the specs
+   * sheer absurd size of some of the specs.
    */
   @BeforeAll
   static void beforeAll() {

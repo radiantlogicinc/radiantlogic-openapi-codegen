@@ -42,11 +42,11 @@ jobs:
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
       - name: Build Artifact
-        run: mvn package -DskipTests
+        run: mvn test-compile package -DskipTests
       - uses: actions/upload-artifact@v4
         with:
           name: project_artifacts
-          path: ./target/*.jar
+          path: ./codegen-modules/openapi-java-client-codegen/target/*.jar
 
   run_unit_tests:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         uses: ./.github/actions/setup-java
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
-      - name: Run Tests
+      - name: Run Unit Tests
         run: mvn test
 
   run_pmd:
@@ -83,3 +83,15 @@ jobs:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
       - name: Run Spotless
         run: mvn spotless:check
+
+  run_integration_tests:
+    runs-on: ubuntu-latest
+    needs: ['build_artifact']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: ./.github/actions/setup-java
+        with:
+          pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
+      - name: Run Integration Tests
+        run: echo ""

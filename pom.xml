@@ -43,6 +43,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <java.client.codegen.path>./codegen-modules/openapi-java-client-codegen</java.client.codegen.path>
         <java.client.usage.path>./usage-modules/openapi-java-client-usage</java.client.usage.path>
+        <skip.surefire.tests>${skipTests}</skip.surefire.tests>
     </properties>
 
     <dependencyManagement>
@@ -228,11 +229,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
+                <configuration>
+                    <skipTests>${skip.surefire.tests}</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

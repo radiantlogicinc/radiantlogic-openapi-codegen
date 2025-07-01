@@ -24,3 +24,8 @@ runs:
         java-version: 24
         distribution: temurin
         cache: maven
+    # TODO delete this
+    - name: Print M2
+      shell: bash
+      run: |
+        ls -l ~/.m2/repository

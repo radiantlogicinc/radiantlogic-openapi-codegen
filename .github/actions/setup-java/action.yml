@@ -28,6 +28,8 @@ runs:
         distribution: temurin
         cache: maven
         cache-dependency-path: run_id.txt
-    - name: Resolve Dependencies
+    - name: Resolve Dependencies To Populate Cache
       shell: bash
-      run: mvn dependency:go-offline
+      run: |
+        mvn dependency:go-offline
+        mvn test-compile

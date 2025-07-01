@@ -23,6 +23,10 @@ The primary use for the generated code is to support building custom connectors 
 - The quality of the generated code is directly correlated to the quality of the OpenAPI specification.
 - Only OpenAPI 3 is supported.
 
+## Using the Codegen
+
+TBD
+
 ## Development
 
 ### Modules
@@ -78,3 +82,7 @@ A robust set of end-to-end tests have been constructed to validate the behavior 
 First is the `integration.com.radiantlogic.openapi.codegen.javaclient.CodegenIT` class in `codegen-modules/openapi-java-client-codegen`. This test suite executes the code generation against a wide range of official OpenAPI specs from a variety of companies. It generates, compiles, and installs the maven artifacts from those specs.
 
 Next is the full test suite in `usage-modules/openapi-java-client-usage`. Once all tests from `CodegenIT` complete successfully, all the artifacts will be available in the local `.m2` directory. At that point the test suite in this project can be run to execute a variety of java client operations against a mock server. This validates that the generated code performs as-expected.
+
+## CI/CD
+
+TBD

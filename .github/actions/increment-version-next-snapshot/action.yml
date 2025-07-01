@@ -1,0 +1,28 @@
+name: Increment Version to Next Snapshot
+
+inputs:
+  major_version:
+    description: The major version number
+    required: true
+  minor_version:
+    description: The minor version number
+    required: true
+  patch_version:
+    description: The patch version number
+    required: true
+outputs:
+  next_snapshot_version:
+    description: The next snapshot version calculated by this action
+    value: ${{ steps.increment_snapshot_version.outputs.next_snapshot_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: increment_snapshot_version
+      id: increment_snapshot_version
+      shell: bash
+      run: |
+        ${{ github.action_path }}/increment-snapshot.sh \
+          "${{ inputs.major_version }}" \
+          "${{ inputs.minor_version }}" \
+          "${{ inputs.patch_version }}"

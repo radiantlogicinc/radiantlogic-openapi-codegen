@@ -1,0 +1,25 @@
+name: Main Branch
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  run_maven_build:
+    uses: ./.github/workflows/core-maven-build.yml
+    with:
+      is_release: false
+
+  run_docker_build:
+    uses: ./.github/workflows/core-docker-build.yml
+    needs: ['run_maven_build']
+    with:
+      image_name: ${{ needs.run_maven_build.outputs.project_name }}
+      image_tag: ${{ needs.run_maven_build.outputs.project_version }}
+    secrets:
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}

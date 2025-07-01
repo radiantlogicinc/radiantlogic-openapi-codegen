@@ -1,0 +1,26 @@
+name: Git Commit Changed Files
+
+inputs:
+  message:
+    required: true
+    description: The commit message
+  push:
+    required: false
+    default: false
+    description: If the commit should be pushed
+
+runs:
+  using: composite
+  steps:
+    - name: print_status
+      shell: bash
+      run: git status --porcelain
+    - name: commit_changed_files
+      shell: bash
+      run: |
+        git add -u
+        git commit -m "${{ inputs.message }}"
+    - name: push
+      if: ${{ inputs.push == 'true' }}
+      shell: bash
+      run: git push

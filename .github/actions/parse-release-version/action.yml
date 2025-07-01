@@ -1,0 +1,32 @@
+name: Parse Release Version
+inputs:
+  release_version:
+    required: true
+    description: The version number for the release. Must be a valid semver number.
+outputs:
+  major_version:
+    description: The major version number.
+    value: ${{ steps.parse_version.outputs.major_version }}
+  minor_version:
+    description: The minor version number.
+    value: ${{ steps.parse_version.outputs.minor_version }}
+  patch_version:
+    description: The patch version number.
+    value: ${{ steps.parse_version.outputs.patch_version }}
+  qualifier_name:
+    description: The qualifier name, if present.
+    value: ${{ steps.parse_version.outputs.qualifier_name }}
+  qualifier_version:
+    description: The qualifier version, if present.
+    value: ${{ steps.parse_version.outputs.qualifier_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Print Version
+      shell: bash
+      run: echo "${{ inputs.release_version }}"
+    - name: Parse Version
+      id: parse_version
+      shell: bash
+      run: ${{ github.action_path }}/parse-version.sh "${{ inputs.release_version }}"

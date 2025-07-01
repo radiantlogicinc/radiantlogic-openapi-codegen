@@ -1,0 +1,26 @@
+name: Setup Java
+
+inputs:
+  pom_artifact_name:
+    required: false
+    description: >-
+      If this is being called as part of a workflow where the pom.xml has been 
+      modified (ie, releases), the name of the artifact should be defined here
+      and it will be downloaded.
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Download Pom Artifact
+      if: ${{ inputs.pom_artifact_name != '' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.pom_artifact_name }}
+        path: .
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: 24
+        distribution: temurin
+        cache: maven

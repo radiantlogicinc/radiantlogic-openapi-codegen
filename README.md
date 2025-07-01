@@ -86,3 +86,4 @@ Next is the full test suite in `usage-modules/openapi-java-client-usage`. Once a
 ## CI/CD
 
 TBD
+Don't forget about the username & password variables in docs

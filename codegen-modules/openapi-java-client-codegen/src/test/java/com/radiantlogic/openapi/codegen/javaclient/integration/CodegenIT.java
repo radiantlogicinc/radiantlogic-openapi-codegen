@@ -215,6 +215,7 @@ public class CodegenIT {
 
     // TODO delete this block
     System.out.println("OUTPUT EXISTS: " + Files.exists(outputPath));
+    Files.list(OUTPUT_DIR).forEach(output -> System.out.println("OUTPUT: " + output));
     runProcess("echo $PATH", outputPath);
 
     System.out.printf("Codegen complete. Building generated code at %s%n", outputPath);

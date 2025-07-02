@@ -44,6 +44,7 @@
             <artifactId>Snyk-API</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- TODO remove this -->
         <dependency>
             <groupId>com.radiantlogic.openapi.generated</groupId>
             <artifactId>RadiantLogic-CloudManager</artifactId>

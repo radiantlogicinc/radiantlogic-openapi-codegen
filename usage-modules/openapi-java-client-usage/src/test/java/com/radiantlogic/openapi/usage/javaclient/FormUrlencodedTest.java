@@ -57,7 +57,7 @@ public class FormUrlencodedTest {
                     .withHeader("Content-Type", "application/json")
                     .withBody(objectMapper.writeValueAsString(expectedResponse))));
 
-    orgAsApi.authorize(
+    orgAsApi.authorizeWithPost(
         clientId,
         "",
         responseTypesSupported,
@@ -74,9 +74,9 @@ public class FormUrlencodedTest {
         10,
         "",
         Prompt.NONE,
+        "",
+        "",
         ResponseMode.FORM_POST,
-        "",
-        "",
         "");
 
     //    final Object result = authApi.authControllerLocalLogin(email, password, null);

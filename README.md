@@ -32,3 +32,5 @@ TBD
 - [Detailed Explanation of "Raw" Types In Generated Code](./docs/RAW_TYPES.md)
 - [Development Guide](./docs/DEVELOPMENT.md)
 - [GitHub Actions CI/CD](./docs/CICD.md)
+
+NOTE: Pay special attention to the CI/CD guide for release instructions.

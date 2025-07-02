@@ -181,14 +181,17 @@ public class CodegenIT {
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {
     final Path outputPath = OUTPUT_DIR.resolve(relativeOutputPath);
+    System.out.printf("Cleaning output directory %s%n", outputPath);
     FileUtils.deleteDirectory(outputPath.toFile());
 
     final URL url = getClass().getClassLoader().getResource("openapi/%s".formatted(yamlFilename));
     final Path yamlPath = Paths.get(url.toURI());
-    System.out.println("Running test for spec file %s".formatted(yamlPath));
+    System.out.printf("Running codegen for spec file %s%n", yamlPath);
     final Runner runner = new Runner();
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};
     runner.run(args);
+
+    System.out.printf("Codegen complete. Building generated code at %s%n", outputPath);
 
     final Process process =
         new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
@@ -202,5 +205,6 @@ public class CodegenIT {
 
     final int exitValue = process.exitValue();
     assertThat(exitValue).isEqualTo(0);
+    System.out.println("Build of generated code completed successfully.");
   }
 }

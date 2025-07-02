@@ -94,4 +94,13 @@ public class ApiClientSupport {
     apiClient.setBasePath(ApiClientSupport.BASE_URL);
     return apiClient;
   }
+
+  public static com.radiantlogic.openapi.generated.oktaopenidconnectoauth20.invoker.ApiClient
+      createOktaOpenidConnectApiClient() {
+    final com.radiantlogic.openapi.generated.oktaopenidconnectoauth20.invoker.ApiClient apiClient =
+        new com.radiantlogic.openapi.generated.oktaopenidconnectoauth20.invoker.ApiClient();
+    apiClient.setDebugging(true);
+    apiClient.setBasePath(ApiClientSupport.BASE_URL);
+    return apiClient;
+  }
 }

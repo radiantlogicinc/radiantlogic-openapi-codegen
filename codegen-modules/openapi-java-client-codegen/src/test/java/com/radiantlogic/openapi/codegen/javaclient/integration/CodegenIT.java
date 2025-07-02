@@ -3,6 +3,8 @@ package com.radiantlogic.openapi.codegen.javaclient.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.radiantlogic.openapi.codegen.javaclient.Runner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -122,7 +124,6 @@ public class CodegenIT {
   }
 
   @Test
-  @Disabled // TODO don't really want to disable this, just trying to make the runner work
   void radiantlogicCloudmanager() {
     generateAndBuild("radiantlogic-cloudmanager-1.3.2.json", "Radiantlogic-CloudManager/1.3.2");
   }
@@ -197,8 +198,12 @@ public class CodegenIT {
         new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
             .directory(outputPath.toFile())
             .redirectErrorStream(true)
-            .inheritIO()
             .start();
+
+    try (BufferedReader reader =
+        new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+      reader.lines().forEach(System.out::println);
+    }
 
     final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD.toMillis(), TimeUnit.MILLISECONDS);
     assertThat(waitSuccess).withFailMessage("Wait for build of generated code timed out.").isTrue();

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,12 @@ public class CodegenIT {
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
 
   private static long peakMemory = 0;
+  private static Thread memoryMonitorThread;
 
   /**
    * This prints the memory being used on an ongoing basis. This is useful information due to the
-   * sheer absurd size of some of the specs.
+   * sheer absurd size of some of the specs. Also in the more memory-constrained Github Action CI/CD
+   * pipeline this was helpful for getting the configuration right.
    */
   @BeforeAll
   static void beforeAll() {
@@ -46,12 +49,18 @@ public class CodegenIT {
                 }
                 System.out.printf("Memory Current: %,d Peak: %,d%n", amount, peakMemory);
                 try {
-                  Thread.sleep(3000);
+                  Thread.sleep(5000);
                 } catch (InterruptedException e) {
+                  return;
                 }
               }
             })
         .start();
+  }
+
+  @AfterAll
+  static void afterAll() {
+    memoryMonitorThread.interrupt();
   }
 
   @Test

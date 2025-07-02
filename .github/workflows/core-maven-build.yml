@@ -94,6 +94,7 @@ jobs:
         uses: ./.github/actions/setup-java
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
+      # TODO delete below
       - name: Print PATH
         run: echo $PATH
       - name: Run Integration Tests
@@ -103,6 +104,7 @@ jobs:
         if: failure()
         run: |
           whoami
+          pwd
           ls -l
           ls -l codegen-modules/openapi-java-client-codegen/output
           ls -l codegen-modules/openapi-java-client-codegen/output/RadiantLogic-CloudManager

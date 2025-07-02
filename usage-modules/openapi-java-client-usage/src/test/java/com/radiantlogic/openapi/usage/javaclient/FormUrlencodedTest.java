@@ -37,6 +37,7 @@ public class FormUrlencodedTest {
     final String clientId = "client-id";
     final String codeChallenge = "challenge";
     final CodeChallengeMethod codeChallengeMethod = CodeChallengeMethod.S256;
+    final ResponseTypesSupported responseTypesSupported = ResponseTypesSupported.CODE;
 
     final Map<String, Object> expectedResponse = new HashMap<>();
     expectedResponse.put("access_token", "test-token");
@@ -49,6 +50,7 @@ public class FormUrlencodedTest {
             .withFormParam("client_id", equalTo(clientId))
             .withFormParam("code_challenge", equalTo(codeChallenge))
             .withFormParam("code_challenge_method", equalTo(codeChallengeMethod.getValue()))
+            .withFormParam("response_type", equalTo(responseTypesSupported.getValue()))
             .willReturn(
                 aResponse()
                     .withStatus(201)
@@ -58,7 +60,7 @@ public class FormUrlencodedTest {
     orgAsApi.authorize(
         clientId,
         "",
-        ResponseTypesSupported.CODE,
+        responseTypesSupported,
         "",
         "",
         AcrValue.PHR,

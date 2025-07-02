@@ -2,7 +2,8 @@ FROM amazoncorretto:24-alpine
 
 LABEL maintainer="radiantlogic"
 
-COPY ./codegen-modules/openapi-java-client-codegen/target/openapi-java-client-codegen-*.jar /openapi-java-client-codegen.jar
+# The GitHub action will result in the jar at the root of the project by this point
+COPY ./*.jar /app.jar
 RUN mkdir /input
 RUN mkdir /output
 

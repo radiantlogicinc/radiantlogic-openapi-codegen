@@ -28,6 +28,7 @@ public class CodeGeneratorExecutor {
     generator.setGeneratorPropertyDefault(CodegenConstants.SKIP_FORM_MODEL, "false");
 
     generator.opts(new ClientOptInput().config(codegen).openAPI(openAPI)).generate();
+    log.info("Code generation complete");
   }
 
   private void prepareOutputDirectory(

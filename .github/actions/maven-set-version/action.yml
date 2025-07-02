@@ -1,0 +1,19 @@
+name: Maven Set Version
+
+inputs:
+  version:
+    required: true
+    description: The version to set
+
+runs:
+  using: composite
+  steps:
+    - name: Set Project Version
+      shell: bash
+      run: |
+        version="${{ inputs.version }}"
+        if [ -z "$version" ]; then
+          echo "No version input provided, cannot proceed" >&2
+          exit 1
+        fi
+        mvn versions:set-property -Dproperty=revision -DnewVersion="$version" -DgenerateBackupPoms=false

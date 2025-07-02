@@ -1,0 +1,99 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        type: string
+        required: true
+        description: The version number for the release. Must be a valid semver number.
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}
+
+permissions:
+  contents: write
+
+jobs:
+  parse_release_version:
+    runs-on: ubuntu-latest
+    outputs:
+      major_version: ${{ steps.parse_version.outputs.major_version }}
+      minor_version: ${{ steps.parse_version.outputs.minor_version }}
+      patch_version: ${{ steps.parse_version.outputs.patch_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: parse_version
+        id: parse_version
+        uses: ./.github/actions/parse-release-version
+        with:
+          release_version: ${{ inputs.release_version }}
+
+  set_project_release_version:
+    runs-on: ubuntu-latest
+    needs: ['parse_release_version']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/maven-set-version
+        with:
+          version: ${{ inputs.release_version }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release_pom_xml
+          path: pom.xml
+
+  run_maven_build:
+    uses: ./.github/workflows/core-maven-build.yml
+    with:
+      is_release: true
+    needs: ['set_project_release_version']
+
+  run_docker_build:
+    uses: ./.github/workflows/core-docker-build.yml
+    needs: [ 'run_maven_build' ]
+    with:
+      image_name: ${{ needs.run_maven_build.outputs.project_name }}
+      image_tag: ${{ inputs.release_version }}
+    secrets:
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  apply_git_tag:
+    runs-on: ubuntu-latest
+    needs: ['run_docker_build']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release_pom_xml
+          path: .
+      - uses: ./.github/actions/git-config
+      - uses: ./.github/actions/git-commit-changed
+        with:
+          message: Updating project version to ${{ inputs.release_version }}
+          push: false
+      - uses: ./.github/actions/git-tag
+        with:
+          tag: v${{ inputs.release_version }}
+
+  increment_project_snapshot_version:
+    runs-on: ubuntu-latest
+    needs: ['run_docker_build', 'parse_release_version']
+    steps:
+      - uses: actions/checkout@v4
+      - name: increment_version
+        id: increment_version
+        uses: ./.github/actions/increment-version-next-snapshot
+        with:
+          major_version: ${{ needs.parse_release_version.outputs.major_version }}
+          minor_version: ${{ needs.parse_release_version.outputs.minor_version }}
+          patch_version: ${{ needs.parse_release_version.outputs.patch_version }}
+      - uses: ./.github/actions/maven-set-version
+        with:
+          version: ${{ steps.increment_version.outputs.next_snapshot_version }}
+      - uses: ./.github/actions/git-config
+      - uses: ./.github/actions/git-commit-changed
+        with:
+          message: Updating project version to ${{ steps.increment_version.outputs.next_snapshot_version }}
+          push: true

@@ -1,0 +1,10 @@
+name: Git Config
+
+runs:
+  using: composite
+  steps:
+    - name: configure_git
+      shell: bash
+      run: |
+        git config --global user.email github-actions@radiantlogic.com
+        git config --global user.name github-actions

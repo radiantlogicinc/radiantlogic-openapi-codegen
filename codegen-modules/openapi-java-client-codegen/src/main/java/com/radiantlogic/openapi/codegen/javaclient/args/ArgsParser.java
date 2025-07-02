@@ -98,7 +98,7 @@ public class ArgsParser {
   private URL parseOpenapiPath(@NonNull final String openapiPath) {
     try {
       return new URI(openapiPath).toURL();
-    } catch (final MalformedURLException | URISyntaxException ex) {
+    } catch (final MalformedURLException | URISyntaxException | IllegalArgumentException ex) {
       try {
         final Path absoluteFilePath = Paths.get(openapiPath);
         if (Files.exists(absoluteFilePath)) {

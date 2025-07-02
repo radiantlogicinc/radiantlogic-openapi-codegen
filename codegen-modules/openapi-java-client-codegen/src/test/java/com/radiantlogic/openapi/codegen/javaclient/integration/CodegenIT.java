@@ -3,13 +3,17 @@ package com.radiantlogic.openapi.codegen.javaclient.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.radiantlogic.openapi.codegen.javaclient.Runner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +26,32 @@ import org.junit.jupiter.api.Test;
 public class CodegenIT {
   private static final Path OUTPUT_DIR = Paths.get(System.getProperty("user.dir"), "output");
   private static final Duration WAIT_FOR_BUILD = Duration.ofMinutes(2);
+
+  private static long peakMemory = 0;
+
+  /**
+   * This prints the memory being used on an ongoing basis. This is useful information due to the
+   * sheer absurd size of some of the specs.
+   */
+  @BeforeAll
+  static void beforeAll() {
+    new Thread(
+            () -> {
+              while (true) {
+                final long amount =
+                    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                if (amount > peakMemory) {
+                  peakMemory = amount;
+                }
+                System.out.printf("Memory Current: %,d Peak: %,d%n", amount, peakMemory);
+                try {
+                  Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                }
+              }
+            })
+        .start();
+  }
 
   @Test
   void oktaIdpMinimal() {
@@ -152,24 +182,39 @@ public class CodegenIT {
   private void generateAndBuild(
       @NonNull final String yamlFilename, @NonNull final String relativeOutputPath) {
     final Path outputPath = OUTPUT_DIR.resolve(relativeOutputPath);
+    System.out.printf("Cleaning output directory %s%n", outputPath);
     FileUtils.deleteDirectory(outputPath.toFile());
 
     final URL url = getClass().getClassLoader().getResource("openapi/%s".formatted(yamlFilename));
     final Path yamlPath = Paths.get(url.toURI());
+    System.out.printf("Running codegen for spec file %s%n", yamlPath);
     final Runner runner = new Runner();
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};
     runner.run(args);
 
+    System.out.printf("Codegen complete. Building generated code at %s%n", outputPath);
+
+    final int exitValue = runProcess("mvn clean install -DskipTests", outputPath);
+
+    assertThat(exitValue).isEqualTo(0);
+    System.out.println("Build of generated code completed successfully.");
+  }
+
+  @SneakyThrows
+  private int runProcess(@NonNull final String command, @NonNull final Path directory) {
     final Process process =
-        new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
-            .directory(outputPath.toFile())
-            .inheritIO()
+        new ProcessBuilder(command.split(" "))
+            .directory(directory.toFile())
+            .redirectErrorStream(true)
             .start();
 
-    final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD);
-    assertThat(waitSuccess).withFailMessage("Wait for build of generated code timed out.").isTrue();
+    try (BufferedReader reader =
+        new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+      reader.lines().forEach(System.out::println);
+    }
 
-    final int exitValue = process.exitValue();
-    assertThat(exitValue).isEqualTo(0);
+    final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD.toMillis(), TimeUnit.MILLISECONDS);
+    assertThat(waitSuccess).withFailMessage("Wait for build of generated code timed out.").isTrue();
+    return process.exitValue();
   }
 }

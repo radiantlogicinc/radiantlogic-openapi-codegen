@@ -1,0 +1,15 @@
+name: Git Apply Tag
+
+inputs:
+  tag:
+    required: true
+    description: The git tag to apply
+
+runs:
+  using: composite
+  steps:
+    - name: apply_tag
+      shell: bash
+      run: |
+        git tag "${{ inputs.tag }}"
+        git push --tags

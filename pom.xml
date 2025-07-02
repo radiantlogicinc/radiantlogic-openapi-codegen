@@ -250,6 +250,7 @@
                     <testFailureIgnore>false</testFailureIgnore>
                     <useModulePath>false</useModulePath>
                     <argLine>-Xmx6000m</argLine>
+
                 </configuration>
             </plugin>
         </plugins>

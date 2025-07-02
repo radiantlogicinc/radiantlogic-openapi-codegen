@@ -27,7 +27,8 @@ The primary use for the generated code is to support building custom connectors 
 
 TBD
 
-## CI/CD
+## Additional Documentation
 
-TBD
-Don't forget about the username & password variables in docs
+- [Detailed Explanation of "Raw" Types In Generated Code](./docs/RAW_TYPES.md)
+- [Development Guide](./docs/DEVELOPMENT.md)
+- [GitHub Actions CI/CD](./docs/CICD.md)

@@ -214,8 +214,9 @@ public class CodegenIT {
     runner.run(args);
 
     // TODO delete this block
-    System.out.println("OUTPUT EXISTS: " + Files.exists(outputPath));
-    System.out.println("PARENT EXISTS: " + Files.exists(outputPath.getParent()));
+    System.out.println("OUTPUT EXISTS: " + outputPath + " " + Files.exists(outputPath));
+    System.out.println(
+        "PARENT EXISTS: " + outputPath.getParent() + " " + Files.exists(outputPath.getParent()));
     Files.list(OUTPUT_DIR).forEach(output -> System.out.println("OUTPUT: " + output));
     runProcess("echo $PATH", outputPath);
 

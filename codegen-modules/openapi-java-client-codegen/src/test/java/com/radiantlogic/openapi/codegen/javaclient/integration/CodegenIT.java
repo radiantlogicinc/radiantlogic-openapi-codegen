@@ -214,8 +214,16 @@ public class CodegenIT {
 
     System.out.printf("Codegen complete. Building generated code at %s%n", outputPath);
 
+    final int exitValue = runProcess("mvn clean install -DskipTests");
+
+    assertThat(exitValue).isEqualTo(0);
+    System.out.println("Build of generated code completed successfully.");
+  }
+
+  @SneakyThrows
+  private int runProcess(@NonNull final String command) {
     final Process process =
-        new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
+        new ProcessBuilder(command.split(" "))
             .directory(outputPath.toFile())
             .redirectErrorStream(true)
             .start();
@@ -227,9 +235,6 @@ public class CodegenIT {
 
     final boolean waitSuccess = process.waitFor(WAIT_FOR_BUILD.toMillis(), TimeUnit.MILLISECONDS);
     assertThat(waitSuccess).withFailMessage("Wait for build of generated code timed out.").isTrue();
-
-    final int exitValue = process.exitValue();
-    assertThat(exitValue).isEqualTo(0);
-    System.out.println("Build of generated code completed successfully.");
+    return process.exitValue();
   }
 }

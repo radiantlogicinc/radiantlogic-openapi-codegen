@@ -25,7 +25,7 @@ The primary use for the generated code is to support building custom connectors 
 
 ## Using the Codegen
 
-The codegen is published as a docker image to DockerHub, `rlidev/openapi-java-client-codegen:$VERSION_NUMBER`. It is capable of generating Java client code for any OpenAPI 3 specification. The specification can be referenced via a local filepath or a URL.
+The codegen is published as a docker image to DockerHub and can be seen here: [rlidev/openapi-java-client-codegen](https://hub.docker.com/repository/docker/rlidev/openapi-java-client-codegen/general). It is capable of generating Java client code for any OpenAPI 3 specification. The specification can be referenced via a local filepath or a URL.
 
 All code is written to the `/output` directory in the docker image. That directory needs to be mounted as a volume in order to write the code to the local filesystem.
 

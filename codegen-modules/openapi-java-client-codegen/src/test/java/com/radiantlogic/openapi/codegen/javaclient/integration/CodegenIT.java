@@ -6,6 +6,7 @@ import com.radiantlogic.openapi.codegen.javaclient.Runner;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -212,19 +213,23 @@ public class CodegenIT {
     final String[] args = new String[] {"-p=%s".formatted(yamlPath.toString())};
     runner.run(args);
 
+    // TODO delete this block
+    System.out.println("OUTPUT EXISTS: " + Files.exists(outputPath));
+    runProcess("echo $PATH", outputPath);
+
     System.out.printf("Codegen complete. Building generated code at %s%n", outputPath);
 
-    final int exitValue = runProcess("mvn clean install -DskipTests");
+    final int exitValue = runProcess("mvn clean install -DskipTests", outputPath);
 
     assertThat(exitValue).isEqualTo(0);
     System.out.println("Build of generated code completed successfully.");
   }
 
   @SneakyThrows
-  private int runProcess(@NonNull final String command) {
+  private int runProcess(@NonNull final String command, @NonNull final Path directory) {
     final Process process =
         new ProcessBuilder(command.split(" "))
-            .directory(outputPath.toFile())
+            .directory(directory.toFile())
             .redirectErrorStream(true)
             .start();
 

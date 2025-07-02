@@ -4,7 +4,7 @@
 
 ### Main
 
-This workflow runs automatically whenever a push is made to the `main` branch. It builds the maven artifact, runs all validations, and then builds and pushes the docker image.
+This workflow runs automatically whenever a push is made to the `main` branch. It builds the maven artifact, runs all validations, and then builds and pushes the docker image. The maven artifact and docker image tag will use the version in the pom.xml (ie, `1.0.0-SNAPSHOT`).
 
 ### PR
 

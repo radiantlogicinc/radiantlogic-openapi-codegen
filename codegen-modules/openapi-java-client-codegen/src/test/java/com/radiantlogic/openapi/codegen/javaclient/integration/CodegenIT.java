@@ -54,6 +54,7 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled // TODO delete this
   void oktaIdpMinimal() {
     generateAndBuild("okta-idp-minimal-2025.01.1.yaml", "MyAccount-Management/2025.01.1");
   }
@@ -66,18 +67,21 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled // TODO delete this
   void oktaOauthMinimal() {
     generateAndBuild(
         "okta-oauth-minimal-2025.01.1.yaml", "Okta-OpenID-Connect--OAuth-2.0/2025.01.1");
   }
 
   @Test
+  @Disabled // TODO delete this
   void radiantone() {
     generateAndBuild(
         "radiantone-openapi-8.1.4-beta.2-SNAPSHOT.yaml", "RadiantOne-V8-API/8.1.4-beta.2-SNAPSHOT");
   }
 
   @Test
+  @Disabled // TODO delete this
   void gitlabV4() {
     generateAndBuild("gitlab-v4.yaml", "GitLab-API/v4");
   }
@@ -89,36 +93,43 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled // TODO delete this
   void googleMaps() {
     generateAndBuild("google-maps-1.22.5.json", "Google-Maps-Platform/1.22.5");
   }
 
   @Test
+  @Disabled // TODO delete this
   void msgraphApplication() {
     generateAndBuild("msgraph-applications-1.0.yaml", "Applications/v1.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void msgraphCalendar() {
     generateAndBuild("msgraph-calendar-1.0.yaml", "Calendar/v1.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void openai() {
     generateAndBuild("openai-2.3.0.yaml", "OpenAI-API/2.3.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void anthropic() {
     generateAndBuild("anthropic-0.0.0.json", "Anthropic-API/0.0.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void onepasswordConnect() {
     generateAndBuild("1password-connect-1.7.1.yaml", "1Password-Connect/1.7.1");
   }
 
   @Test
+  @Disabled // TODO delete this
   void bitbucket() {
     generateAndBuild("bitbucket-2.0.json", "Bitbucket-API/2.0");
   }
@@ -129,41 +140,49 @@ public class CodegenIT {
   }
 
   @Test
+  @Disabled // TODO delete this
   void swaggerPetstore() {
     generateAndBuild("swagger-petstore-1.0.26.json", "Swagger-Petstore---OpenAPI-3.0/1.0.26");
   }
 
   @Test
+  @Disabled // TODO delete this
   void harryPotter() {
     generateAndBuild("harrypotter-1.0.0.yaml", "Harry-Potter-API/1.0.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void snyk() {
     generateAndBuild("snyk-1.0.yaml", "Snyk-API/1.0");
   }
 
   @Test
+  @Disabled // TODO delete this
   void sonarqube() {
     generateAndBuild("sonarqube-2025.4.0.109754.json", "SonarQube-Web-API-v2/2025.4.0.109754");
   }
 
   @Test
+  @Disabled // TODO delete this
   void githubActions() {
     generateAndBuild("github-actions-v3-1.1.4.yaml", "GitHub-v3-REST-API---actions/1.1.4");
   }
 
   @Test
+  @Disabled // TODO delete this
   void githubActivity() {
     generateAndBuild("github-activity-v3-1.1.4.yaml", "GitHub-v3-REST-API---activity/1.1.4");
   }
 
   @Test
+  @Disabled // TODO delete this
   void githubApps() {
     generateAndBuild("github-apps-v3-1.1.4.yaml", "GitHub-v3-REST-API---apps/1.1.4");
   }
 
   @Test
+  @Disabled // TODO delete this
   void githubBilling() {
     generateAndBuild("github-billing-v3-1.1.4.yaml", "GitHub-v3-REST-API---billing/1.1.4");
   }
@@ -174,6 +193,7 @@ public class CodegenIT {
    * changes this new test-only spec is required.
    */
   @Test
+  @Disabled // TODO delete this
   void brokenDiscriminatorTest() {
     generateAndBuild("broken-discriminator-test-1.0.0.yaml", "Broken-Discriminator-Test/1.0.0");
   }

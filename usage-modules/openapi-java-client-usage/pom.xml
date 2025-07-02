@@ -51,6 +51,11 @@
         </dependency>
         <dependency>
             <groupId>com.radiantlogic.openapi.generated</groupId>
+            <artifactId>Okta-OpenID-Connect--OAuth-2.0</artifactId>
+            <version>2025.01.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.radiantlogic.openapi.generated</groupId>
             <artifactId>GitLab-API</artifactId>
             <version>v4</version>
         </dependency>

@@ -25,7 +25,34 @@ The primary use for the generated code is to support building custom connectors 
 
 ## Using the Codegen
 
-The codegen is published 
+The codegen is published as a docker image to DockerHub, `rlidev/openapi-java-client-codegen:$VERSION_NUMBER`. It is capable of generating Java client code for any OpenAPI 3 specification. The specification can be referenced via a local filepath or a URL.
+
+All code is written to the `/output` directory in the docker image. That directory needs to be mounted as a volume in order to write the code to the local filesystem.
+
+The CLI commands and arguments supported by the codegen can be listed by running the image with the `-h` argument. The most important one is `-p=THE_PATH` which supplies the path to the OpenAPI specification.
+
+### Using a Local Spec File
+
+Local files are read via the `/input` directory in the docker image. That directory needs to be mounted as a volume, and the spec itself needs to be placed within that directory. Assuming that the OpenAPI file is called `openapi.yaml`, and it is placed in a directory at the path `./specs`, this is what the docker run command would look like:
+
+```bash
+docker run \
+  -v './specs:/input' \
+  -v './generated:/output' \
+  rlidev/openapi-java-client-codegen:$VERSION_NUMBER \
+  -p=/input/openapi.yaml
+```
+
+### Using a URL Spec File
+
+URL specs are read directly from their URL. Assuming the URL is `https://some-company.com/openapi.yaml`, this is what the docker run command would look like:
+
+```bash
+docker run \
+  -v './generated:/output' \
+  rlidev/openapi-java-client-codegen:$VERSION_NUMBER \
+  -p=https://some-company.com/openapi.yaml
+```
 
 ## Additional Documentation
 

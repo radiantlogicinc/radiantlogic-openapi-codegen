@@ -41,22 +41,22 @@ public class CodegenIT {
   static void beforeAll() {
     memoryMonitorThread =
         new Thread(
-                () -> {
-                  while (true) {
-                    final long amount =
-                        Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-                    if (amount > peakMemory) {
-                      peakMemory = amount;
-                    }
-                    System.out.printf("Memory Current: %,d Peak: %,d%n", amount, peakMemory);
-                    try {
-                      Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                      return;
-                    }
-                  }
-                })
-            .start();
+            () -> {
+              while (true) {
+                final long amount =
+                    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                if (amount > peakMemory) {
+                  peakMemory = amount;
+                }
+                System.out.printf("Memory Current: %,d Peak: %,d%n", amount, peakMemory);
+                try {
+                  Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                  return;
+                }
+              }
+            });
+    memoryMonitorThread.start();
   }
 
   @AfterAll

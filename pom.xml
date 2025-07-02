@@ -44,6 +44,7 @@
         <java.client.codegen.path>./codegen-modules/openapi-java-client-codegen</java.client.codegen.path>
         <java.client.usage.path>./usage-modules/openapi-java-client-usage</java.client.usage.path>
         <skip.surefire.tests>${skipTests}</skip.surefire.tests>
+        <ci.run>false</ci.run>
     </properties>
 
     <dependencyManagement>
@@ -247,6 +248,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <systemPropertyVariables>
+                        <ci-run>${ci-run}</ci-run>
+                    </systemPropertyVariables>
                     <testFailureIgnore>false</testFailureIgnore>
                     <useModulePath>false</useModulePath>
                     <argLine>-Xmx8000m</argLine>

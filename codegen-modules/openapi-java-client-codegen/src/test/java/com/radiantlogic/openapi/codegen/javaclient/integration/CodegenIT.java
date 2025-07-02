@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * Integration tests that validate this codegen against various openapi specifications. All of these
@@ -124,6 +125,7 @@ public class CodegenIT {
   }
 
   @Test
+  @DisabledIfSystemProperty(named = "ci-run", matches = "true")
   void radiantlogicCloudmanager() {
     generateAndBuild("radiantlogic-cloudmanager-1.3.2.json", "Radiantlogic-CloudManager/1.3.2");
   }

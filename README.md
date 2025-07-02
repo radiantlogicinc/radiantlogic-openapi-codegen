@@ -25,7 +25,7 @@ The primary use for the generated code is to support building custom connectors 
 
 ## Using the Codegen
 
-TBD
+The codegen is published 
 
 ## Additional Documentation
 

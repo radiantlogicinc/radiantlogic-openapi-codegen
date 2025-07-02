@@ -249,8 +249,7 @@
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                     <useModulePath>false</useModulePath>
-                    <argLine>-Xmx6000m</argLine>
-
+                    <argLine>-Xmx8000m</argLine>
                 </configuration>
             </plugin>
         </plugins>

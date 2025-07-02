@@ -93,6 +93,8 @@ jobs:
         uses: ./.github/actions/setup-java
         with:
           pom_artifact_name: ${{ inputs.is_release && 'release_pom_xml' || '' }}
+      - name: Print PATH
+        run: echo $PATH
       - name: Run Integration Tests
         run: mvn integration-test -Dskip.surefire.tests
       - name: Upload Integration Test Artifacts

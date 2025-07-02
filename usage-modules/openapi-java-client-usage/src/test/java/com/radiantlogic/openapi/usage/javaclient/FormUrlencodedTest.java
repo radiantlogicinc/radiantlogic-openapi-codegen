@@ -38,6 +38,8 @@ public class FormUrlencodedTest {
     final String codeChallenge = "challenge";
     final CodeChallengeMethod codeChallengeMethod = CodeChallengeMethod.S256;
     final ResponseTypesSupported responseTypesSupported = ResponseTypesSupported.CODE;
+    final AcrValue acrValue = AcrValue.PHR;
+    final AmrValue amrValue = AmrValue.DUO;
 
     final Map<String, Object> expectedResponse = new HashMap<>();
     expectedResponse.put("access_token", "test-token");
@@ -51,23 +53,26 @@ public class FormUrlencodedTest {
             .withFormParam("code_challenge", equalTo(codeChallenge))
             .withFormParam("code_challenge_method", equalTo(codeChallengeMethod.getValue()))
             .withFormParam("response_type", equalTo(responseTypesSupported.getValue()))
+            .withFormParam("acr_values", equalTo(acrValue.getValue()))
+            .withFormParam("enroll_amr_values", equalTo(amrValue.getValue()))
             .willReturn(
                 aResponse()
                     .withStatus(201)
                     .withHeader("Content-Type", "application/json")
                     .withBody(objectMapper.writeValueAsString(expectedResponse))));
 
+    // If it doesn't match the stub, an exception will be thrown
     orgAsApi.authorizeWithPost(
         clientId,
         "",
         responseTypesSupported,
         "",
         "",
-        AcrValue.PHR,
+        acrValue,
         codeChallenge,
         codeChallengeMethod,
         "",
-        AmrValue.DUO,
+        amrValue,
         "",
         "",
         "",
@@ -78,20 +83,5 @@ public class FormUrlencodedTest {
         "",
         ResponseMode.FORM_POST,
         "");
-
-    //    final Object result = authApi.authControllerLocalLogin(email, password, null);
-    //
-    //    assertThat(result).isNotNull();
-    //    assertThat(result).isInstanceOf(Map.class);
-    //    final Map<String, Object> resultMap = (Map<String, Object>) result;
-    //
-    //    assertThat(resultMap).usingRecursiveComparison().isEqualTo(expectedResponse);
-
-    //    verify(
-    //        postRequestedFor(urlPathEqualTo("/eoc-backend/auth/local"))
-    //            .withHeader("Content-Type",
-    // equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
-    //            .withFormParam("email", equalTo(email))
-    //            .withFormParam("password", equalTo(password)));
   }
 }

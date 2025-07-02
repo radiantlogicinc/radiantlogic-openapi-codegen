@@ -193,6 +193,7 @@ public class CodegenIT {
     final Process process =
         new ProcessBuilder("mvn", "clean", "install", "-DskipTests")
             .directory(outputPath.toFile())
+            .redirectErrorStream(true)
             .inheritIO()
             .start();
 
